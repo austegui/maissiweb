@@ -43,6 +43,7 @@ Create `.env`:
 PHONE_NUMBER_ID=your_phone_number_id
 KAPSO_API_KEY=your_kapso_api_key
 WABA_ID=your_business_account_id
+WHATSAPP_API_URL=https://api.kapso.ai/meta/whatsapp  # Optional: custom API endpoint
 ```
 
 ### 4. Run

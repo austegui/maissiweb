@@ -9,7 +9,7 @@ export function getWhatsAppClient(): WhatsAppClient {
       throw new Error('KAPSO_API_KEY environment variable is not set');
     }
     _whatsappClient = new WhatsAppClient({
-      baseUrl: 'https://api.kapso.ai/meta/whatsapp',
+      baseUrl: process.env.WHATSAPP_API_URL || 'https://api.kapso.ai/meta/whatsapp',
       kapsoApiKey,
       graphVersion: 'v24.0'
     });
