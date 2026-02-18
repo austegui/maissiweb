@@ -31,12 +31,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Every file that reads PHONE_NUMBER_ID, KAPSO_API_KEY, or WABA_ID from process.env is listed with line numbers
   4. The webhook endpoint path is confirmed and documented
   5. The gokapso/whatsapp-cloud-inbox repo is set as the upstream git remote
-**Plans**: TBD
+**Plans**: 3 plans in 3 waves (sequential)
 
 Plans:
-- [ ] 01-01: Clone repo, install dependencies, configure local env, verify app runs
-- [ ] 01-02: Audit router type, process.env reads, webhook path, and API route structure
-- [ ] 01-03: Add upstream remote and document audit findings
+- [ ] 01-01-PLAN.md — Pull Kapso source, install deps, configure env, verify app runs (Wave 1)
+- [ ] 01-02-PLAN.md — Audit router type, process.env reads, webhook path, API routes (Wave 2)
+- [ ] 01-03-PLAN.md — Verify upstream remote, create AUDIT.md, update STATE.md (Wave 3)
 
 ### Phase 2: Authentication
 **Goal**: Every team member can log in to the inbox with their own account, and nobody can access the inbox without authenticating
