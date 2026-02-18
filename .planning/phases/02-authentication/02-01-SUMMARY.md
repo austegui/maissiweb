@@ -62,10 +62,10 @@ completed: 2026-02-18
 
 ## Performance
 
-- **Duration:** ~8 min
+- **Duration:** ~10 min
 - **Started:** 2026-02-18T14:19:13Z
-- **Completed:** 2026-02-18T14:27:00Z
-- **Tasks:** 1 auto (+ 1 checkpoint pending user action)
+- **Completed:** 2026-02-18
+- **Tasks:** 2 (1 auto + 1 human-action checkpoint — both complete)
 - **Files modified:** 5
 
 ## Accomplishments
@@ -74,14 +74,19 @@ completed: 2026-02-18
 - Created browser client factory using createBrowserClient (for Client Components)
 - Created server client factory using async cookies() — Next.js 15 compatible pattern
 - Created middleware updateSession with getUser() for secure token validation and route protection logic
+- Supabase project provisioned at https://mwtxxyupqqfgsbapvjbb.supabase.co
+- app_settings table created with RLS policies (SELECT, INSERT, UPDATE for authenticated role)
+- NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY set in Vercel (all environments)
+- First user account created in Supabase Authentication for inbox access
 
 ## Task Commits
 
 Each task was committed atomically:
 
 1. **Task 1: Install Supabase packages and create client utility files** - `5b3dcb0` (feat)
+2. **Task 2: Create Supabase project, run app_settings SQL, set Vercel env vars** - human-action checkpoint (no commit — external manual setup completed by user)
 
-**Plan metadata:** (pending — checkpoint in progress)
+**Plan metadata:** (docs commit made after SUMMARY.md + STATE.md update)
 
 ## Files Created/Modified
 
@@ -106,47 +111,20 @@ None - plan executed exactly as written.
 
 None.
 
-## User Setup Required
+## User Setup Completed
 
-**External services require manual configuration.** The checkpoint in this plan requires:
+All external service configuration was completed by the user during the Task 2 human-action checkpoint:
 
-1. Create Supabase project at https://supabase.com
-2. Run app_settings table SQL in Supabase SQL Editor
-3. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to Vercel environment variables
-4. Create first user account in Supabase Authentication -> Users
-
-The app_settings SQL:
-```sql
-CREATE TABLE app_settings (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  key text UNIQUE NOT NULL,
-  value text NOT NULL,
-  updated_at timestamptz DEFAULT now()
-);
-
-ALTER TABLE app_settings ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Authenticated users can read settings"
-  ON app_settings FOR SELECT
-  TO authenticated
-  USING (true);
-
-CREATE POLICY "Authenticated users can update settings"
-  ON app_settings FOR UPDATE
-  TO authenticated
-  USING (true);
-
-CREATE POLICY "Authenticated users can insert settings"
-  ON app_settings FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
-```
+1. Supabase project created at https://mwtxxyupqqfgsbapvjbb.supabase.co
+2. app_settings table created with RLS policies in Supabase SQL Editor
+3. NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY added to Vercel (all environments)
+4. First user account created in Supabase Authentication -> Users
 
 ## Next Phase Readiness
 
 - Three Supabase utility files are ready — plans 02-02 (middleware wrapper) and 02-03 (login page + server actions) can import from them immediately
-- Supabase project must be created and env vars set before any auth flow can be tested end-to-end
-- No blockers once user completes the checkpoint steps
+- Supabase project is live and env vars are set in Vercel — auth flow can be tested end-to-end once 02-02 and 02-03 are complete
+- No blockers for 02-02
 
 ---
 *Phase: 02-authentication*

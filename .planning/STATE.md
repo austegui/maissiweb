@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-18)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Phase 2 — Authentication (plan 01 at checkpoint, awaiting user Supabase setup)
+**Current focus:** Phase 2 — Authentication (plan 01 complete, ready for plan 02-02)
 
 ## Current Position
 
 Phase: 2 of 6 (Authentication)
-Plan: 1 of ~5 in current phase
-Status: Checkpoint — awaiting user action (Supabase project setup)
-Last activity: 2026-02-18 — 02-01 Task 1 complete, checkpoint hit
+Plan: 1 of ~3 in current phase (02-01 complete)
+Status: In progress — 02-01 complete, ready for 02-02
+Last activity: 2026-02-18 — Completed 02-01-PLAN.md (both tasks done, Supabase configured)
 
-Progress: [██░░░░░░░░] 22% (4/18 plans estimated)
+Progress: [███░░░░░░░] 27% (5/18 plans estimated)
 
 ## Performance Metrics
 
@@ -53,17 +53,18 @@ Recent decisions affecting current work:
 - [02-01]: getUser() not getSession() in middleware — contacts Auth servers for real token validation
 - [02-01]: Route protection logic lives in src/lib/supabase/middleware.ts, root middleware.ts (02-02) is thin wrapper
 - [02-01]: async cookies() required for Next.js 15 — synchronous form removed
+- [02-01]: Supabase project URL is https://mwtxxyupqqfgsbapvjbb.supabase.co — use this in any Supabase dashboard references
 
 ### Pending Todos
 
-- [02-01 checkpoint]: User must create Supabase project, run app_settings SQL, add env vars to Vercel, create first user account
+None.
 
 ### Blockers/Concerns
 
-- [02-01 checkpoint BLOCKING]: Supabase project not yet created — auth cannot function until user completes setup steps
+None — Supabase project is live, env vars set, user account created. Auth foundation ready for 02-02.
 
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: 02-01 checkpoint — Task 1 complete (5b3dcb0), awaiting user Supabase setup
+Stopped at: Completed 02-01-PLAN.md — all tasks done, Supabase configured
 Resume file: None
