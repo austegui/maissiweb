@@ -1,27 +1,8 @@
 import { WhatsAppClient } from '@kapso/whatsapp-cloud-api';
+import { getConfig } from '@/lib/get-config';
 
-let _whatsappClient: WhatsAppClient | null = null;
-
-export function getWhatsAppClient(): WhatsAppClient {
-  if (!_whatsappClient) {
-    const kapsoApiKey = process.env.KAPSO_API_KEY;
-    if (!kapsoApiKey) {
-      throw new Error('KAPSO_API_KEY environment variable is not set');
-    }
-    _whatsappClient = new WhatsAppClient({
-      baseUrl: process.env.WHATSAPP_API_URL || 'https://api.kapso.ai/meta/whatsapp',
-      kapsoApiKey,
-      graphVersion: 'v24.0'
-    });
-  }
-  return _whatsappClient;
+export async function getWhatsAppClient(): Promise<WhatsAppClient> {
+  const kapsoApiKey = await getConfig('KAPSO_API_KEY');
+  const baseUrl = await getConfig('WHATSAPP_API_URL');
+  return new WhatsAppClient({ baseUrl, kapsoApiKey, graphVersion: 'v24.0' });
 }
-
-// Lazy getter for backwards compatibility
-export const whatsappClient = new Proxy({} as WhatsAppClient, {
-  get(_, prop) {
-    return getWhatsAppClient()[prop as keyof WhatsAppClient];
-  }
-});
-
-export const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID || '';
