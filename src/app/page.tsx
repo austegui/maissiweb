@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { ConversationList, type ConversationListRef } from '@/components/conversation-list';
 import { MessageView } from '@/components/message-view';
+import { logout } from '@/app/login/actions';
 
 type Conversation = {
   id: string;
@@ -32,7 +33,16 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen flex">
+    <div className="h-screen flex flex-col">
+      <div className="flex items-center justify-between border-b px-4 py-2">
+        <span className="text-sm font-medium">WhatsApp Inbox</span>
+        <form action={logout}>
+          <button type="submit" className="text-xs text-gray-500 hover:text-gray-700">
+            Sign out
+          </button>
+        </form>
+      </div>
+      <div className="flex flex-1 overflow-hidden">
       <ConversationList
         ref={conversationListRef}
         onSelectConversation={setSelectedConversation}
@@ -47,6 +57,7 @@ export default function Home() {
         onBack={handleBackToList}
         isVisible={!!selectedConversation}
       />
+      </div>
     </div>
   );
 }
