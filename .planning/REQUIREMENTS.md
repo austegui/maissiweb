@@ -66,19 +66,19 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FORK-01 | — | Pending |
-| FORK-02 | — | Pending |
-| FORK-03 | — | Pending |
-| AUTH-01 | — | Pending |
-| AUTH-02 | — | Pending |
-| AUTH-03 | — | Pending |
-| SETTINGS-01 | — | Pending |
-| SETTINGS-02 | — | Pending |
-| SETTINGS-03 | — | Pending |
-| BRAND-01 | — | Pending |
-| DEPLOY-01 | — | Pending |
-| DEPLOY-02 | — | Pending |
-| PRESERVE-01 | — | Pending |
+| FORK-01 | Phase 1 | Pending |
+| FORK-02 | Phase 1 | Pending |
+| FORK-03 | Phase 1 | Pending |
+| AUTH-01 | Phase 2 | Pending |
+| AUTH-02 | Phase 2 | Pending |
+| AUTH-03 | Phase 2 | Pending |
+| SETTINGS-01 | Phase 3 | Pending |
+| SETTINGS-02 | Phase 3 | Pending |
+| SETTINGS-03 | Phase 3 | Pending |
+| PRESERVE-01 | Phase 4 | Pending |
+| BRAND-01 | Phase 5 | Pending |
+| DEPLOY-01 | Phase 6 | Pending |
+| DEPLOY-02 | Phase 6 | Pending |
 
 ---
-*Last updated: 2026-02-18 after requirements definition*
+*Last updated: 2026-02-18 after roadmap creation*
