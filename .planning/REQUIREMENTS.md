@@ -66,12 +66,12 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FORK-01 | Phase 1 | Pending |
-| FORK-02 | Phase 1 | Pending |
-| FORK-03 | Phase 1 | Pending |
-| AUTH-01 | Phase 2 | Pending |
-| AUTH-02 | Phase 2 | Pending |
-| AUTH-03 | Phase 2 | Pending |
+| FORK-01 | Phase 1 | Complete |
+| FORK-02 | Phase 1 | Complete |
+| FORK-03 | Phase 1 | Complete |
+| AUTH-01 | Phase 2 | Complete |
+| AUTH-02 | Phase 2 | Complete |
+| AUTH-03 | Phase 2 | Complete |
 | SETTINGS-01 | Phase 3 | Pending |
 | SETTINGS-02 | Phase 3 | Pending |
 | SETTINGS-03 | Phase 3 | Pending |

@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-02-18)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Phase 3 — Inbox UI (Phase 2 complete)
+**Current focus:** Phase 2 complete — ready for Phase 3 planning
 
 ## Current Position
 
@@ -56,7 +56,7 @@ Recent decisions affecting current work:
 - [02-01]: Supabase project URL is https://mwtxxyupqqfgsbapvjbb.supabase.co
 - [02-02]: Error passing via ?error= search param (not returned object) — keeps LoginPage as Server Component
 - [02-02]: Middleware matcher excludes static assets (_next/static, _next/image, favicon, images) — prevents Supabase getUser() on every asset
-- [02-02]: logout() Server Action ready to wire to button in Phase 3 or 5
+- [02-02]: logout() Server Action wired to "Sign out" button in inbox header (gap closure)
 - [02-03]: Auth flow confirmed working on Vercel production deployment
 - [02-03]: Initial deployment had space in NEXT_PUBLIC_SUPABASE_ANON_KEY causing "invalid header value" — fixed by user re-pasting env var in Vercel dashboard
 

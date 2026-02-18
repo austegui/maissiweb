@@ -12,8 +12,8 @@ Starting from the open-source Kapso WhatsApp Cloud Inbox, this roadmap adds thre
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Fork Setup** - Clone, audit, and configure the Kapso upstream base
-- [ ] **Phase 2: Authentication** - Supabase project, login page, and route protection middleware
+- [x] **Phase 1: Fork Setup** - Clone, audit, and configure the Kapso upstream base
+- [x] **Phase 2: Authentication** - Supabase project, login page, and route protection middleware
 - [ ] **Phase 3: Admin Settings** - Credentials UI and Supabase Postgres storage
 - [ ] **Phase 4: Config Migration** - Replace process.env reads with DB-backed getConfig()
 - [ ] **Phase 5: Branding** - Maissi name and logo in the UI
@@ -123,8 +123,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Fork Setup | 0/3 | Not started | - |
-| 2. Authentication | 0/3 | Not started | - |
+| 1. Fork Setup | 3/3 | Complete | 2026-02-18 |
+| 2. Authentication | 3/3 | Complete | 2026-02-18 |
 | 3. Admin Settings | 0/3 | Not started | - |
 | 4. Config Migration | 0/2 | Not started | - |
 | 5. Branding | 0/1 | Not started | - |
