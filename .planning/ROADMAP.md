@@ -81,11 +81,11 @@ Plans:
   2. An incoming WhatsApp message appears in the inbox without manual refresh (or with polling, as the base app does it)
   3. Template messages, media attachments, and read receipts work the same as in the unmodified Kapso base
   4. Removing PHONE_NUMBER_ID, KAPSO_API_KEY, and WABA_ID from Vercel env vars does not break messaging (DB is the sole credential source)
-**Plans**: TBD
+**Plans**: 2 plans in 2 waves (sequential)
 
 Plans:
-- [ ] 04-01: Replace all identified process.env reads in Kapso API routes with getConfig() calls
-- [ ] 04-02: Test full messaging flow locally with credentials loaded from DB only (env vars unset)
+- [ ] 04-01-PLAN.md — Refactor whatsapp-client.ts and all 7 consumer routes to use async getConfig() (Wave 1)
+- [ ] 04-02-PLAN.md — Deploy to Vercel, remove env vars, verify full messaging flow with DB-only credentials (Wave 2)
 
 ### Phase 5: Branding
 **Goal**: The UI displays Maissi Beauty Shop's name and logo so the team recognizes the tool as theirs
