@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-18)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Phase 3 in progress — backend foundation complete, settings UI next
+**Current focus:** Phase 3 in progress — settings UI complete, ready for Phase 3 plan 03 or Phase 4
 
 ## Current Position
 
 Phase: 3 of 6 (Admin Settings) — In progress
-Plan: 1 of 3 in phase (03-01 complete)
-Status: In progress — 03-01 executed (getConfig + /api/settings backend foundation)
-Last activity: 2026-02-18 — Completed 03-01-PLAN.md (getConfig utility + /api/settings route)
+Plan: 2 of 3 in phase (03-02 complete)
+Status: In progress — 03-02 executed (/admin/settings page, SettingsForm, saveSettings Server Action)
+Last activity: 2026-02-18 — Completed 03-02-PLAN.md (/admin/settings UI page + Server Action)
 
-Progress: [████░░░░░░] 44% (8/18 plans estimated)
+Progress: [█████░░░░░] 50% (9/18 plans estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3 (Phase 1) + 3 (02-01, 02-02, 02-03) + 1 (03-01)
+- Total plans completed: 3 (Phase 1) + 3 (02-01, 02-02, 02-03) + 2 (03-01, 03-02)
 - Average duration: ~6 min (all plans)
-- Total execution time: ~47 min
+- Total execution time: ~55 min
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [████░░░░░░] 44% (8/18 plans estimated)
 |-------|-------|-------|----------|
 | 01-fork-setup | 3/3 | ~21 min | ~7 min |
 | 02-authentication | 3/3 | ~18 min | ~6 min |
-| 03-admin-settings | 1/3 | ~8 min | ~8 min |
+| 03-admin-settings | 2/3 | ~16 min | ~8 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (~8 min), 02-02 (~5 min), 02-03 (~5 min), 03-01 (~8 min)
+- Last 5 plans: 02-02 (~5 min), 02-03 (~5 min), 03-01 (~8 min), 03-02 (~8 min)
 - Trend: Stable, ~5-8 min per plan
 
 *Updated after each plan completion*
@@ -64,6 +64,10 @@ Recent decisions affecting current work:
 - [03-01]: getConfig() is NOT yet called by Kapso routes — Phase 4 scope; Phase 3 creates utility only
 - [03-01]: Route handler returns 401 JSON intentionally alongside middleware 302 redirect (serves API consumers)
 - [03-01]: PHONE_NUMBER_ID fallback is empty string not undefined — empty string is valid, matches whatsapp-client.ts behavior
+- [03-02]: API key input uses placeholder not defaultValue — prevents masked string corrupting DB on save
+- [03-02]: WHATSAPP_API_URL is optional — blank submission skips upsert (preserves env fallback)
+- [03-02]: KAPSO_API_KEY conditionally upserted — blank = keep current, non-blank = update
+- [03-02]: SaveResult type exported from actions.ts for type-safe import in SettingsForm
 
 ### Pending Todos
 
@@ -71,10 +75,10 @@ None.
 
 ### Blockers/Concerns
 
-None — 03-01 backend foundation complete. TypeScript compiles cleanly. Ready for 03-02 (settings UI page).
+None — 03-02 UI complete. /admin/settings page, SettingsForm, and saveSettings Server Action committed and pushed to GitHub (triggers Vercel deployment). Ready for 03-03 (if planned) or Phase 4.
 
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 03-01-PLAN.md — getConfig utility and /api/settings route created and committed
+Stopped at: Completed 03-02-PLAN.md — /admin/settings UI page with Server Component, Client Component form, and Server Action
 Resume file: None
