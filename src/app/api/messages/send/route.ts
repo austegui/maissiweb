@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
-import { whatsappClient, PHONE_NUMBER_ID } from '@/lib/whatsapp-client';
+import { getWhatsAppClient } from '@/lib/whatsapp-client';
+import { getConfig } from '@/lib/get-config';
 
 export async function POST(request: Request) {
   try {
+    const whatsappClient = await getWhatsAppClient();
+    const phoneNumberId = await getConfig('PHONE_NUMBER_ID');
+
     const formData = await request.formData();
     const to = formData.get('to') as string;
     const body = formData.get('body') as string;
@@ -24,7 +28,7 @@ export async function POST(request: Request) {
 
       // Upload media first
       const uploadResult = await whatsappClient.media.upload({
-        phoneNumberId: PHONE_NUMBER_ID,
+        phoneNumberId,
         type: mediaType as 'image' | 'video' | 'audio' | 'document',
         file: file,
         fileName: file.name
@@ -33,25 +37,25 @@ export async function POST(request: Request) {
       // Send message with media
       if (mediaType === 'image') {
         result = await whatsappClient.messages.sendImage({
-          phoneNumberId: PHONE_NUMBER_ID,
+          phoneNumberId,
           to,
           image: { id: uploadResult.id, caption: body || undefined }
         });
       } else if (mediaType === 'video') {
         result = await whatsappClient.messages.sendVideo({
-          phoneNumberId: PHONE_NUMBER_ID,
+          phoneNumberId,
           to,
           video: { id: uploadResult.id, caption: body || undefined }
         });
       } else if (mediaType === 'audio') {
         result = await whatsappClient.messages.sendAudio({
-          phoneNumberId: PHONE_NUMBER_ID,
+          phoneNumberId,
           to,
           audio: { id: uploadResult.id }
         });
       } else {
         result = await whatsappClient.messages.sendDocument({
-          phoneNumberId: PHONE_NUMBER_ID,
+          phoneNumberId,
           to,
           document: { id: uploadResult.id, caption: body || undefined, filename: file.name }
         });
@@ -59,7 +63,7 @@ export async function POST(request: Request) {
     } else if (body) {
       // Send text message
       result = await whatsappClient.messages.sendText({
-        phoneNumberId: PHONE_NUMBER_ID,
+        phoneNumberId,
         to,
         body
       });

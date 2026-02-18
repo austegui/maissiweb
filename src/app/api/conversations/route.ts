@@ -4,7 +4,8 @@ import {
   type ConversationKapsoExtensions,
   type ConversationRecord
 } from '@kapso/whatsapp-cloud-api';
-import { whatsappClient, PHONE_NUMBER_ID } from '@/lib/whatsapp-client';
+import { getWhatsAppClient } from '@/lib/whatsapp-client';
+import { getConfig } from '@/lib/get-config';
 
 function parseDirection(kapso?: ConversationKapsoExtensions): 'inbound' | 'outbound' {
   if (!kapso) {
@@ -25,13 +26,16 @@ function parseDirection(kapso?: ConversationKapsoExtensions): 'inbound' | 'outbo
 
 export async function GET(request: Request) {
   try {
+    const whatsappClient = await getWhatsAppClient();
+    const phoneNumberId = await getConfig('PHONE_NUMBER_ID');
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const parsedLimit = Number.parseInt(searchParams.get('limit') ?? '', 10);
     const limit = Number.isFinite(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 100) : 50;
 
     const response = await whatsappClient.conversations.list({
-      phoneNumberId: PHONE_NUMBER_ID,
+      phoneNumberId,
       ...(status && { status: status as 'active' | 'ended' }),
       limit,
       fields: buildKapsoFields([
@@ -56,7 +60,7 @@ export async function GET(request: Request) {
         phoneNumber: conversation.phoneNumber ?? '',
         status: conversation.status ?? 'unknown',
         lastActiveAt: typeof conversation.lastActiveAt === 'string' ? conversation.lastActiveAt : undefined,
-        phoneNumberId: conversation.phoneNumberId ?? PHONE_NUMBER_ID,
+        phoneNumberId: conversation.phoneNumberId ?? phoneNumberId,
         metadata: conversation.metadata ?? {},
         contactName: typeof kapso?.contactName === 'string' ? kapso.contactName : undefined,
         messagesCount: typeof kapso?.messagesCount === 'number' ? kapso.messagesCount : undefined,

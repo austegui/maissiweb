@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { whatsappClient, PHONE_NUMBER_ID } from '@/lib/whatsapp-client';
+import { getWhatsAppClient } from '@/lib/whatsapp-client';
+import { getConfig } from '@/lib/get-config';
 
 export async function GET(
   request: Request,
@@ -7,15 +8,18 @@ export async function GET(
 ) {
   const { mediaId } = await params;
   try {
+    const whatsappClient = await getWhatsAppClient();
+    const phoneNumberId = await getConfig('PHONE_NUMBER_ID');
+
     // Get metadata for mime type
     const metadata = await whatsappClient.media.get({
       mediaId,
-      phoneNumberId: PHONE_NUMBER_ID
+      phoneNumberId
     });
 
     const buffer = await whatsappClient.media.download({
       mediaId,
-      phoneNumberId: PHONE_NUMBER_ID,
+      phoneNumberId,
       auth: 'never' // Force no auth headers for CDN
     });
 

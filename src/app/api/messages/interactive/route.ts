@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
-import { whatsappClient, PHONE_NUMBER_ID } from '@/lib/whatsapp-client';
+import { getWhatsAppClient } from '@/lib/whatsapp-client';
+import { getConfig } from '@/lib/get-config';
 
 export async function POST(request: Request) {
   try {
+    const whatsappClient = await getWhatsAppClient();
+    const phoneNumberId = await getConfig('PHONE_NUMBER_ID');
+
     const body = await request.json();
     const { phoneNumber, header, body: bodyText, buttons } = body;
 
@@ -29,7 +33,7 @@ export async function POST(request: Request) {
       header?: { type: 'text'; text: string };
       buttons: Array<{ id: string; title: string }>;
     } = {
-      phoneNumberId: PHONE_NUMBER_ID,
+      phoneNumberId,
       to: phoneNumber,
       bodyText,
       buttons: buttons.map((btn: { id: string; title: string }) => ({
