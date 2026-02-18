@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-18)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Phase 2 — Authentication (plans 01 and 02 complete)
+**Current focus:** Phase 3 — Inbox UI (Phase 2 complete)
 
 ## Current Position
 
-Phase: 2 of 6 (Authentication)
-Plan: 2 of ~3 in current phase (02-02 complete)
-Status: In progress — 02-01 and 02-02 complete, auth layer fully operational
-Last activity: 2026-02-18 — Completed 02-02-PLAN.md (login page, server actions, middleware)
+Phase: 2 of 6 (Authentication) — COMPLETE
+Plan: 3 of 3 in phase (02-03 complete)
+Status: Phase 2 complete — all 3 plans executed and verified in production
+Last activity: 2026-02-18 — Completed 02-03-PLAN.md (push to GitHub + Vercel production verification)
 
-Progress: [████░░░░░░] 33% (6/18 plans estimated)
+Progress: [████░░░░░░] 39% (7/18 plans estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3 (Phase 1) + 2 (02-01, 02-02)
+- Total plans completed: 3 (Phase 1) + 3 (02-01, 02-02, 02-03)
 - Average duration: ~6 min (all plans)
-- Total execution time: ~34 min
+- Total execution time: ~39 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-fork-setup | 3/3 | ~21 min | ~7 min |
-| 02-authentication | 2/~3 | ~13 min | ~6.5 min |
+| 02-authentication | 3/3 | ~18 min | ~6 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5 min), 01-02 (8 min), 01-03 (~7 min), 02-01 (~8 min), 02-02 (~5 min)
-- Trend: Stable, slightly accelerating
+- Last 5 plans: 01-02 (8 min), 01-03 (~7 min), 02-01 (~8 min), 02-02 (~5 min), 02-03 (~5 min)
+- Trend: Stable, ~5-8 min per plan
 
 *Updated after each plan completion*
 
@@ -57,6 +57,8 @@ Recent decisions affecting current work:
 - [02-02]: Error passing via ?error= search param (not returned object) — keeps LoginPage as Server Component
 - [02-02]: Middleware matcher excludes static assets (_next/static, _next/image, favicon, images) — prevents Supabase getUser() on every asset
 - [02-02]: logout() Server Action ready to wire to button in Phase 3 or 5
+- [02-03]: Auth flow confirmed working on Vercel production deployment
+- [02-03]: Initial deployment had space in NEXT_PUBLIC_SUPABASE_ANON_KEY causing "invalid header value" — fixed by user re-pasting env var in Vercel dashboard
 
 ### Pending Todos
 
@@ -64,10 +66,10 @@ None.
 
 ### Blockers/Concerns
 
-None — Auth layer complete. Login page live at /login, all routes protected by middleware.
+None — Phase 2 complete. Auth layer verified live on https://maissiweb.vercel.app/.
 
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 02-02-PLAN.md — login page, server actions, and middleware done
+Stopped at: Completed 02-03-PLAN.md — Phase 2 (Authentication) fully complete and verified in production
 Resume file: None
