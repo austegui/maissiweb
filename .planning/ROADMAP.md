@@ -65,12 +65,12 @@ Plans:
   3. Credentials are visible in the Supabase Postgres table after saving (persistent storage confirmed)
   4. Redeploying the app to Vercel does not reset any credential values
   5. All Kapso API routes call getConfig() to resolve credentials — no route reads credentials directly from process.env
-**Plans**: TBD
+**Plans**: 3 plans in 2 waves (2 parallel + 1 sequential)
 
 Plans:
-- [ ] 03-01: Create getConfig() utility that reads from Supabase Postgres with process.env fallback
-- [ ] 03-02: Build /api/settings server route for authenticated read/write of app_settings table
-- [ ] 03-03: Build /admin/settings page with Server Component fetch and client-side form (React Hook Form + Zod)
+- [ ] 03-01-PLAN.md — Create getConfig() utility and /api/settings route handler (Wave 1)
+- [ ] 03-02-PLAN.md — Build /admin/settings page with Server Component, Server Action, and useActionState form (Wave 1)
+- [ ] 03-03-PLAN.md — Add Settings link to inbox header, push to GitHub, verify on Vercel (Wave 2)
 
 ### Phase 4: Config Migration
 **Goal**: All Kapso messaging features continue to work end-to-end after credentials are moved from env vars to the database
