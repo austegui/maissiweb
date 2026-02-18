@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-18)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Phase 2 complete — ready for Phase 3 planning
+**Current focus:** Phase 3 in progress — backend foundation complete, settings UI next
 
 ## Current Position
 
-Phase: 2 of 6 (Authentication) — COMPLETE
-Plan: 3 of 3 in phase (02-03 complete)
-Status: Phase 2 complete — all 3 plans executed and verified in production
-Last activity: 2026-02-18 — Completed 02-03-PLAN.md (push to GitHub + Vercel production verification)
+Phase: 3 of 6 (Admin Settings) — In progress
+Plan: 1 of 3 in phase (03-01 complete)
+Status: In progress — 03-01 executed (getConfig + /api/settings backend foundation)
+Last activity: 2026-02-18 — Completed 03-01-PLAN.md (getConfig utility + /api/settings route)
 
-Progress: [████░░░░░░] 39% (7/18 plans estimated)
+Progress: [████░░░░░░] 44% (8/18 plans estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3 (Phase 1) + 3 (02-01, 02-02, 02-03)
+- Total plans completed: 3 (Phase 1) + 3 (02-01, 02-02, 02-03) + 1 (03-01)
 - Average duration: ~6 min (all plans)
-- Total execution time: ~39 min
+- Total execution time: ~47 min
 
 **By Phase:**
 
@@ -29,9 +29,10 @@ Progress: [████░░░░░░] 39% (7/18 plans estimated)
 |-------|-------|-------|----------|
 | 01-fork-setup | 3/3 | ~21 min | ~7 min |
 | 02-authentication | 3/3 | ~18 min | ~6 min |
+| 03-admin-settings | 1/3 | ~8 min | ~8 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (8 min), 01-03 (~7 min), 02-01 (~8 min), 02-02 (~5 min), 02-03 (~5 min)
+- Last 5 plans: 02-01 (~8 min), 02-02 (~5 min), 02-03 (~5 min), 03-01 (~8 min)
 - Trend: Stable, ~5-8 min per plan
 
 *Updated after each plan completion*
@@ -59,6 +60,10 @@ Recent decisions affecting current work:
 - [02-02]: logout() Server Action wired to "Sign out" button in inbox header (gap closure)
 - [02-03]: Auth flow confirmed working on Vercel production deployment
 - [02-03]: Initial deployment had space in NEXT_PUBLIC_SUPABASE_ANON_KEY causing "invalid header value" — fixed by user re-pasting env var in Vercel dashboard
+- [03-01]: getConfig() queries DB on every call — no module-level cache (Vercel serverless functions don't share module state reliably)
+- [03-01]: getConfig() is NOT yet called by Kapso routes — Phase 4 scope; Phase 3 creates utility only
+- [03-01]: Route handler returns 401 JSON intentionally alongside middleware 302 redirect (serves API consumers)
+- [03-01]: PHONE_NUMBER_ID fallback is empty string not undefined — empty string is valid, matches whatsapp-client.ts behavior
 
 ### Pending Todos
 
@@ -66,10 +71,10 @@ None.
 
 ### Blockers/Concerns
 
-None — Phase 2 complete. Auth layer verified live on https://maissiweb.vercel.app/.
+None — 03-01 backend foundation complete. TypeScript compiles cleanly. Ready for 03-02 (settings UI page).
 
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 02-03-PLAN.md — Phase 2 (Authentication) fully complete and verified in production
+Stopped at: Completed 03-01-PLAN.md — getConfig utility and /api/settings route created and committed
 Resume file: None
