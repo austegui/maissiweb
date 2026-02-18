@@ -48,12 +48,12 @@ Plans:
   3. After logging in, the user stays logged in across browser sessions (session persists on refresh)
   4. The WhatsApp webhook endpoint accepts POST requests without authentication (incoming messages are not blocked)
   5. A logged-in user can log out and is redirected to /login
-**Plans**: TBD
+**Plans**: 3 plans in 3 waves (sequential)
 
 Plans:
-- [ ] 02-01: Create Supabase project, configure auth, create app_settings table with RLS, set env vars
-- [ ] 02-02: Build login page with email/password form and Supabase session handling
-- [ ] 02-03: Write Next.js middleware to protect all routes, whitelist /login and webhook endpoint
+- [ ] 02-01-PLAN.md — Install Supabase packages, create client utilities, CHECKPOINT: user creates Supabase project + sets env vars (Wave 1)
+- [ ] 02-02-PLAN.md — Create login page with email/password form, auth Server Actions, Next.js middleware (Wave 2)
+- [ ] 02-03-PLAN.md — Push to GitHub, verify auth flow on Vercel deployment (Wave 3)
 
 ### Phase 3: Admin Settings
 **Goal**: The admin can view and update WhatsApp API credentials through an in-app page without touching code or env files
