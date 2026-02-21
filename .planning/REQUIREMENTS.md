@@ -1,4 +1,4 @@
-# Requirements — Maissi Beauty Shop WhatsApp Inbox
+# Requirements -- Maissi Beauty Shop WhatsApp Inbox
 
 **Version:** v2.0 Commercial-Grade Features
 **Created:** 2026-02-21
@@ -12,7 +12,7 @@
 ### Foundation & RBAC
 
 - [ ] **RBAC-01**: User profiles table auto-created on first login with default "agent" role
-- [ ] **RBAC-02**: Two roles exist — admin and agent — enforced by RLS policies in Supabase
+- [ ] **RBAC-02**: Two roles exist -- admin and agent -- enforced by RLS policies in Supabase
 - [ ] **RBAC-03**: Only admin users can access the settings page and user management
 - [ ] **RBAC-04**: Agent users can view conversations, send messages, manage notes, but cannot change settings or manage users
 - [ ] **RBAC-05**: getConfig() refactored to batch query (getConfigs()) to prevent query multiplication
@@ -109,21 +109,21 @@
 
 ---
 
-## Validated (v1.0 — shipped and confirmed)
+## Validated (v1.0 -- shipped and confirmed)
 
-- ✓ **FORK-01**: Clone gokapso/whatsapp-cloud-inbox as the project base
-- ✓ **FORK-02**: Audit upstream code
-- ✓ **FORK-03**: Set upstream git remote
-- ✓ **AUTH-01**: User can log in with email and password via Supabase Auth
-- ✓ **AUTH-02**: All app routes protected by auth middleware
-- ✓ **AUTH-03**: WhatsApp webhook remains publicly accessible
-- ✓ **SETTINGS-01**: Admin can view and update Kapso credentials
-- ✓ **SETTINGS-02**: Credentials stored in Supabase Postgres
-- ✓ **SETTINGS-03**: All Kapso API routes use getConfig()
-- ✓ **PRESERVE-01**: All WhatsApp inbox features preserved
-- ✓ **BRAND-01**: Maissi Beauty Shop name and logo in UI
-- ✓ **DEPLOY-01**: App deployed to Vercel with Supabase backend
-- ✓ **DEPLOY-02**: Team member accounts created and working
+- [x] **FORK-01**: Clone gokapso/whatsapp-cloud-inbox as the project base
+- [x] **FORK-02**: Audit upstream code
+- [x] **FORK-03**: Set upstream git remote
+- [x] **AUTH-01**: User can log in with email and password via Supabase Auth
+- [x] **AUTH-02**: All app routes protected by auth middleware
+- [x] **AUTH-03**: WhatsApp webhook remains publicly accessible
+- [x] **SETTINGS-01**: Admin can view and update Kapso credentials
+- [x] **SETTINGS-02**: Credentials stored in Supabase Postgres
+- [x] **SETTINGS-03**: All Kapso API routes use getConfig()
+- [x] **PRESERVE-01**: All WhatsApp inbox features preserved
+- [x] **BRAND-01**: Maissi Beauty Shop name and logo in UI
+- [x] **DEPLOY-01**: App deployed to Vercel with Supabase backend
+- [x] **DEPLOY-02**: Team member accounts created and working
 
 ---
 
@@ -148,26 +148,68 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RBAC-01 to RBAC-05 | Phase 7 | Pending |
-| CANNED-01 to CANNED-05 | Phase 8 | Pending |
-| STATUS-01 to STATUS-05 | Phase 9 | Pending |
-| ASSIGN-01 to ASSIGN-04 | Phase 9 | Pending |
-| LABEL-01 to LABEL-04 | Phase 9 | Pending |
-| NOTES-01 to NOTES-04 | Phase 10 | Pending |
-| CONTACT-01 to CONTACT-04 | Phase 10 | Pending |
-| NOTIF-01 to NOTIF-04 | Phase 11 | Pending |
-| REALTIME-01 to REALTIME-03 | Phase 11 | Pending |
-| ANALYTICS-01 to ANALYTICS-04 | Phase 12 | Pending |
-| EXPORT-01 to EXPORT-03 | Phase 12 | Pending |
-| SEARCH-01 to SEARCH-04 | Phase 13 | Pending |
-| SENTRY-01 to SENTRY-03 | Phase 14 | Pending |
-| USRMGMT-01 to USRMGMT-04 | Phase 14 | Pending |
+| RBAC-01 | Phase 7 | Pending |
+| RBAC-02 | Phase 7 | Pending |
+| RBAC-03 | Phase 7 | Pending |
+| RBAC-04 | Phase 7 | Pending |
+| RBAC-05 | Phase 7 | Pending |
+| CANNED-01 | Phase 8 | Pending |
+| CANNED-02 | Phase 8 | Pending |
+| CANNED-03 | Phase 8 | Pending |
+| CANNED-04 | Phase 8 | Pending |
+| CANNED-05 | Phase 8 | Pending |
+| STATUS-01 | Phase 9 | Pending |
+| STATUS-02 | Phase 9 | Pending |
+| STATUS-03 | Phase 9 | Pending |
+| STATUS-04 | Phase 9 | Pending |
+| STATUS-05 | Phase 9 | Pending |
+| ASSIGN-01 | Phase 9 | Pending |
+| ASSIGN-02 | Phase 9 | Pending |
+| ASSIGN-03 | Phase 9 | Pending |
+| ASSIGN-04 | Phase 9 | Pending |
+| LABEL-01 | Phase 9 | Pending |
+| LABEL-02 | Phase 9 | Pending |
+| LABEL-03 | Phase 9 | Pending |
+| LABEL-04 | Phase 9 | Pending |
+| CONTACT-01 | Phase 10 | Pending |
+| CONTACT-02 | Phase 10 | Pending |
+| CONTACT-03 | Phase 10 | Pending |
+| CONTACT-04 | Phase 10 | Pending |
+| NOTES-01 | Phase 10 | Pending |
+| NOTES-02 | Phase 10 | Pending |
+| NOTES-03 | Phase 10 | Pending |
+| NOTES-04 | Phase 10 | Pending |
+| NOTIF-01 | Phase 11 | Pending |
+| NOTIF-02 | Phase 11 | Pending |
+| NOTIF-03 | Phase 11 | Pending |
+| NOTIF-04 | Phase 11 | Pending |
+| REALTIME-01 | Phase 11 | Pending |
+| REALTIME-02 | Phase 11 | Pending |
+| REALTIME-03 | Phase 11 | Pending |
+| ANALYTICS-01 | Phase 12 | Pending |
+| ANALYTICS-02 | Phase 12 | Pending |
+| ANALYTICS-03 | Phase 12 | Pending |
+| ANALYTICS-04 | Phase 12 | Pending |
+| EXPORT-01 | Phase 12 | Pending |
+| EXPORT-02 | Phase 12 | Pending |
+| EXPORT-03 | Phase 12 | Pending |
+| SEARCH-01 | Phase 13 | Pending |
+| SEARCH-02 | Phase 13 | Pending |
+| SEARCH-03 | Phase 13 | Pending |
+| SEARCH-04 | Phase 13 | Pending |
+| SENTRY-01 | Phase 14 | Pending |
+| SENTRY-02 | Phase 14 | Pending |
+| SENTRY-03 | Phase 14 | Pending |
+| USRMGMT-01 | Phase 14 | Pending |
+| USRMGMT-02 | Phase 14 | Pending |
+| USRMGMT-03 | Phase 14 | Pending |
+| USRMGMT-04 | Phase 14 | Pending |
 
 **Coverage:**
-- v2.0 requirements: 53 total
-- Mapped to phases: 53
-- Unmapped: 0 ✓
+- v2.0 requirements: 56 total
+- Mapped to phases: 56
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-21 after milestone v2.0 definition*
+*Last updated: 2026-02-21 after v2.0 roadmap creation*
