@@ -17,6 +17,14 @@ export async function POST(request: Request) {
       );
     }
 
+    // Validate phone number format (digits only, 10-15 chars)
+    if (!/^\d{10,15}$/.test(phoneNumber)) {
+      return NextResponse.json(
+        { error: 'Invalid phone number format' },
+        { status: 400 }
+      );
+    }
+
     // Validate buttons
     if (buttons.length > 3) {
       return NextResponse.json(

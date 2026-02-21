@@ -53,6 +53,7 @@ export function MediaMessage({ mediaId, messageType, caption, filename, isOutbou
         <img
           src={mediaUrl}
           alt={caption || 'Image'}
+          loading="lazy"
           className="rounded max-w-full h-auto max-h-96"
           onError={handleLoadError}
         />
@@ -62,6 +63,7 @@ export function MediaMessage({ mediaId, messageType, caption, filename, isOutbou
         <video
           src={mediaUrl}
           controls
+          preload="none"
           className="rounded max-w-full h-auto max-h-96"
           onError={handleLoadError}
         />

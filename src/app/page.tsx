@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { ConversationList, type ConversationListRef } from '@/components/conversation-list';
 import { MessageView } from '@/components/message-view';
+import { ErrorBoundary } from '@/components/error-boundary';
 import { useHandoffAlerts } from '@/hooks/use-handoff-alerts';
 import { logout } from '@/app/login/actions';
 
@@ -54,6 +55,7 @@ export default function Home() {
           </form>
         </div>
       </div>
+      <ErrorBoundary>
       <div className="flex flex-1 overflow-hidden">
       <ConversationList
         ref={conversationListRef}
@@ -73,6 +75,7 @@ export default function Home() {
         isHandoff={selectedConversation ? allHandoffIds.has(selectedConversation.id) : false}
       />
       </div>
+      </ErrorBoundary>
     </div>
   );
 }

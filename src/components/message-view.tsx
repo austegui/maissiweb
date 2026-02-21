@@ -138,6 +138,8 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previousMessageCountRef = useRef(0);
+  const lastMessageIdRef = useRef<string | null>(null);
+  const lastMessageStatusRef = useRef<string | undefined>(undefined);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -172,8 +174,18 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       });
 
-      setMessages(sortedMessages);
+      // Skip setState if data hasn't changed
+      const lastNew = sortedMessages[sortedMessages.length - 1];
+      const changed = sortedMessages.length !== previousMessageCountRef.current ||
+        lastNew?.id !== lastMessageIdRef.current ||
+        lastNew?.status !== lastMessageStatusRef.current;
+
+      if (changed) {
+        setMessages(sortedMessages);
+      }
       previousMessageCountRef.current = sortedMessages.length;
+      lastMessageIdRef.current = lastNew?.id ?? null;
+      lastMessageStatusRef.current = lastNew?.status;
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
@@ -441,18 +453,21 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
                           <img
                             src={message.mediaData.url}
                             alt="Sticker"
+                            loading="lazy"
                             className="max-w-[150px] max-h-[150px] h-auto"
                           />
                         ) : message.mediaData.contentType?.startsWith('image/') || message.messageType === 'image' ? (
                           <img
                             src={message.mediaData.url}
                             alt="Media"
+                            loading="lazy"
                             className="rounded max-w-full h-auto max-h-96"
                           />
                         ) : message.mediaData.contentType?.startsWith('video/') || message.messageType === 'video' ? (
                           <video
                             src={message.mediaData.url}
                             controls
+                            preload="none"
                             className="rounded max-w-full h-auto max-h-96"
                           />
                         ) : message.mediaData.contentType?.startsWith('audio/') || message.messageType === 'audio' ? (

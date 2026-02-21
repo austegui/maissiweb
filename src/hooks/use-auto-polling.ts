@@ -10,6 +10,17 @@ export function useAutoPolling({ interval = 5000, enabled = true, onPoll }: UseA
   const [isPolling, setIsPolling] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const currentIntervalRef = useRef(interval);
+  const baseIntervalRef = useRef(interval);
+
+  const resetBackoff = useCallback(() => {
+    currentIntervalRef.current = baseIntervalRef.current;
+  }, []);
+
+  const increaseBackoff = useCallback(() => {
+    const maxInterval = 60000;
+    currentIntervalRef.current = Math.min(currentIntervalRef.current * 2, maxInterval);
+  }, []);
 
   const startPolling = useCallback(() => {
     if (!enabled) return;
@@ -19,25 +30,31 @@ export function useAutoPolling({ interval = 5000, enabled = true, onPoll }: UseA
     const poll = async () => {
       try {
         await onPoll();
+        resetBackoff();
       } catch (error) {
         console.error('Polling error:', error);
+        increaseBackoff();
       }
+
+      // Reschedule with current interval (may have changed due to backoff)
+      if (intervalRef.current) {
+        clearTimeout(intervalRef.current);
+      }
+      intervalRef.current = setTimeout(poll, currentIntervalRef.current);
     };
 
     // Poll immediately
     poll();
-
-    // Then poll at intervals
-    intervalRef.current = setInterval(poll, interval);
-  }, [interval, enabled, onPoll]);
+  }, [enabled, onPoll, resetBackoff, increaseBackoff]);
 
   const stopPolling = useCallback(() => {
     if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+      clearTimeout(intervalRef.current);
       intervalRef.current = null;
     }
     setIsPolling(false);
-  }, []);
+    resetBackoff();
+  }, [resetBackoff]);
 
   // Handle visibility change (pause when tab is hidden)
   useEffect(() => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, forwardRef, useImperativeHandle, useCallback } from 'react';
+import { useEffect, useState, useRef, forwardRef, useImperativeHandle, useCallback } from 'react';
 import { format, isValid, isToday, isYesterday } from 'date-fns';
 import { RefreshCw, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -77,21 +77,43 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const onConversationsLoadedRef = useRef(onConversationsLoaded);
+  onConversationsLoadedRef.current = onConversationsLoaded;
+
+  // Debounce search query by 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const conversationsRef = useRef<Conversation[]>([]);
 
   const fetchConversations = useCallback(async () => {
     try {
       const response = await fetch('/api/conversations');
       const data = await response.json();
-      const convs = data.data || [];
-      setConversations(convs);
-      onConversationsLoaded?.(convs);
+      const convs: Conversation[] = data.data || [];
+
+      // Skip setState if data hasn't changed (compare IDs + lastActiveAt)
+      const prev = conversationsRef.current;
+      const changed = convs.length !== prev.length || convs.some((c, i) =>
+        c.id !== prev[i]?.id || c.lastActiveAt !== prev[i]?.lastActiveAt
+      );
+
+      if (changed) {
+        conversationsRef.current = convs;
+        setConversations(convs);
+      }
+      onConversationsLoadedRef.current?.(convs);
     } catch (error) {
       console.error('Error fetching conversations:', error);
+      throw error; // Re-throw so polling hook can apply backoff
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [onConversationsLoaded]);
+  }, []);
 
   useEffect(() => {
     fetchConversations();
@@ -130,7 +152,7 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
   }));
 
   const filteredConversations = conversations.filter((conv) => {
-    const query = searchQuery.toLowerCase();
+    const query = debouncedQuery.toLowerCase();
     return (
       conv.phoneNumber.toLowerCase().includes(query) ||
       conv.contactName?.toLowerCase().includes(query)

@@ -9,10 +9,14 @@ export async function saveSettings(
   _prevState: SaveResult,
   formData: FormData
 ): Promise<SaveResult> {
-  const kapsoApiKey = formData.get('kapsoApiKey') as string
-  const phoneNumberId = formData.get('phoneNumberId') as string
-  const wabaId = formData.get('wabaId') as string
-  const whatsappApiUrl = formData.get('whatsappApiUrl') as string
+  const kapsoApiKey = formData.get('kapsoApiKey')
+  const phoneNumberId = formData.get('phoneNumberId')
+  const wabaId = formData.get('wabaId')
+  const whatsappApiUrl = formData.get('whatsappApiUrl')
+
+  if (typeof phoneNumberId !== 'string' || typeof wabaId !== 'string') {
+    return { success: false, message: 'Phone Number ID and WABA ID are required' }
+  }
 
   const updates: Array<{ key: string; value: string }> = []
 
@@ -22,12 +26,12 @@ export async function saveSettings(
 
   // Only include KAPSO_API_KEY if a new value is provided
   // Empty means "keep current" — do not overwrite with empty string
-  if (kapsoApiKey.trim()) {
+  if (typeof kapsoApiKey === 'string' && kapsoApiKey.trim()) {
     updates.push({ key: 'KAPSO_API_KEY', value: kapsoApiKey.trim() })
   }
 
   // WHATSAPP_API_URL is optional — blank means "use default fallback", do not write empty string
-  if (whatsappApiUrl.trim()) {
+  if (typeof whatsappApiUrl === 'string' && whatsappApiUrl.trim()) {
     updates.push({ key: 'WHATSAPP_API_URL', value: whatsappApiUrl.trim() })
   }
 

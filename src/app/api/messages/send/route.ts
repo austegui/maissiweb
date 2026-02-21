@@ -19,10 +19,46 @@ export async function POST(request: Request) {
       );
     }
 
+    // Validate phone number format (digits only, 10-15 chars)
+    if (!/^\d{10,15}$/.test(to)) {
+      return NextResponse.json(
+        { error: 'Invalid phone number format' },
+        { status: 400 }
+      );
+    }
+
     let result;
 
     // Send media message
     if (file) {
+      // Validate file size (max 16MB)
+      const MAX_FILE_SIZE = 16 * 1024 * 1024;
+      if (file.size > MAX_FILE_SIZE) {
+        return NextResponse.json(
+          { error: 'File size exceeds 16MB limit' },
+          { status: 400 }
+        );
+      }
+
+      // Validate MIME type
+      const ALLOWED_TYPES = [
+        'image/', 'video/', 'audio/',
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      ];
+      const isAllowedType = ALLOWED_TYPES.some(type =>
+        type.endsWith('/') ? file.type.startsWith(type) : file.type === type
+      );
+      if (!isAllowedType) {
+        return NextResponse.json(
+          { error: 'File type not allowed' },
+          { status: 400 }
+        );
+      }
+
       const fileType = file.type.split('/')[0]; // image, video, audio, application
       const mediaType = fileType === 'application' ? 'document' : fileType;
 

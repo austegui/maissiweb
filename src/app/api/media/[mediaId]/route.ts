@@ -1,11 +1,18 @@
 import { NextResponse } from 'next/server';
 import { getWhatsAppClient } from '@/lib/whatsapp-client';
 import { getConfig } from '@/lib/get-config';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ mediaId: string }> }
 ) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { mediaId } = await params;
   try {
     const whatsappClient = await getWhatsAppClient();
