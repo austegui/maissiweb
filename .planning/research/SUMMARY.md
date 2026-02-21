@@ -1,283 +1,218 @@
 # Project Research Summary
 
-**Project:** Maissi Beauty Shop — WhatsApp Cloud Inbox
-**Domain:** WhatsApp Business Shared Inbox — Single-Tenant Internal Tool
-**Researched:** 2026-02-18
-**Confidence:** MEDIUM (high confidence on owner-defined scope; medium on Kapso internals until fork is inspected)
+**Project:** Maissi Beauty Shop -- WhatsApp Cloud Inbox v2.0 (Commercial-Grade Features)
+**Domain:** WhatsApp Business Shared Inbox / Beauty Shop CRM
+**Researched:** 2026-02-21
+**Confidence:** HIGH
 
 ## Executive Summary
 
-Maissi is a customization layer on top of the Kapso `whatsapp-cloud-inbox` open-source Next.js application. The Kapso base already ships a working WhatsApp inbox with real-time messaging, template support, media transmission, and 24-hour window enforcement. The task is to add three things on top — user authentication (Supabase Auth), an admin UI for managing Kapso API credentials, and database-backed settings that survive redeployments — then deploy to Vercel. The architecture is additive: nothing in the Kapso core should be rewritten. The customization layer lives alongside Kapso's files, not inside them.
+Maissi v2.0 upgrades a working WhatsApp inbox from a functional prototype to a commercial-grade team tool. The existing stack (Next.js 15 App Router, Supabase, Kapso WhatsApp API, Radix UI + Tailwind, Vercel Hobby) is solid and stays unchanged. The v2 approach is additive: 6 new Supabase tables, 12 new npm packages (mostly Radix primitives), ~18 new API routes, and 5 new pages -- all layered on top of the existing Kapso proxy architecture. No rewrites, no data model changes, no infrastructure migrations. The data split remains: WhatsApp messages live in Kapso (read-only via API), operational metadata lives in Supabase (fully owned). Every new feature writes to Supabase; none modify how Kapso data flows.
 
-The recommended stack for the additions is small and well-understood: `@supabase/ssr` + `@supabase/supabase-js` for auth and the database client, React Hook Form + Zod for the settings form, shadcn/ui + Tailwind for settings UI components (scoped to the admin route only), and Next.js middleware for route protection. The entire platform runs on Supabase free tier (more than sufficient for 2-3 users) and Vercel. The critical stack unknown is whether the Kapso base uses App Router or Pages Router — this affects middleware setup, server component patterns, and Server Actions availability. Resolving this is the first task when forking.
+The recommended build order is driven by two forces: **agent productivity first** (canned responses, conversation status, and sound notifications are highest daily ROI) and **dependency chains** (user profiles with RBAC must exist before any feature that references `created_by` or `assigned_to`). This means the foundation phase -- user profiles table, auth helpers, and RBAC policies -- ships before any visible feature. After that, canned responses and conversation status deliver immediate team value. Contact profiles, notes, and labels follow as "customer intelligence." Assignment, analytics, search, and export round out the milestone. Real-time SSE is explicitly replaced by Supabase Realtime for local data changes; polling stays for Kapso data.
 
-The biggest risks are security (API credentials must never reach the browser — server-only reads only), completeness (the middleware auth guard must explicitly exclude the WhatsApp webhook endpoint or incoming messages will silently stop), and scope creep (the v1 feature set is deliberately narrow; the post-v1 differentiators are high-value but should not dilute the first working release). If the fork is kept thin — new files alongside Kapso, no edits to Kapso's core — the project is low-risk and can be shipped quickly.
-
----
+The top risks are: (1) RBAC privilege escalation if the role column is placed in a user-editable table -- mitigated by RLS policies that prevent self-role-update; (2) Supabase free tier connection pressure as features multiply -- mitigated by batching queries via RPC functions and using fire-and-forget for analytics writes; (3) the existing `getConfig()` per-request overhead multiplying with new routes -- mitigated by refactoring to a single batch query early. SSE on Vercel is a known dead end (300s max function duration); Supabase Realtime covers the actual need at zero cost.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The Kapso base provides Next.js, TypeScript, and plain CSS. The additions required are: Supabase (`@supabase/supabase-js` v2 and `@supabase/ssr`) for auth and Postgres, React Hook Form + Zod for the settings form, shadcn/ui + Tailwind CSS for the settings UI, and Next.js Middleware for auth-gating routes. No ORM is needed — the Supabase JS client querying one or two tables is sufficient. No complex state management is needed — the Kapso base already manages inbox state.
+The existing stack handles v2 without replacement. Only additions are needed: 5 functional libraries, 8 Radix UI primitives, and Supabase Realtime (already bundled in the installed SDK). See [STACK.md](./STACK.md) for full rationale per dependency.
 
-The key architectural constraint is that the Kapso base's Next.js router version is unverified. App Router enables Server Components, Server Actions, and `@supabase/ssr`'s cookie helpers as documented. Pages Router requires different patterns for each. The build cannot begin until the router version is confirmed.
+**New dependencies (runtime):**
+- `@sentry/nextjs` (v10.39.0): Production error tracking across client, server, and edge runtimes
+- `recharts` (v3.7.0): SVG-based React charts for the analytics dashboard -- native JSX API, SSR compatible
+- `sonner` (v2.0.7): Toast notifications for action feedback -- 5KB, used by Vercel themselves
+- `papaparse` (v5.5.3): CSV export via `unparse()` -- lightweight, handles edge cases (commas, unicode)
+- `cmdk` (v1.1.1): Command palette for Cmd+K search -- built on Radix, accessible, 8KB
+- 8 Radix UI primitives: select, dropdown-menu, tabs, tooltip, popover, switch, checkbox, context-menu
 
-**Core technologies:**
-- `@supabase/supabase-js` v2: Supabase JS client — required for all DB queries and auth operations
-- `@supabase/ssr`: Server-side Supabase auth for Next.js — official replacement for deprecated `auth-helpers-nextjs`; handles cookie-based sessions in middleware and server components
-- React Hook Form + Zod: Settings form validation — industry standard, TypeScript-first, pairs with shadcn/ui
-- shadcn/ui + Tailwind CSS: Admin settings UI components — copy-paste components, no dependency lock-in, scoped to admin route only
-- Next.js Middleware (`middleware.ts`): Route protection — single file, intercepts all requests, redirects unauthenticated users to `/login`
-- Supabase Postgres (hosted, free tier): Persistent storage for Kapso credentials and user records
+**Explicitly rejected:** Redux/Zustand (overkill for this scale), Prisma/Drizzle (Supabase client suffices), Chart.js (canvas-based, poor SSR), Socket.io/Pusher (Supabase Realtime already included), react-hook-form (existing FormData pattern is consistent).
 
-**What NOT to add:** NextAuth, Clerk, any ORM (Prisma/Drizzle), full UI library (MUI/Chakra), multi-tenant infrastructure.
-
-See `.planning/research/STACK.md` for full rationale and installation commands.
-
----
+**Key stack decision -- Supabase Realtime over custom SSE:** Custom SSE on Vercel Hobby has a 300-second ceiling and requires reconnection logic. Supabase Realtime uses WebSockets via Supabase's own infrastructure, bypasses Vercel's limits entirely, handles reconnection automatically, and is already installed. It covers status changes, assignment updates, new notes, and label changes. WhatsApp messages still come via polling (Kapso is the source of truth, and push from Kapso is not available).
 
 ### Expected Features
 
-The v1 scope is owner-confirmed and narrow. The Kapso base covers all messaging features. The customization layer adds only what the team needs to operate the tool independently.
+Feature research validated 14 features against WATI, Respond.io, Trengo, SleekFlow, and WhatsApp Business App. See [FEATURES.md](./FEATURES.md) for competitor analysis per feature.
 
-**Must have (table stakes — v1):**
-- Individual user logins (Supabase Auth, email + password) — team accountability, separate sessions
-- Admin settings UI for API credentials — non-technical owner must update credentials without touching code
-- Settings persistence in Supabase Postgres — credentials survive redeployments
-- Protected routes (auth-gated inbox) — inbox must not be accessible without login
-- Light Maissi branding (name + logo only) — team needs the tool to feel like theirs
+**Table stakes (must build -- team will feel the product is a prototype without these):**
+- Canned responses / quick replies -- highest daily ROI; eliminates repetitive typing of pricing, hours, aftercare
+- Conversation status (open/pending/resolved) -- basic workflow management, universal in shared inboxes
+- Sound notifications for all messages -- agents miss messages without audio cues
+- Internal notes -- team knowledge sharing per conversation ("prefers balayage," "sensitive scalp")
+- Contact profiles + labels/tags -- customer intelligence, service-based segmentation
+- Error tracking (Sentry) -- production visibility; errors are currently invisible
 
-**Should have (highest-ROI post-v1 additions):**
-- Quick replies / canned responses — staff sends the same messages constantly; team-shared, stored in Supabase
-- Customer notes / internal annotations — "sensitive scalp", "prefers balayage" — keyed by phone number
-- Appointment reminder templates — high business value; requires scheduling infrastructure
+**Differentiators (valuable, build after table stakes):**
+- Conversation assignment -- manual assignment with "unassigned" default view; auto-assignment deferred
+- User management UI -- admin page for invite/deactivate; currently requires Supabase dashboard
+- RBAC (admin/agent) -- two roles, enforced at DB level via RLS
+- Message search -- depends on Kapso API capabilities (unverified)
+- Analytics dashboard -- operational metrics (volume, response time, resolution rate)
+- Conversation export -- CSV download for records
 
-**Defer to v2+:**
-- Customer labels / tags
-- Conversation assignment to staff member
-- Message search
-- Business hours auto-reply
-- Price list / services media library
-
-**Never build (for this product):**
-- Multi-account / multi-shop support
-- Direct Meta API layer (replacing Kapso)
-- Full UI redesign
-- RBAC / complex role system
-
-See `.planning/research/FEATURES.md` for full feature dependency tree and anti-features rationale.
-
----
+**Anti-features (explicitly do NOT build):**
+- Auto-assignment rules engine, workflow automation builder, multi-channel support, full CRM/sales pipeline, booking widget, chat ratings/CSAT, AI response suggestions
 
 ### Architecture Approach
 
-The architecture is three layers added on top of an untouched Kapso base: an auth layer (Supabase Auth + Next.js Middleware), a settings layer (admin UI + Supabase Postgres table), and a config resolution layer (a server-side `getConfig()` utility that replaces direct `process.env` reads in Kapso's API routes). The central design principle is that credentials are server-only — they flow from Supabase Postgres into API route handlers and never reach the browser. The settings table uses a singleton row pattern (one row, fixed ID `'singleton'`) with Row-Level Security enabled.
+v2 follows the same additive-layer principle as v1. New features integrate through new Supabase tables, new API routes, modified existing components, and enhanced middleware. The existing Kapso proxy pattern (API routes -> getConfig() -> WhatsAppClient -> Kapso API) remains completely unchanged. See [ARCHITECTURE.md](./ARCHITECTURE.md) for complete schema SQL, API route inventory, and component diagrams.
 
-**Major components:**
-1. `middleware.ts` — session validation on every request; redirects unauthenticated users to `/login`; must explicitly whitelist `/api/webhook`
-2. Login Page (`/login`) — email + password form; creates Supabase session via browser client
-3. Admin Settings Page (`/admin/settings`) — Server Component fetches current settings; passes to Client Component form; writes via `/api/settings` route
-4. Settings API Route (`/api/settings`) — server-side read/write of `app_settings` table; validates session before accepting writes
-5. Config Resolver (`lib/config.ts` — `getConfig()`) — fetches singleton settings row from Supabase Postgres; called inside every Kapso API route handler; falls back to `process.env` during migration
-6. Supabase Postgres (`app_settings` table) — single row storing `phone_number_id`, `kapso_api_key`, `waba_id`, `whatsapp_api_url`; RLS-protected
+**Major architectural components:**
 
-The build order is a hard dependency chain: Fork + Inspect → Supabase Setup → Auth Layer (middleware + login) → Settings Storage (DB schema + API route) → Admin Settings UI → Config Migration (replace process.env reads) → Branding → Vercel Deploy.
+1. **6 new Supabase tables** -- `user_profiles`, `canned_responses`, `conversation_notes`, `conversation_metadata`, `contact_profiles`, `analytics_events`. All with RLS policies. All keyed by Kapso conversation IDs or phone numbers to bridge the two data stores.
 
-See `.planning/research/ARCHITECTURE.md` for full patterns, code samples, and open questions requiring fork inspection.
+2. **Server-side data merge** -- The `/api/conversations` route will fetch from Kapso, then enrich with local metadata (status, assignment, tags) from `conversation_metadata` before returning to the client. Single response, single loading state. Client stays simple.
 
----
+3. **Hybrid real-time** -- Polling stays for Kapso data (5-10s intervals, unchanged). Supabase Realtime added for local data changes (status, assignment, notes). Two data channels, unified in the UI.
+
+4. **Query-based RBAC** -- Simple `user_profiles.role` check via a `requireAdmin()` helper, NOT JWT custom claims. For 2-3 users, one extra DB query per request is negligible. Avoids auth hook complexity and re-login requirements on role change.
+
+5. **Server-side analytics logging** -- Events logged in API routes (not client-side), fire-and-forget pattern using `waitUntil()`. Dashboard reads from aggregate queries or materialized views.
 
 ### Critical Pitfalls
 
-1. **API credentials readable in browser** — The settings API route must never return the raw `KAPSO_API_KEY` to the browser. Store in Supabase, read server-side only, display only last 4 characters in the UI. Violation: WhatsApp Business Account suspension.
+See [PITFALLS.md](./PITFALLS.md) for all 15 identified pitfalls with detailed prevention strategies.
 
-2. **Webhook accidentally auth-guarded** — The Next.js middleware matcher must explicitly exclude `/api/webhook`. If the webhook is redirected to `/login`, all incoming WhatsApp messages silently stop arriving. Meta's webhook system enters a backoff state.
+1. **RBAC privilege escalation** (Critical) -- If `user_profiles` has an UPDATE policy allowing users to edit their own row AND contains a `role` column, users can self-promote to admin. Prevention: RLS policies must exclude the `role` column from user self-updates, or use a separate `user_roles` table.
 
-3. **Building on Kapso internals before reading the code** — The router type (App Router vs Pages Router), exact `process.env` usage, and API route structure are unknown until the fork is inspected. All architecture patterns have conditional variants depending on this. Phase 0 (Fork + Audit) is mandatory before any code is written.
+2. **SSE on Vercel = 300-second ceiling** (Critical) -- SSE connections die every 5 minutes on Hobby plan. Prevention: Use Supabase Realtime instead of custom SSE. Keep polling for Kapso data.
 
-4. **Dual credential sources (.env + Supabase) creating split truth** — If Vercel env vars are not removed after migrating to Supabase, old credentials may silently override new ones. Use a single `getConfig()` resolver with DB-first, env-fallback-for-local-dev only.
+3. **`getConfig()` query multiplication** (Critical) -- Currently makes 4 individual DB queries per Kapso-related request. Adding features multiplies this. Prevention: Refactor to `getConfigs()` (batch query) before adding new routes.
 
-5. **WhatsApp 24-hour window not enforced** — Kapso may or may not enforce this in the UI. If staff can send free-form messages to out-of-window contacts, messages fail silently. Requires `last_customer_message_at` tracking and a UI warning + template-only send for expired windows.
+4. **Supabase free tier connection pressure** (Critical) -- 6 new tables + more queries per request + 2-3 concurrent agents. Prevention: Use Supabase JS client (REST, not direct Postgres), batch reads via RPC functions, fire-and-forget analytics writes.
 
-See `.planning/research/PITFALLS.md` for 12 pitfalls with detection signs, prevention strategies, and phase assignments.
-
----
+5. **Internal notes leaking to customers** (Moderate) -- If notes share a table or query path with messages, a bug could send a note to the customer via WhatsApp. Prevention: Separate table, separate API routes, physical isolation from message-sending code.
 
 ## Implications for Roadmap
 
-Based on the dependency chain in ARCHITECTURE.md, the phase structure must follow the hard dependencies: you cannot add auth before you understand the upstream codebase, and you cannot migrate credentials before auth exists to protect the settings route. The research strongly suggests 6-7 phases.
+Based on combined research, the following 8-phase structure respects dependency chains, front-loads productivity gains, and isolates risk.
 
-### Phase 0: Fork Setup and Upstream Audit
+### Phase 1: Foundation (RBAC + User Profiles + Config Refactor)
+**Rationale:** Every subsequent feature needs `user_profiles` (for `created_by`, `assigned_to`, role checks). The `getConfig()` batch refactor prevents query multiplication as new routes are added. This is invisible to end users but unblocks everything.
+**Delivers:** `user_profiles` table with auto-create trigger, `requireAuth()`/`requireAdmin()` helpers, `getConfigs()` batch function, RLS policies.
+**Addresses:** RBAC (from FEATURES), getConfig multiplication (from PITFALLS)
+**Avoids:** Pitfall 2 (privilege escalation), Pitfall 4 (config query overhead)
+**Stack:** No new npm packages. Supabase schema + TypeScript only.
 
-**Rationale:** Every architecture decision in this project has a conditional branch that depends on whether Kapso uses App Router or Pages Router. The middleware pattern, server component patterns, Server Actions availability, and Supabase cookie helpers all differ. Starting to build without this knowledge means building twice. This phase is mandatory.
+### Phase 2: Canned Responses
+**Rationale:** Highest daily ROI for the beauty shop team. Eliminates repetitive typing (pricing, hours, aftercare). Independent of conversation features -- can ship and deliver value immediately.
+**Delivers:** `canned_responses` table, CRUD API routes, slash-command picker in message input, management page.
+**Addresses:** Canned responses (P0 from FEATURES)
+**Avoids:** Pitfall 8 (ownership confusion -- schema designed for both personal and shared from day one)
+**Stack:** `@radix-ui/react-popover` for the picker dropdown, `sonner` for action feedback toasts.
 
-**Delivers:** A forked repo, a map of all `process.env` reads in Kapso, confirmation of router type, API route list, understanding of existing real-time/polling mechanism, and upstream remote configured for future merges.
+### Phase 3: Conversation Management (Status + Assignment + Tags)
+**Rationale:** This is the core workflow upgrade -- transforms the inbox from a message viewer into a ticket system. Status, assignment, and tags share the `conversation_metadata` table and modify the same components (ConversationList, MessageView header).
+**Delivers:** `conversation_metadata` table with status/assignment/tags, server-side merge in `/api/conversations`, filter controls, status tabs, assignment dropdown, tag picker.
+**Addresses:** Conversation status (P0), conversation assignment (P2), customer labels (P1) from FEATURES
+**Avoids:** Pitfall 9 (unassigned conversations invisible -- default view is "Unassigned + Mine"), Pitfall 11 (labels schema -- using `text[]` with GIN index on `conversation_metadata`, plus a `labels` master list for consistency)
+**Stack:** `@radix-ui/react-select`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-checkbox`, `@radix-ui/react-tooltip`.
 
-**Addresses:** FEATURES.md: "preserve all Kapso base features without breaking them"
+### Phase 4: Customer Intelligence (Contact Profiles + Internal Notes)
+**Rationale:** Builds on Phase 3's conversation metadata. Contact profiles enrich the conversation list with customer context. Notes add team knowledge to individual conversations. Both appear in panels alongside the message view.
+**Delivers:** `contact_profiles` table, `conversation_notes` table, contact detail panel, notes panel, contacts browse page.
+**Addresses:** Contact profiles (P1), internal notes (P1), customer labels (shared tag system) from FEATURES
+**Avoids:** Pitfall 10 (notes leaking -- separate table, separate API, no shared query path with message sending), Pitfall 14 (stale contact data -- Kapso name is primary, local profile is supplementary)
+**Stack:** `@radix-ui/react-tabs` for contact profile sections.
 
-**Avoids:** PITFALLS.md Pitfall 3 (fork divergence locked in early), Pitfall 8 (real-time polling conflict), Pitfall 5 (dual credential sources)
+### Phase 5: Sound Notifications + Real-Time Updates
+**Rationale:** With conversation metadata and notes in Supabase, Realtime subscriptions make multi-agent collaboration instant. Sound notifications extend the existing handoff audio pattern to all new messages. These are infrastructure improvements that make all prior features feel more responsive.
+**Delivers:** Supabase Realtime subscriptions for `conversation_metadata` and `conversation_notes`, generalized message alert hook, notification preference settings.
+**Addresses:** Sound notifications (P0), real-time via SSE (reframed as Supabase Realtime) from FEATURES
+**Avoids:** Pitfall 1 (SSE on Vercel -- using Supabase Realtime instead), Pitfall 13 (browser autoplay -- reusing existing AudioContext)
+**Stack:** `@radix-ui/react-switch` for notification toggles. No new real-time dependencies (Supabase Realtime already in SDK).
 
-**Research flag:** Standard git + code reading — no additional research phase needed.
+### Phase 6: Analytics + Export
+**Rationale:** Analytics becomes meaningful only after status/assignment data has accumulated from Phases 3-5. Export is low complexity and bundles naturally. Both are admin-only features.
+**Delivers:** `analytics_events` table, server-side event logging in existing send/resolve routes, analytics dashboard page with charts, CSV conversation export.
+**Addresses:** Analytics dashboard (P3), conversation export (P3) from FEATURES
+**Avoids:** Pitfall 7 (analytics blocking requests -- `waitUntil()` for fire-and-forget writes), Pitfall 12 (export timeout -- date range limits, client-side generation)
+**Stack:** `recharts` for charts, `papaparse` for CSV export.
 
----
+### Phase 7: Message Search
+**Rationale:** Placed late because feasibility depends on an unresolved question: does Kapso's API support message search? If yes, this is medium complexity. If no, it requires a local message cache -- a significant architectural change that may warrant deferral to v3.
+**Delivers:** Global search dialog (Cmd+K), conversation/contact search (from local data), message content search (if Kapso supports it).
+**Addresses:** Message search (P3) from FEATURES
+**Avoids:** Pitfall 6 (full table scans -- proper indexes at table creation time)
+**Stack:** `cmdk` for the command palette.
 
-### Phase 1: Supabase Project Setup and Infrastructure
-
-**Rationale:** Auth and settings storage both depend on Supabase. The database schema (`app_settings` table with RLS), auth configuration (email/password enabled, magic links optionally enabled), and environment variables must exist before any app code can reference them.
-
-**Delivers:** A live Supabase project with `app_settings` table, RLS policies, initial user accounts created via dashboard, and environment variables set for local development.
-
-**Uses:** STACK.md: `@supabase/supabase-js`, Supabase Postgres free tier, connection pooler URL (not direct connection string)
-
-**Implements:** ARCHITECTURE.md: Pattern 2 (Singleton Settings Row), including the SQL migration
-
-**Avoids:** PITFALLS.md Pitfall 7 (connection pool exhaustion) — configure pooler URL from day one; Pitfall 3 (skipping RLS)
-
-**Research flag:** Standard pattern — skip research phase. Supabase project setup and SQL migrations are well-documented.
-
----
-
-### Phase 2: Authentication Layer
-
-**Rationale:** Auth is the gate to everything else. The inbox must be protected before it is deployed anywhere with real credentials. The middleware must be written correctly — with the webhook exclusion — before any WhatsApp functionality is tested.
-
-**Delivers:** Working login page, Supabase session management, Next.js middleware protecting all routes except `/login` and `/api/webhook`, session refresh handled correctly, users can log in and stay logged in.
-
-**Uses:** STACK.md: `@supabase/ssr`, Next.js Middleware
-
-**Implements:** ARCHITECTURE.md: Pattern 1 (Supabase Server Client), Pattern 4 (Middleware Auth Guard)
-
-**Avoids:** PITFALLS.md Pitfall 2 (missing auth guard on all routes), Pitfall 6 (webhook accidentally auth-guarded), Pitfall 10 (session not refreshed)
-
-**Research flag:** Standard pattern — skip research phase. `@supabase/ssr` middleware pattern is documented and stable.
-
----
-
-### Phase 3: Admin Settings UI and Credential Storage
-
-**Rationale:** Once auth exists, the settings route can be protected. The admin settings UI is a hard dependency for the credential migration phase — there needs to be a way to put values into the database before the app can read them from there.
-
-**Delivers:** `/admin/settings` page with form for `phone_number_id`, `kapso_api_key`, `waba_id`; server-side API route for read/write; credentials stored in Supabase with RLS; key displayed as last-4 only (never full value in browser).
-
-**Uses:** STACK.md: shadcn/ui + Tailwind (scoped to admin route), React Hook Form + Zod, Server Actions or `/api/settings` route
-
-**Implements:** ARCHITECTURE.md: Pattern 5 (Server Component + Client Form), Pattern 2 (singleton row upsert)
-
-**Avoids:** PITFALLS.md Pitfall 1 (API key readable in browser), Pitfall 5 (dual credential sources)
-
-**Research flag:** May need a brief research pass on Tailwind + Kapso CSS conflict if base uses global resets. Otherwise standard pattern.
-
----
-
-### Phase 4: Config Migration (DB Credentials Replace .env)
-
-**Rationale:** This is the integration that makes the whole system work. Existing Kapso API routes read credentials from `process.env` — they need to call `getConfig()` instead. This phase is a targeted edit of existing Kapso files (the one exception to the "don't touch Kapso files" rule) and must be done carefully.
-
-**Delivers:** All Kapso API routes using `getConfig()` for credentials; `process.env` reads removed from hot paths; env-var fallback preserved for local dev only; Vercel env vars for `PHONE_NUMBER_ID`/`KAPSO_API_KEY`/`WABA_ID` removed or marked as deprecated.
-
-**Implements:** ARCHITECTURE.md: Pattern 3 (Config Resolver Utility), Anti-Pattern 1 avoidance (no module-level constants)
-
-**Avoids:** PITFALLS.md Pitfall 5 (dual credential sources), Pitfall 1 (credentials exposed)
-
-**Research flag:** No research needed. Pattern is simple and well-defined.
-
----
-
-### Phase 5: Branding and Polish
-
-**Rationale:** Branding is independent of all other phases and can be done any time after Phase 0 establishes the file conventions. Placing it here (after the core system works) ensures the team can test the product before investing in polish.
-
-**Delivers:** Maissi logo in `/public/`, app name in page title, wrapper components for branded header — all in new files, no edits to Kapso originals.
-
-**Avoids:** PITFALLS.md Pitfall 11 (branding applied to Kapso core files causing merge conflicts)
-
-**Research flag:** No research needed. Purely additive UI work.
-
----
-
-### Phase 6: Vercel Deployment and End-to-End Verification
-
-**Rationale:** Production deployment has its own failure modes (webhook cold starts, environment variable setup, Supabase connection pooler URLs) that only surface in the Vercel environment. This phase is not just "push to Vercel" — it is a structured verification that every integration point works in production.
-
-**Delivers:** Live app on Vercel with correct environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`), webhook verified with Meta (GET challenge + POST test message), end-to-end send/receive tested with a real WhatsApp number, team accounts created and login verified.
-
-**Avoids:** PITFALLS.md Pitfall 9 (Vercel cold start causing webhook timeout), Pitfall 6 (webhook not reachable), Pitfall 7 (connection pool exhaustion in production)
-
-**Research flag:** No research needed. Vercel deployment and Supabase connection pooler setup are standard.
-
----
+### Phase 8: Error Tracking (Sentry) + User Management UI
+**Rationale:** Sentry is independent and can ship anytime, but is placed here because the team currently operates without error visibility and has survived. User management UI is low urgency (2-3 person team, rare user changes). Both are "product completeness" features.
+**Delivers:** Sentry integration (client + server + edge), `global-error.tsx`, user management admin page (invite, deactivate, role change).
+**Addresses:** Error tracking (P1), user management (P2) from FEATURES
+**Avoids:** Pitfall 5 (Sentry config -- use wizard, all three config files from the start), Pitfall 3 (Supabase overload -- Sentry is external, no DB impact; user management uses existing `user_profiles` table)
+**Stack:** `@sentry/nextjs`.
 
 ### Phase Ordering Rationale
 
-- Phase 0 must come first because the router type determines everything else. No shortcuts.
-- Phase 1 (Supabase setup) comes before Phase 2 (Auth) because auth requires a live Supabase project with configured users.
-- Phase 2 (Auth) must precede Phase 3 (Settings UI) because the settings route needs auth protection before it can safely store credentials.
-- Phase 3 (Settings UI) must precede Phase 4 (Config Migration) because there must be a way to populate the DB before the app reads from it.
-- Phase 5 (Branding) is independent. Placing it after Phase 4 keeps earlier phases focused on infrastructure.
-- Phase 6 (Deploy) comes last by definition, but webhook exclusion from middleware (Phase 2) must be verified here.
+- **Foundation first** because every feature references `user_profiles` and the config refactor prevents compounding DB overhead.
+- **Canned responses before conversation management** because it delivers standalone value with zero dependency on other new features -- the team benefits immediately.
+- **Status/assignment/tags grouped** because they share the `conversation_metadata` table and modify the same UI surfaces (conversation list, message view header).
+- **Contact profiles + notes after conversation management** because the contact panel makes more sense when conversations already have status and tags.
+- **Real-time after metadata tables exist** because Supabase Realtime subscribes to table changes -- the tables must exist first.
+- **Analytics late** because it aggregates data from earlier phases -- needs status/assignment/event data to be meaningful.
+- **Search near the end** because its feasibility is uncertain (Kapso API question).
+- **Sentry + user management last** because they are operationally useful but not team-productivity features.
 
 ### Research Flags
 
 Phases likely needing deeper research during planning:
-- **Phase 0:** Depends entirely on reading the Kapso source code. No planning research can be done in advance — the audit output is the research.
-- **Phase 3:** If Kapso base uses global CSS resets that conflict with Tailwind preflight, a brief implementation research session is needed to scope the fix before building the settings UI.
+- **Phase 1 (Foundation):** RBAC RLS policy design needs careful testing -- deploy incrementally, test from Supabase Table Editor (not SQL Editor which bypasses RLS). See Pitfall 15.
+- **Phase 3 (Conversation Management):** Server-side merge pattern (Kapso + Supabase) is the most architecturally novel piece. Verify the Kapso conversation response shape to design the merge correctly.
+- **Phase 7 (Message Search):** Kapso API search capability is UNVERIFIED. Must investigate before planning this phase. If unavailable, descope to contact/conversation search only.
 
-Phases with standard patterns (skip research-phase):
-- **Phase 1:** Supabase project setup and SQL migrations are fully documented.
-- **Phase 2:** `@supabase/ssr` middleware pattern is the current official Supabase recommendation.
-- **Phase 4:** Config Resolver is a straightforward utility module.
-- **Phase 5:** Purely additive UI work with no external dependencies.
-- **Phase 6:** Vercel + Supabase deployment is well-documented.
-
----
+Phases with standard patterns (skip deep research):
+- **Phase 2 (Canned Responses):** Standard CRUD feature, well-documented patterns, no external dependencies.
+- **Phase 4 (Contact Profiles + Notes):** Standard CRUD + panel UI. No novel architecture.
+- **Phase 5 (Notifications + Realtime):** Supabase Realtime is well-documented. Sound notifications extend existing proven code.
+- **Phase 6 (Analytics + Export):** recharts and papaparse are well-documented. Event logging is a standard append-only pattern.
+- **Phase 8 (Sentry + User Management):** Sentry wizard auto-generates configs. User management is standard Supabase Auth admin API usage.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | MEDIUM-HIGH | `@supabase/ssr`, React Hook Form, Zod are HIGH confidence. Tailwind + Kapso CSS compatibility is LOW until fork is inspected. Server Actions availability is MEDIUM — depends on router type. |
-| Features | HIGH | v1 scope is owner-confirmed from PROJECT.md. Post-v1 differentiators are MEDIUM — based on training knowledge of WATI/Respond.io patterns without live verification. |
-| Architecture | MEDIUM | Core patterns (middleware, singleton row, Config Resolver) are HIGH confidence. All Kapso-specific integration points are LOW confidence until the upstream is read. |
-| Pitfalls | HIGH | Security pitfalls (API key exposure, RLS, service role key) are HIGH confidence. Webhook behavior and WhatsApp 24-hour window are HIGH confidence. Kapso-specific pitfalls (rate limits, real-time polling) are LOW confidence — verified only after fork inspection. |
+| Stack | HIGH | All package versions verified on npm (2026-02-21). Recharts v3.7.0, Sentry v10.39.0, sonner v2.0.7 confirmed active. Rejections well-reasoned. |
+| Features | HIGH | Validated against 7+ competitors (WATI, Respond.io, Trengo, SleekFlow, WhatsApp Business App). Priority ordering grounded in beauty shop workflow analysis. |
+| Architecture | HIGH | Based on direct codebase inspection (every file inventoried). Schema designs include complete SQL with RLS policies. Data flow diagrams verified against existing code. |
+| Pitfalls | HIGH | 15 pitfalls identified. Critical ones verified against official docs (Vercel function limits, Supabase RBAC, connection management). Code-level pitfalls (getConfig) verified from source. |
 
-**Overall confidence:** MEDIUM
+**Overall confidence:** HIGH
+
+The research is thorough and internally consistent across all four dimensions. The one significant gap is Kapso API search capability, which affects only Phase 7 (message search).
 
 ### Gaps to Address
 
-- **Kapso router type (App Router vs Pages Router):** Determine in Phase 0. Affects middleware, server component, and Server Actions patterns. Until resolved, architecture patterns should be treated as conditional.
-
-- **Kapso `process.env` usage scope:** Identify all files reading `PHONE_NUMBER_ID`, `KAPSO_API_KEY`, `WABA_ID` in Phase 0. Determines exact scope of Phase 4 (Config Migration).
-
-- **Kapso real-time/polling mechanism:** Determine in Phase 0 before adding any Supabase Realtime. Risk of duplicate messages if two polling systems run simultaneously.
-
-- **Tailwind vs Kapso CSS conflict:** Verify in Phase 0 or early Phase 3. May require disabling Tailwind preflight or using a CSS layers approach.
-
-- **WhatsApp webhook route path in Kapso:** Identify in Phase 0 to ensure middleware matcher correctly excludes it. If path differs from `/api/webhook`, the default middleware config will break incoming messages.
-
-- **Kapso API error codes and rate limits:** Read Kapso documentation before Phase 4. Affects error handling in the Config Resolver and API proxy layer.
-
----
+- **Kapso API search capability:** Does the Kapso SDK or API support filtering/searching message content? This determines whether Phase 7 is medium complexity (API proxy) or high complexity (local message cache). Must investigate before planning Phase 7.
+- **Supabase Auth admin API from server routes:** User management (Phase 8) requires `supabase.auth.admin.createUser()` and similar calls. These need the service role key. Verify this works from Next.js API routes on Vercel (likely yes, but needs confirmation).
+- **Kapso webhook/callback support:** If Kapso supports webhooks for new messages, polling could eventually be replaced entirely. Not needed for v2 but worth investigating for future optimization.
+- **Actual daily message volume:** Analytics design assumptions are based on ~50-100 messages/day. If volume is significantly higher, materialized views and data retention become more urgent.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- `PROJECT.md` — owner-confirmed feature scope, stack constraints, team size, and anti-features
-- Supabase Next.js SSR documentation (supabase.com/docs/guides/auth/server-side/nextjs) — `@supabase/ssr` patterns, middleware setup, `getUser()` vs `getSession()` security guidance
-- Next.js Middleware documentation (nextjs.org/docs/app/building-your-application/routing/middleware) — matcher config, Edge Runtime behavior
-- WhatsApp Business Platform — Messaging Windows policy (developers.facebook.com/docs/whatsapp/conversation-types) — 24-hour window rules
+- [Sentry Next.js Setup Guide](https://docs.sentry.io/platforms/javascript/guides/nextjs/) -- config requirements, App Router instrumentation
+- [Supabase RBAC Docs](https://supabase.com/docs/guides/database/postgres/custom-claims-and-role-based-access-control-rbac) -- custom claims, auth hooks
+- [Supabase Realtime Docs](https://supabase.com/docs/guides/realtime/postgres-changes) -- postgres changes, limits
+- [Supabase RLS Docs](https://supabase.com/docs/guides/database/postgres/row-level-security) -- policy syntax, enable behavior
+- [Vercel Functions Duration](https://vercel.com/docs/functions/configuring-functions/duration) -- 300s max Hobby with Fluid Compute
+- [Supabase Connection Management](https://supabase.com/docs/guides/database/connection-management) -- pooling limits, free tier
+- Existing codebase inspection -- every file inventoried and analyzed
 
 ### Secondary (MEDIUM confidence)
-- Training knowledge: shadcn/ui + Tailwind CSS integration patterns
-- Training knowledge: React Hook Form + Zod with `@hookform/resolvers` in Next.js
-- Training knowledge: Vercel serverless function cold start behavior and webhook timeout patterns
-- Training knowledge: WhatsApp shared inbox products (WATI, Respond.io, Zoko, Twilio Flex) — for post-v1 feature benchmarking
+- [WATI Review (Chatimize)](https://chatimize.com/reviews/wati/) -- competitor feature set
+- [Respond.io Team Inbox](https://respond.io/team-inbox) -- competitor feature set
+- [Trengo WhatsApp Guide](https://trengo.com/blog/whatsapp-team-inbox) -- competitor feature set
+- [recharts npm](https://www.npmjs.com/package/recharts) -- v3.7.0 verified
+- [sonner npm](https://www.npmjs.com/package/sonner) -- v2.0.7 verified
+- [cmdk npm](https://www.npmjs.com/package/cmdk) -- v1.1.1 verified
+- [papaparse npm](https://www.npmjs.com/package/papaparse) -- v5.5.3 verified
 
-### Tertiary (LOW confidence — verify at fork time)
-- Training knowledge: `gokapso/whatsapp-cloud-inbox` repo structure, router type, API route patterns — NOT directly inspected; requires Phase 0 audit
-- Training knowledge: Kapso API rate limit specifics — not publicly documented; verify against Kapso docs
-- Training knowledge: Supabase free tier connection limits — subject to change; verify current limits at project creation
+### Tertiary (LOW confidence)
+- Kapso API search capabilities -- UNVERIFIED, assumed unavailable until confirmed
+- Actual message volume data -- estimated at 50-100/day based on beauty shop norms
 
 ---
-*Research completed: 2026-02-18*
+*Research completed: 2026-02-21*
 *Ready for roadmap: yes*
