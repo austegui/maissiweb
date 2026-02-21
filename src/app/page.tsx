@@ -43,7 +43,10 @@ export default function Home() {
   return (
     <div className="h-screen flex flex-col">
       <div className="flex items-center justify-between border-b px-4 py-2">
-        <span className="text-sm font-medium">WhatsApp Inbox</span>
+        <div className="flex items-center gap-2">
+          <img src="/maissi-logo.svg" alt="Maissi" className="h-6" />
+          <span className="text-sm font-medium">Maissi Beauty Shop AI</span>
+        </div>
         <div className="flex items-center gap-3">
           <a href="/admin/settings" className="text-xs text-gray-500 hover:text-gray-700">
             Settings

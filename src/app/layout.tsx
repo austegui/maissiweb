@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "WhatsApp inbox",
-  description: "A simple WhatsApp inbox built with Next.js",
+  title: "Maissi Beauty Shop AI",
+  description: "WhatsApp inbox for Maissi Beauty Shop",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
