@@ -34,7 +34,6 @@ export async function GET() {
 
     const convResponse = await whatsappClient.conversations.list({
       phoneNumberId,
-      status: 'active',
       limit: 50,
       fields: buildKapsoFields(['contact_name'])
     });
