@@ -110,9 +110,9 @@ function showBrowserNotification(newHandoffs: HandoffInfo[]) {
   if (Notification.permission !== 'granted') return;
 
   for (const handoff of newHandoffs) {
-    const title = 'Customer needs attention';
-    const name = handoff.contactName || handoff.phoneNumber || 'Unknown';
-    const body = `${name} has been transferred to a human agent`;
+    const name = handoff.contactName || handoff.phoneNumber || 'Cliente';
+    const title = `${name} necesita ayuda de una persona`;
+    const body = '';
 
     const notification = new Notification(title, {
       body,
