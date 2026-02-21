@@ -40,6 +40,16 @@ export async function GET() {
     });
 
     type HandoffInfo = { id: string; contactName?: string; phoneNumber?: string };
+    type DebugConv = {
+      id: string;
+      phoneNumber?: string;
+      messageCount: number;
+      sampleContents: string[];
+      rawSample: unknown[];
+      hasHandoff: boolean;
+    };
+
+    const debugConvs: DebugConv[] = [];
 
     const results = await Promise.allSettled(
       convResponse.data.map(async (conv: ConversationRecord) => {
@@ -50,9 +60,35 @@ export async function GET() {
           fields: buildKapsoFields(['content', 'direction'])
         });
 
+        const sampleContents: string[] = [];
+        const rawSample: unknown[] = [];
+
         const hasHandoff = msgResponse.data.some((msg) => {
           const content = extractContent(msg);
+          sampleContents.push(content.slice(0, 100));
+          // Include raw shape of first 3 messages for debugging
+          if (rawSample.length < 3) {
+            const kapso = msg.kapso as KapsoMessageExtensions | undefined;
+            const rawContent = kapso?.content;
+            rawSample.push({
+              type: msg.type,
+              textBody: typeof msg.text?.body === 'string' ? msg.text.body.slice(0, 80) : null,
+              kapsoContentType: typeof rawContent,
+              kapsoContent: rawContent
+                ? JSON.stringify(rawContent).slice(0, 120)
+                : null,
+            });
+          }
           return content.includes(HANDOFF_MARKER);
+        });
+
+        debugConvs.push({
+          id: conv.id,
+          phoneNumber: conv.phoneNumber ?? undefined,
+          messageCount: msgResponse.data.length,
+          sampleContents,
+          rawSample,
+          hasHandoff,
         });
 
         if (!hasHandoff) return null;
@@ -77,7 +113,11 @@ export async function GET() {
 
     return NextResponse.json({
       handoffConversationIds: handoffs.map((h) => h.id),
-      handoffs
+      handoffs,
+      debug: {
+        totalConversations: convResponse.data.length,
+        conversations: debugConvs,
+      }
     });
   } catch (error) {
     console.error('Error checking handoffs:', error);
