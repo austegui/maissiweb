@@ -63,6 +63,7 @@ type Props = {
   selectedConversationId?: string;
   isHidden?: boolean;
   handoffIds?: Set<string>;
+  onConversationsLoaded?: (conversations: Conversation[]) => void;
 };
 
 export type ConversationListRef = {
@@ -71,7 +72,7 @@ export type ConversationListRef = {
 };
 
 export const ConversationList = forwardRef<ConversationListRef, Props>(
-  ({ onSelectConversation, selectedConversationId, isHidden = false, handoffIds }, ref) => {
+  ({ onSelectConversation, selectedConversationId, isHidden = false, handoffIds, onConversationsLoaded }, ref) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -81,14 +82,16 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
     try {
       const response = await fetch('/api/conversations');
       const data = await response.json();
-      setConversations(data.data || []);
+      const convs = data.data || [];
+      setConversations(convs);
+      onConversationsLoaded?.(convs);
     } catch (error) {
       console.error('Error fetching conversations:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [onConversationsLoaded]);
 
   useEffect(() => {
     fetchConversations();

@@ -15,7 +15,7 @@ type Conversation = {
 export default function Home() {
   const [selectedConversation, setSelectedConversation] = useState<Conversation>();
   const conversationListRef = useRef<ConversationListRef>(null);
-  const { alertingIds, allHandoffIds, acknowledge } = useHandoffAlerts();
+  const { alertingIds, allHandoffIds, acknowledge, onConversationsUpdated } = useHandoffAlerts();
 
   const handleSelectConversation = (conversation: Conversation) => {
     setSelectedConversation(conversation);
@@ -61,6 +61,7 @@ export default function Home() {
         selectedConversationId={selectedConversation?.id}
         isHidden={!!selectedConversation}
         handoffIds={alertingIds}
+        onConversationsLoaded={onConversationsUpdated}
       />
       <MessageView
         conversationId={selectedConversation?.id}
