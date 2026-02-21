@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import {
   buildKapsoFields,
+  type ConversationKapsoExtensions,
+  type ConversationRecord,
   type KapsoMessageExtensions,
   type MetaMessage
 } from '@kapso/whatsapp-cloud-api';
@@ -34,11 +36,13 @@ export async function GET() {
       phoneNumberId,
       status: 'active',
       limit: 50,
-      fields: buildKapsoFields([])
+      fields: buildKapsoFields(['contact_name'])
     });
 
+    type HandoffInfo = { id: string; contactName?: string; phoneNumber?: string };
+
     const results = await Promise.allSettled(
-      convResponse.data.map(async (conv) => {
+      convResponse.data.map(async (conv: ConversationRecord) => {
         const msgResponse = await whatsappClient.messages.listByConversation({
           phoneNumberId,
           conversationId: conv.id,
@@ -51,19 +55,30 @@ export async function GET() {
           return content.includes(HANDOFF_MARKER);
         });
 
-        return hasHandoff ? conv.id : null;
+        if (!hasHandoff) return null;
+
+        const kapso = conv.kapso as ConversationKapsoExtensions | undefined;
+        const info: HandoffInfo = {
+          id: conv.id,
+          contactName: typeof kapso?.contactName === 'string' ? kapso.contactName : undefined,
+          phoneNumber: conv.phoneNumber ?? undefined
+        };
+        return info;
       })
     );
 
-    const handoffConversationIds = results
+    const handoffs = results
       .filter(
-        (r): r is PromiseFulfilledResult<string | null> =>
+        (r): r is PromiseFulfilledResult<HandoffInfo | null> =>
           r.status === 'fulfilled'
       )
       .map((r) => r.value)
-      .filter((id): id is string => id !== null);
+      .filter((v): v is HandoffInfo => v !== null);
 
-    return NextResponse.json({ handoffConversationIds });
+    return NextResponse.json({
+      handoffConversationIds: handoffs.map((h) => h.id),
+      handoffs
+    });
   } catch (error) {
     console.error('Error checking handoffs:', error);
     return NextResponse.json(

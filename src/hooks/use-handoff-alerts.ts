@@ -81,6 +81,12 @@ function writeString(view: DataView, offset: number, str: string) {
   }
 }
 
+type HandoffInfo = {
+  id: string;
+  contactName?: string;
+  phoneNumber?: string;
+};
+
 type UseHandoffAlertsReturn = {
   /** Conversation IDs with unacknowledged handoffs (need attention) */
   alertingIds: Set<string>;
@@ -90,15 +96,47 @@ type UseHandoffAlertsReturn = {
   acknowledge: (conversationId: string) => void;
 };
 
+function requestNotificationPermission() {
+  if (typeof window === 'undefined') return;
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function showBrowserNotification(newHandoffs: HandoffInfo[]) {
+  if (typeof window === 'undefined') return;
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
+
+  for (const handoff of newHandoffs) {
+    const title = 'Customer needs attention';
+    const name = handoff.contactName || handoff.phoneNumber || 'Unknown';
+    const body = `${name} has been transferred to a human agent`;
+
+    const notification = new Notification(title, {
+      body,
+      icon: '/favicon.ico',
+      tag: `handoff-${handoff.id}`,
+    });
+
+    notification.onclick = () => {
+      window.focus();
+      notification.close();
+    };
+  }
+}
+
 export function useHandoffAlerts(): UseHandoffAlertsReturn {
   const [allHandoffIds, setAllHandoffIds] = useState<Set<string>>(new Set());
   const [acknowledgedIds, setAcknowledgedIds] = useState<Set<string>>(new Set());
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const prevHandoffIdsRef = useRef<Set<string>>(new Set());
 
-  // Initialize audio on mount
+  // Initialize audio and request notification permission on mount
   useEffect(() => {
     audioRef.current = createBeepSound();
+    requestNotificationPermission();
   }, []);
 
   const fetchHandoffs = useCallback(async () => {
@@ -108,22 +146,25 @@ export function useHandoffAlerts(): UseHandoffAlertsReturn {
 
       const data = await response.json();
       const newIds = new Set<string>(data.handoffConversationIds || []);
+      const handoffs: HandoffInfo[] = data.handoffs || [];
 
       // Detect brand-new handoffs (not previously known and not acknowledged)
       const prevIds = prevHandoffIdsRef.current;
-      let hasNew = false;
-      for (const id of newIds) {
-        if (!prevIds.has(id) && !acknowledgedIds.has(id)) {
-          hasNew = true;
-          break;
-        }
-      }
+      const brandNewHandoffs = handoffs.filter(
+        (h) => !prevIds.has(h.id) && !acknowledgedIds.has(h.id)
+      );
 
-      if (hasNew && audioRef.current) {
-        audioRef.current.currentTime = 0;
-        audioRef.current.play().catch(() => {
-          // Browser may block autoplay until user interaction
-        });
+      if (brandNewHandoffs.length > 0) {
+        // Play sound
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play().catch(() => {
+            // Browser may block autoplay until user interaction
+          });
+        }
+
+        // Show browser notification
+        showBrowserNotification(brandNewHandoffs);
       }
 
       prevHandoffIdsRef.current = newIds;
