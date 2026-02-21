@@ -106,14 +106,27 @@ function writeString(view: DataView, offset: number, str: string) {
 function requestNotificationPermission() {
   if (typeof window === 'undefined') return;
   if (!('Notification' in window)) return;
-  if (Notification.permission === 'default') {
+  if (Notification.permission !== 'default') return;
+
+  // Chrome requires a user gesture to show the permission prompt.
+  // Request on the first click/keypress, then remove the listeners.
+  const request = () => {
     Notification.requestPermission();
-  }
+    document.removeEventListener('click', request);
+    document.removeEventListener('keydown', request);
+  };
+  document.addEventListener('click', request, { once: true });
+  document.addEventListener('keydown', request, { once: true });
 }
 
-function showBrowserNotification(handoffs: ConversationData[]) {
+async function showBrowserNotification(handoffs: ConversationData[]) {
   if (typeof window === 'undefined') return;
   if (!('Notification' in window)) return;
+
+  // If permission is still 'default', try requesting (user may have just interacted)
+  if (Notification.permission === 'default') {
+    await Notification.requestPermission();
+  }
   if (Notification.permission !== 'granted') return;
 
   for (const handoff of handoffs) {
