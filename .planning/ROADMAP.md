@@ -91,7 +91,12 @@ Plans:
   3. An agent user can view conversations and send messages but cannot see admin-only pages
   4. A user cannot change their own role (RLS prevents self-promotion)
   5. API routes that previously made 4 individual config queries now make a single batch query
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 07-01-PLAN.md -- Refactor getConfig() to batch queries and update all API route consumers
+- [ ] 07-02-PLAN.md -- Create user_profiles table, trigger, RLS policies in Supabase Dashboard
+- [ ] 07-03-PLAN.md -- Create admin route guard and verify RBAC on Vercel
 
 ### Phase 8: Canned Responses
 **Goal**: Agents can instantly insert pre-written replies into conversations, eliminating repetitive typing of common responses like pricing, hours, and aftercare instructions
@@ -190,7 +195,7 @@ Note: Phases 8, 9, 12, and 14 all depend on Phase 7 but not necessarily on each 
 | 4. Config Migration | v1.0 | 2/2 | Complete | 2026-02-18 |
 | 5. Branding | v1.0 | 1/1 | Complete | 2026-02-18 |
 | 6. Deploy + Verify | v1.0 | 2/2 | Complete | 2026-02-21 |
-| 7. Foundation | v2.0 | 0/TBD | Not started | - |
+| 7. Foundation | v2.0 | 0/3 | Not started | - |
 | 8. Canned Responses | v2.0 | 0/TBD | Not started | - |
 | 9. Conversation Management | v2.0 | 0/TBD | Not started | - |
 | 10. Customer Intelligence | v2.0 | 0/TBD | Not started | - |
