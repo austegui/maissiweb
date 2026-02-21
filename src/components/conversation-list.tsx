@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 type Conversation = {
   id: string;
@@ -61,6 +62,7 @@ type Props = {
   onSelectConversation: (conversation: Conversation) => void;
   selectedConversationId?: string;
   isHidden?: boolean;
+  handoffIds?: Set<string>;
 };
 
 export type ConversationListRef = {
@@ -69,7 +71,7 @@ export type ConversationListRef = {
 };
 
 export const ConversationList = forwardRef<ConversationListRef, Props>(
-  ({ onSelectConversation, selectedConversationId, isHidden = false }, ref) => {
+  ({ onSelectConversation, selectedConversationId, isHidden = false, handoffIds }, ref) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -205,26 +207,39 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
           </div>
         ) : (
           <div className="w-full overflow-hidden">
-          {filteredConversations.map((conversation) => (
+          {filteredConversations.map((conversation) => {
+            const isHandoff = handoffIds?.has(conversation.id) ?? false;
+            return (
             <button
               key={conversation.id}
               onClick={() => onSelectConversation(conversation)}
               className={cn(
                 'w-full p-3 pr-4 border-b border-[#e9edef] hover:bg-[#f0f2f5] text-left transition-colors relative overflow-hidden',
-                selectedConversationId === conversation.id && 'bg-[#f0f2f5]'
+                selectedConversationId === conversation.id && 'bg-[#f0f2f5]',
+                isHandoff && 'bg-[#fff8e1] border-l-4 border-l-[#f59e0b] hover:bg-[#fff3cd]'
               )}
             >
               <div className="flex gap-3 items-start overflow-hidden">
                 <Avatar className="h-12 w-12 flex-shrink-0">
-                  <AvatarFallback className="bg-[#d1d7db] text-[#111b21] text-sm font-medium">
+                  <AvatarFallback className={cn(
+                    "text-sm font-medium",
+                    isHandoff ? "bg-[#f59e0b] text-white" : "bg-[#d1d7db] text-[#111b21]"
+                  )}>
                     {getAvatarInitials(conversation.contactName, conversation.phoneNumber)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0 flex justify-between items-start gap-4 overflow-hidden">
                   <div className="flex-1 min-w-0 overflow-hidden">
-                    <p className="font-medium text-[#111b21] truncate">
-                      {conversation.contactName || conversation.phoneNumber}
-                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-medium text-[#111b21] truncate">
+                        {conversation.contactName || conversation.phoneNumber}
+                      </p>
+                      {isHandoff && (
+                        <Badge className="bg-[#f59e0b] hover:bg-[#d97706] text-white text-[10px] px-1.5 py-0 flex-shrink-0">
+                          Handoff
+                        </Badge>
+                      )}
+                    </div>
                     {conversation.lastMessage && (
                       <p className="text-sm text-[#667781] truncate mt-0.5">
                         {conversation.lastMessage.direction === 'outbound' && (
@@ -240,8 +255,8 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
                 </div>
               </div>
             </button>
-          ))
-          }
+            );
+          })}
           </div>
         )}
       </ScrollArea>

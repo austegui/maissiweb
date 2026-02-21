@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { ConversationList, type ConversationListRef } from '@/components/conversation-list';
 import { MessageView } from '@/components/message-view';
+import { useHandoffAlerts } from '@/hooks/use-handoff-alerts';
 import { logout } from '@/app/login/actions';
 
 type Conversation = {
@@ -14,6 +15,12 @@ type Conversation = {
 export default function Home() {
   const [selectedConversation, setSelectedConversation] = useState<Conversation>();
   const conversationListRef = useRef<ConversationListRef>(null);
+  const { alertingIds, allHandoffIds, acknowledge } = useHandoffAlerts();
+
+  const handleSelectConversation = (conversation: Conversation) => {
+    setSelectedConversation(conversation);
+    acknowledge(conversation.id);
+  };
 
   const handleTemplateSent = async (phoneNumber: string) => {
     // Refresh the conversation list and get the updated conversations
@@ -50,9 +57,10 @@ export default function Home() {
       <div className="flex flex-1 overflow-hidden">
       <ConversationList
         ref={conversationListRef}
-        onSelectConversation={setSelectedConversation}
+        onSelectConversation={handleSelectConversation}
         selectedConversationId={selectedConversation?.id}
         isHidden={!!selectedConversation}
+        handoffIds={alertingIds}
       />
       <MessageView
         conversationId={selectedConversation?.id}
@@ -61,6 +69,7 @@ export default function Home() {
         onTemplateSent={handleTemplateSent}
         onBack={handleBackToList}
         isVisible={!!selectedConversation}
+        isHandoff={selectedConversation ? allHandoffIds.has(selectedConversation.id) : false}
       />
       </div>
     </div>

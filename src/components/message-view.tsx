@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { format, isValid, isToday, isYesterday, differenceInHours } from 'date-fns';
-import { RefreshCw, Paperclip, Send, X, AlertCircle, MessageSquare, XCircle, ListTree, ArrowLeft } from 'lucide-react';
+import { RefreshCw, Paperclip, Send, X, AlertCircle, MessageSquare, XCircle, ListTree, ArrowLeft, UserRound } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MediaMessage } from '@/components/media-message';
 import { TemplateSelectorDialog } from '@/components/template-selector-dialog';
@@ -119,9 +119,10 @@ type Props = {
   onTemplateSent?: (phoneNumber: string) => Promise<void>;
   onBack?: () => void;
   isVisible?: boolean;
+  isHandoff?: boolean;
 };
 
-export function MessageView({ conversationId, phoneNumber, contactName, onTemplateSent, onBack, isVisible = false }: Props) {
+export function MessageView({ conversationId, phoneNumber, contactName, onTemplateSent, onBack, isVisible = false, isHandoff = false }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -391,6 +392,15 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
           </Button>
         </div>
       </div>
+
+      {isHandoff && (
+        <div className="bg-[#fff8e1] border-b border-[#f59e0b] px-4 py-2 flex items-center gap-2">
+          <UserRound className="h-4 w-4 text-[#f59e0b] flex-shrink-0" />
+          <span className="text-sm text-[#92400e]">
+            This customer requested a human agent
+          </span>
+        </div>
+      )}
 
       <ScrollArea ref={messagesContainerRef} className="flex-1 h-0 p-4">
         <div className="max-w-[900px] mx-auto">
