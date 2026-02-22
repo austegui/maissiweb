@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { format, isValid, isToday, isYesterday, differenceInHours } from 'date-fns';
-import { RefreshCw, Paperclip, Send, X, AlertCircle, MessageSquare, XCircle, ListTree, ArrowLeft, UserRound } from 'lucide-react';
+import { RefreshCw, Paperclip, Send, X, AlertCircle, MessageSquare, XCircle, ListTree, ArrowLeft, UserRound, ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MediaMessage } from '@/components/media-message';
 import { TemplateSelectorDialog } from '@/components/template-selector-dialog';
@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import * as Select from '@radix-ui/react-select';
 import type { MediaData } from '@kapso/whatsapp-cloud-api';
 
 type Message = {
@@ -39,6 +40,18 @@ type Message = {
     mediaId?: string;
     caption?: string;
   };
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  abierto: 'Abierto',
+  pendiente: 'Pendiente',
+  resuelto: 'Resuelto',
+};
+
+const STATUS_DOT: Record<string, string> = {
+  abierto: 'bg-green-500',
+  pendiente: 'bg-amber-500',
+  resuelto: 'bg-gray-400',
 };
 
 function formatMessageTime(timestamp: string): string {
@@ -113,17 +126,67 @@ function getDisabledInputMessage(messages: Message[]): string {
   return "Last message was over 24 hours ago. Send a template message or wait for the user to message you.";
 }
 
+type StatusSelectProps = {
+  value: string;
+  onChange: (newStatus: string) => void;
+};
+
+function StatusSelect({ value, onChange }: StatusSelectProps) {
+  const dotClass = STATUS_DOT[value] ?? 'bg-gray-400';
+  const label = STATUS_LABELS[value] ?? value;
+
+  return (
+    <Select.Root value={value} onValueChange={onChange}>
+      <Select.Trigger
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-sm border border-[#d1d7db] bg-white hover:bg-[#f0f2f5] transition-colors outline-none data-[state=open]:ring-2 data-[state=open]:ring-[#00a884]"
+        aria-label="Estado de conversacion"
+      >
+        <span className={cn("h-2 w-2 rounded-full flex-shrink-0", dotClass)} />
+        <Select.Value>{label}</Select.Value>
+        <Select.Icon>
+          <ChevronDown className="h-3.5 w-3.5 text-[#667781]" />
+        </Select.Icon>
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Content
+          className="bg-white border border-[#d1d7db] rounded-lg shadow-lg z-50 overflow-hidden"
+          position="popper"
+          sideOffset={4}
+        >
+          <Select.Viewport>
+            {(['abierto', 'pendiente', 'resuelto'] as const).map((status) => (
+              <Select.Item
+                key={status}
+                value={status}
+                className="flex items-center gap-2 px-3 py-2 text-sm text-[#111b21] cursor-pointer hover:bg-[#f0f2f5] outline-none data-[highlighted]:bg-[#f0f2f5] select-none"
+              >
+                <span className={cn("h-2 w-2 rounded-full flex-shrink-0", STATUS_DOT[status])} />
+                <Select.ItemText>{STATUS_LABELS[status]}</Select.ItemText>
+                <Select.ItemIndicator className="ml-auto">
+                  <Check className="h-3 w-3 text-[#00a884]" />
+                </Select.ItemIndicator>
+              </Select.Item>
+            ))}
+          </Select.Viewport>
+        </Select.Content>
+      </Select.Portal>
+    </Select.Root>
+  );
+}
+
 type Props = {
   conversationId?: string;
   phoneNumber?: string;
   contactName?: string;
+  convStatus?: string;
+  onStatusChange?: (conversationId: string, newStatus: string) => void;
   onTemplateSent?: (phoneNumber: string) => Promise<void>;
   onBack?: () => void;
   isVisible?: boolean;
   isHandoff?: boolean;
 };
 
-export function MessageView({ conversationId, phoneNumber, contactName, onTemplateSent, onBack, isVisible = false, isHandoff = false }: Props) {
+export function MessageView({ conversationId, phoneNumber, contactName, convStatus, onStatusChange, onTemplateSent, onBack, isVisible = false, isHandoff = false }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -137,12 +200,24 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
   const [isNearBottom, setIsNearBottom] = useState(true);
   const [showCannedPicker, setShowCannedPicker] = useState(false);
   const [cannedQuery, setCannedQuery] = useState('');
+  const [localStatus, setLocalStatus] = useState(convStatus ?? 'abierto');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previousMessageCountRef = useRef(0);
   const lastMessageIdRef = useRef<string | null>(null);
   const lastMessageStatusRef = useRef<string | undefined>(undefined);
+  const autoReopenedRef = useRef<string | null>(null);
+
+  // Sync localStatus when convStatus prop changes (e.g., switching conversations)
+  useEffect(() => {
+    setLocalStatus(convStatus ?? 'abierto');
+  }, [convStatus]);
+
+  // Reset auto-reopen tracking when conversation changes
+  useEffect(() => {
+    autoReopenedRef.current = null;
+  }, [conversationId]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -189,13 +264,30 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
       previousMessageCountRef.current = sortedMessages.length;
       lastMessageIdRef.current = lastNew?.id ?? null;
       lastMessageStatusRef.current = lastNew?.status;
+
+      // Auto-reopen: if conversation is 'resuelto' and last message is inbound, reopen to 'abierto'
+      const lastMsg = sortedMessages[sortedMessages.length - 1];
+      if (
+        localStatus === 'resuelto' &&
+        lastMsg?.direction === 'inbound' &&
+        autoReopenedRef.current !== conversationId
+      ) {
+        autoReopenedRef.current = conversationId;
+        fetch(`/api/conversations/${conversationId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'abierto' })
+        }).catch(err => console.error('Auto-reopen failed:', err));
+        setLocalStatus('abierto');
+        onStatusChange?.(conversationId!, 'abierto');
+      }
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [conversationId]);
+  }, [conversationId, localStatus, onStatusChange]);
 
   useEffect(() => {
     if (conversationId) {
@@ -247,6 +339,25 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
     enabled: !!conversationId,
     onPoll: fetchMessages
   });
+
+  const handleStatusChange = async (newStatus: string) => {
+    setLocalStatus(newStatus); // optimistic update
+    // Reset auto-reopen ref when user manually sets status to resuelto
+    if (newStatus === 'resuelto') {
+      autoReopenedRef.current = null;
+    }
+    try {
+      await fetch(`/api/conversations/${conversationId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      onStatusChange?.(conversationId!, newStatus);
+    } catch (error) {
+      console.error('Error updating status:', error);
+      setLocalStatus(convStatus ?? 'abierto'); // revert on error
+    }
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -416,15 +527,20 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
               )}
             </div>
           </div>
-          <Button
-            onClick={handleRefresh}
-            disabled={refreshing}
-            variant="ghost"
-            size="icon"
-            className="text-[#667781] hover:bg-[#f0f2f5]"
-          >
-            <RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} />
-          </Button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {conversationId && (
+              <StatusSelect value={localStatus} onChange={handleStatusChange} />
+            )}
+            <Button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              variant="ghost"
+              size="icon"
+              className="text-[#667781] hover:bg-[#f0f2f5]"
+            >
+              <RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} />
+            </Button>
+          </div>
         </div>
       </div>
 
