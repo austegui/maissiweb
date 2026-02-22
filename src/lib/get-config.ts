@@ -13,31 +13,48 @@ const ENV_FALLBACKS: Record<ConfigKey, string | undefined> = {
  * Resolves a config/credential value from the database (app_settings table)
  * with a fallback to process.env if no DB row exists.
  *
- * DB values take precedence over env vars, enabling admin-configurable credentials
- * without redeployment (Phase 3+). Phase 4 will wire Kapso routes to call this.
- *
- * Uses .maybeSingle() so missing rows return null (not an error).
- * Throws only if the key is absent from both DB and env (truly unconfigured).
+ * Delegates to getConfigs() internally for backward compatibility.
+ * Use getConfigs() directly for batch queries (single DB round-trip).
  */
 export async function getConfig(key: ConfigKey): Promise<string> {
+  const configs = await getConfigs(key)
+  return configs[key]
+}
+
+/**
+ * Batch-resolves multiple config keys in a single DB round-trip.
+ * Uses .in() filter to fetch all requested keys at once.
+ *
+ * DB values take precedence over env vars, enabling admin-configurable credentials
+ * without redeployment. Throws only if a key is absent from both DB and env.
+ */
+export async function getConfigs<K extends ConfigKey>(
+  ...keys: K[]
+): Promise<Record<K, string>> {
   const supabase = await createClient()
 
   const { data } = await supabase
     .from('app_settings')
-    .select('value')
-    .eq('key', key)
-    .maybeSingle()
+    .select('key, value')
+    .in('key', keys)
 
-  if (data?.value) {
-    return data.value
+  // Build result map from DB rows
+  const dbValues: Partial<Record<K, string>> = {}
+  for (const row of data ?? []) {
+    if (keys.includes(row.key as K)) {
+      dbValues[row.key as K] = row.value
+    }
   }
 
-  // Fall back to process.env
-  const fallback = ENV_FALLBACKS[key]
-
-  if (fallback !== undefined) {
-    return fallback
+  // Apply env fallbacks for any missing keys, throw if still missing
+  const result = {} as Record<K, string>
+  for (const key of keys) {
+    const value = dbValues[key] ?? ENV_FALLBACKS[key]
+    if (value === undefined) {
+      throw new Error(`Config key "${key}" is not set in DB or environment`)
+    }
+    result[key] = value
   }
 
-  throw new Error(`Config key "${key}" is not set in DB or environment`)
+  return result
 }
