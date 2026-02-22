@@ -6,7 +6,8 @@ import { RefreshCw, Paperclip, Send, X, AlertCircle, MessageSquare, XCircle, Lis
 import { cn } from '@/lib/utils';
 import { MediaMessage } from '@/components/media-message';
 import { TemplateSelectorDialog } from '@/components/template-selector-dialog';
-import { InteractiveMessageDialog } from '@/components/interactive-message-dialog';
+import { InteractiveMessageDialog } from '@/components/interactive-message-dialog'
+import { CannedResponsesPicker } from '@/components/canned-responses-picker';
 import { useAutoPolling } from '@/hooks/use-auto-polling';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -134,6 +135,8 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
   const [showInteractiveDialog, setShowInteractiveDialog] = useState(false);
   const [isNearBottom, setIsNearBottom] = useState(true);
+  const [showCannedPicker, setShowCannedPicker] = useState(false);
+  const [cannedQuery, setCannedQuery] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -271,11 +274,31 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
     }
   };
 
+  const handleMessageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setMessageInput(value);
+    if (value[0] === '/') {
+      setShowCannedPicker(true);
+      setCannedQuery(value.slice(1));
+    } else {
+      setShowCannedPicker(false);
+      setCannedQuery('');
+    }
+  };
+
+  const handleCannedSelect = (body: string) => {
+    setMessageInput(body);
+    setShowCannedPicker(false);
+    setCannedQuery('');
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if ((!messageInput.trim() && !selectedFile) || !phoneNumber || sending) return;
 
+    setShowCannedPicker(false);
+    setCannedQuery('');
     setSending(true);
     try {
       const formData = new FormData();
@@ -589,53 +612,69 @@ export function MessageView({ conversationId, phoneNumber, contactName, onTempla
               </div>
             )}
 
-            <form onSubmit={handleSendMessage} className="p-3 max-w-[900px] mx-auto w-full flex gap-2 items-center">
-              <input
-                ref={fileInputRef}
-                type="file"
-                onChange={handleFileSelect}
-                accept="image/*,video/*,audio/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                className="hidden"
-              />
-              <Button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={sending}
-                variant="ghost"
-                size="icon"
-                className="text-[#667781] hover:bg-[#d1d7db]/30"
-                title="Upload file"
-              >
-                <Paperclip className="h-5 w-5" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() => setShowInteractiveDialog(true)}
-                disabled={sending}
-                size="icon"
-                variant="ghost"
-                className="text-[#667781] hover:text-[#00a884] hover:bg-[#f0f2f5]"
-                title="Send interactive message"
-              >
-                <ListTree className="h-5 w-5" />
-              </Button>
-              <Input
-                type="text"
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                placeholder="Type a message"
-                disabled={sending}
-                className="flex-1 bg-white border-[#d1d7db] focus-visible:ring-[#00a884] rounded-lg"
-              />
-              <Button
-                type="submit"
-                disabled={sending || (!messageInput.trim() && !selectedFile)}
-                size="icon"
-                className="bg-[#00a884] hover:bg-[#008f6f] rounded-full"
-              >
-                <Send className="h-5 w-5" />
-              </Button>
-            </form>
+            <div className="relative">
+              {showCannedPicker && (
+                <CannedResponsesPicker
+                  query={cannedQuery}
+                  onSelect={handleCannedSelect}
+                  onClose={() => { setShowCannedPicker(false); setCannedQuery(''); }}
+                />
+              )}
+              <form onSubmit={handleSendMessage} className="p-3 max-w-[900px] mx-auto w-full flex gap-2 items-center">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileSelect}
+                  accept="image/*,video/*,audio/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={sending}
+                  variant="ghost"
+                  size="icon"
+                  className="text-[#667781] hover:bg-[#d1d7db]/30"
+                  title="Upload file"
+                >
+                  <Paperclip className="h-5 w-5" />
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setShowInteractiveDialog(true)}
+                  disabled={sending}
+                  size="icon"
+                  variant="ghost"
+                  className="text-[#667781] hover:text-[#00a884] hover:bg-[#f0f2f5]"
+                  title="Send interactive message"
+                >
+                  <ListTree className="h-5 w-5" />
+                </Button>
+                <Input
+                  type="text"
+                  value={messageInput}
+                  onChange={handleMessageInputChange}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape' && showCannedPicker) {
+                      e.preventDefault();
+                      setShowCannedPicker(false);
+                      setCannedQuery('');
+                    }
+                  }}
+                  placeholder="Type a message"
+                  disabled={sending}
+                  className="flex-1 bg-white border-[#d1d7db] focus-visible:ring-[#00a884] rounded-lg"
+                />
+                <Button
+                  type="submit"
+                  disabled={sending || (!messageInput.trim() && !selectedFile)}
+                  size="icon"
+                  className="bg-[#00a884] hover:bg-[#008f6f] rounded-full"
+                >
+                  <Send className="h-5 w-5" />
+                </Button>
+              </form>
+            </div>
           </>
         ) : (
           <div className="p-3 max-w-[900px] mx-auto w-full">
