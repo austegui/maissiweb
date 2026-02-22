@@ -307,6 +307,12 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Stable refs for values used in fetchMessages to avoid re-creating the callback
+  const localStatusRef = useRef(localStatus);
+  localStatusRef.current = localStatus;
+  const onStatusChangeRef = useRef(onStatusChange);
+  onStatusChangeRef.current = onStatusChange;
+
   const fetchMessages = useCallback(async () => {
     if (!conversationId) return;
 
@@ -352,7 +358,7 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
       // Auto-reopen: if conversation is 'resuelto' and last message is inbound, reopen to 'abierto'
       const lastMsg = sortedMessages[sortedMessages.length - 1];
       if (
-        localStatus === 'resuelto' &&
+        localStatusRef.current === 'resuelto' &&
         lastMsg?.direction === 'inbound' &&
         autoReopenedRef.current !== conversationId
       ) {
@@ -363,7 +369,7 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
           body: JSON.stringify({ status: 'abierto' })
         }).catch(err => console.error('Auto-reopen failed:', err));
         setLocalStatus('abierto');
-        onStatusChange?.(conversationId!, 'abierto');
+        onStatusChangeRef.current?.(conversationId!, 'abierto');
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -371,7 +377,7 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
       setLoading(false);
       setRefreshing(false);
     }
-  }, [conversationId, localStatus, onStatusChange]);
+  }, [conversationId]);
 
   useEffect(() => {
     if (conversationId) {

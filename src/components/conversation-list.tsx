@@ -129,20 +129,24 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
       const data = await response.json();
       const convs: Conversation[] = data.data || [];
 
-      // Skip setState if data hasn't changed (compare IDs + lastActiveAt)
+      // Skip setState + parent notification if data hasn't changed
+      // Compare IDs, lastActiveAt, and metadata fields to catch Realtime updates
       const prev = conversationsRef.current;
       const changed = convs.length !== prev.length || convs.some((c, i) =>
-        c.id !== prev[i]?.id || c.lastActiveAt !== prev[i]?.lastActiveAt
+        c.id !== prev[i]?.id ||
+        c.lastActiveAt !== prev[i]?.lastActiveAt ||
+        c.convStatus !== prev[i]?.convStatus ||
+        c.assignedAgentId !== prev[i]?.assignedAgentId
       );
 
       if (changed) {
         conversationsRef.current = convs;
         setConversations(convs);
+        const meta = data.agents !== undefined
+          ? { agents: data.agents ?? [], currentUserId: data.currentUserId ?? null }
+          : undefined;
+        onConversationsLoadedRef.current?.(convs, meta);
       }
-      const meta = data.agents !== undefined
-        ? { agents: data.agents ?? [], currentUserId: data.currentUserId ?? null }
-        : undefined;
-      onConversationsLoadedRef.current?.(convs, meta);
     } catch (error) {
       console.error('Error fetching conversations:', error);
       throw error; // Re-throw so polling hook can apply backoff
@@ -179,13 +183,8 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
 
   useImperativeHandle(ref, () => ({
     refresh: async () => {
-      setRefreshing(true);
-      const response = await fetch('/api/conversations');
-      const data = await response.json();
-      const newConversations = data.data || [];
-      setConversations(newConversations);
-      setRefreshing(false);
-      return newConversations;
+      await fetchConversations();
+      return conversationsRef.current;
     },
     selectByPhoneNumber
   }));
