@@ -125,7 +125,14 @@ Plans:
   3. When a customer sends a new message to a Resolved conversation, it automatically reopens to Open
   4. An agent can assign a conversation to a team member, and the assigned name is visible in the conversation list
   5. The conversation list can be filtered by "Mine", "Unassigned", or "All" assignments, and by customer label
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 09-01-PLAN.md -- Create Supabase tables (conversation_metadata, contact_labels, conversation_contact_labels) and RLS policies
+- [ ] 09-02-PLAN.md -- Install Radix packages, create all API routes, enrich conversations endpoint with metadata + labels
+- [ ] 09-03-PLAN.md -- Build admin label management page (CRUD with color picker)
+- [ ] 09-04-PLAN.md -- Add status tabs to conversation list and status dropdown + auto-reopen to message view
+- [ ] 09-05-PLAN.md -- Add assignment dropdown, label picker, initials badges, label pills, and filters
 
 ### Phase 10: Customer Intelligence
 **Goal**: Agents have persistent customer context and can share team knowledge about any conversation, so no information is lost between sessions or team members
@@ -202,7 +209,7 @@ Note: Phases 8, 9, 12, and 14 all depend on Phase 7 but not necessarily on each 
 | 6. Deploy + Verify | v1.0 | 2/2 | Complete | 2026-02-21 |
 | 7. Foundation | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 8. Canned Responses | v2.0 | 3/3 | Complete | 2026-02-22 |
-| 9. Conversation Management | v2.0 | 0/TBD | Not started | - |
+| 9. Conversation Management | v2.0 | 0/5 | Not started | - |
 | 10. Customer Intelligence | v2.0 | 0/TBD | Not started | - |
 | 11. Notifications + Real-Time | v2.0 | 0/TBD | Not started | - |
 | 12. Analytics + Export | v2.0 | 0/TBD | Not started | - |
