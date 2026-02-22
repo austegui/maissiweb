@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 8 (Canned Responses) ready to plan
+**Current focus:** Milestone v2.0 -- Phase 8 (Canned Responses) executing
 
 ## Current Position
 
 Phase: 8 of 14 (Canned Responses)
-Plan: 0 of TBD
-Status: Ready to plan
-Last activity: 2026-02-22 -- Completed Phase 7 (Foundation) -- all 3 plans shipped and verified
+Plan: 02 of 3 complete
+Status: Executing wave 2
+Last activity: 2026-02-22 -- Completed 08-02 (Admin CRUD page for canned responses)
 
-Progress: [################░░░░░░░░░░░░░░] 50% (v1.0 complete, Phase 7 complete)
+Progress: [################░░░░░░░░░░░░░░] 50%+ (v1.0 complete, Phase 7 complete, Phase 8 in progress)
 
 ## Performance Metrics
 
@@ -27,6 +27,8 @@ Progress: [################░░░░░░░░░░░░░░] 50% (v1.0
 - 07-01: 3 min (getConfig batch refactor, 2 tasks, 9 files)
 - 07-02: User-executed SQL (Supabase RBAC setup)
 - 07-03: 3 min (admin route guard via layout.tsx)
+- 08-01: User-executed SQL (canned_responses table + RLS)
+- 08-02: 2 min (admin CRUD page, 2 tasks, 4 files)
 
 ## Accumulated Context
 
@@ -44,6 +46,8 @@ Progress: [################░░░░░░░░░░░░░░] 50% (v1.0
 - [07-01]: settings/route.ts intentionally left unchanged (reads all settings, not specific keys)
 - [07-02]: app_settings RLS already existed from v1.0; user_profiles table + trigger + RLS created via Supabase Dashboard SQL
 - [07-03]: Admin guard implemented as /admin/layout.tsx server component that checks user_profiles.role
+- [08-02]: Inline form view (mode state machine) instead of Radix Dialog for admin CRUD -- simpler and sufficient
+- [08-02]: updateCannedResponse bound via .bind(null, id) -- standard pattern for row-specific Server Actions
 
 ### Pending Todos
 
@@ -55,6 +59,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-22
-Stopped at: Phase 7 complete -- ready to plan Phase 8
+Last session: 2026-02-22T02:28:34Z
+Stopped at: Completed 08-02-PLAN.md -- admin CRUD page for canned responses
 Resume file: None
