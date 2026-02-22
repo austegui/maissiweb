@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 8 (Canned Responses) executing
+**Current focus:** Milestone v2.0 -- Phase 8 (Canned Responses) complete
 
 ## Current Position
 
 Phase: 8 of 14 (Canned Responses)
-Plan: 02 of 3 complete
-Status: Executing wave 2
-Last activity: 2026-02-22 -- Completed 08-02 (Admin CRUD page for canned responses)
+Plan: 03 of 3 complete
+Status: Phase 8 complete
+Last activity: 2026-02-22 -- Completed 08-03 (slash-command picker integrated into message-view)
 
-Progress: [################░░░░░░░░░░░░░░] 50%+ (v1.0 complete, Phase 7 complete, Phase 8 in progress)
+Progress: [####################░░░░░░░░░░] 57% (v1.0 complete, Phase 7 complete, Phase 8 complete)
 
 ## Performance Metrics
 
@@ -29,6 +29,7 @@ Progress: [################░░░░░░░░░░░░░░] 50%+ (v1.
 - 07-03: 3 min (admin route guard via layout.tsx)
 - 08-01: User-executed SQL (canned_responses table + RLS)
 - 08-02: 2 min (admin CRUD page, 2 tasks, 4 files)
+- 08-03: 15 min (slash-command picker: cmdk, API route, message-view integration)
 
 ## Accumulated Context
 
@@ -48,6 +49,9 @@ Progress: [################░░░░░░░░░░░░░░] 50%+ (v1.
 - [07-03]: Admin guard implemented as /admin/layout.tsx server component that checks user_profiles.role
 - [08-02]: Inline form view (mode state machine) instead of Radix Dialog for admin CRUD -- simpler and sufficient
 - [08-02]: updateCannedResponse bound via .bind(null, id) -- standard pattern for row-specific Server Actions
+- [08-03]: cmdk used without its own Input; shouldFilter=false + client-side filtering since message textarea is the search box
+- [08-03]: Slash-command picker uses absolute CSS positioning (not Radix Popover) to avoid focus theft from message input
+- [08-03]: Picker triggers only when '/' is value[0] (first char only), not mid-sentence slashes
 
 ### Pending Todos
 
@@ -59,6 +63,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-22T02:28:34Z
-Stopped at: Completed 08-02-PLAN.md -- admin CRUD page for canned responses
+Last session: 2026-02-22
+Stopped at: Completed 08-03-PLAN.md -- slash-command picker for canned responses
 Resume file: None
