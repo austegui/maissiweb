@@ -143,7 +143,12 @@ Plans:
   2. A contact's full conversation history is accessible from their profile
   3. An agent can add a text note to any conversation, and it appears in a collapsible side panel with the author name and timestamp
   4. Internal notes are never sent to the customer -- they are physically separate from the message-sending code path
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 10-01-PLAN.md -- Create contacts and conversation_notes tables in Supabase (SQL + RLS + backfill)
+- [ ] 10-02-PLAN.md -- Backend API routes for contact profiles (GET/PATCH) and conversation notes (GET/POST)
+- [ ] 10-03-PLAN.md -- Contact panel UI component with editable fields, conversation history, and collapsible notes
 
 ### Phase 11: Notifications + Real-Time
 **Goal**: Agents never miss a new message thanks to sound and browser alerts, and all connected agents see status changes, assignments, and notes appear instantly without refreshing
@@ -210,7 +215,7 @@ Note: Phases 8, 9, 12, and 14 all depend on Phase 7 but not necessarily on each 
 | 7. Foundation | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 8. Canned Responses | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 9. Conversation Management | v2.0 | 5/5 | Complete | 2026-02-22 |
-| 10. Customer Intelligence | v2.0 | 0/TBD | Not started | - |
+| 10. Customer Intelligence | v2.0 | 0/3 | Not started | - |
 | 11. Notifications + Real-Time | v2.0 | 0/TBD | Not started | - |
 | 12. Analytics + Export | v2.0 | 0/TBD | Not started | - |
 | 13. Message Search | v2.0 | 0/TBD | Not started | - |
