@@ -72,7 +72,7 @@ Plans:
 
 - [x] **Phase 7: Foundation** - RBAC, user profiles, and config batch refactor to unblock all subsequent features
 - [x] **Phase 8: Canned Responses** - Quick reply library with slash-command picker for agent productivity
-- [ ] **Phase 9: Conversation Management** - Status tracking, team assignment, and customer labels for workflow control
+- [x] **Phase 9: Conversation Management** - Status tracking, team assignment, and customer labels for workflow control
 - [ ] **Phase 10: Customer Intelligence** - Contact profiles and internal notes for customer context and team knowledge
 - [ ] **Phase 11: Notifications + Real-Time** - Sound alerts for all messages and Supabase Realtime for instant metadata sync
 - [ ] **Phase 12: Analytics + Export** - Operational dashboard and CSV export for business visibility
@@ -128,11 +128,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 09-01-PLAN.md -- Create Supabase tables (conversation_metadata, contact_labels, conversation_contact_labels) and RLS policies
-- [ ] 09-02-PLAN.md -- Install Radix packages, create all API routes, enrich conversations endpoint with metadata + labels
-- [ ] 09-03-PLAN.md -- Build admin label management page (CRUD with color picker)
-- [ ] 09-04-PLAN.md -- Add status tabs to conversation list and status dropdown + auto-reopen to message view
-- [ ] 09-05-PLAN.md -- Add assignment dropdown, label picker, initials badges, label pills, and filters
+- [x] 09-01-PLAN.md -- Create Supabase tables (conversation_metadata, contact_labels, conversation_contact_labels) and RLS policies
+- [x] 09-02-PLAN.md -- Install Radix packages, create all API routes, enrich conversations endpoint with metadata + labels
+- [x] 09-03-PLAN.md -- Build admin label management page (CRUD with color picker)
+- [x] 09-04-PLAN.md -- Add status tabs to conversation list and status dropdown + auto-reopen to message view
+- [x] 09-05-PLAN.md -- Add assignment dropdown, label picker, initials badges, label pills, and filters
 
 ### Phase 10: Customer Intelligence
 **Goal**: Agents have persistent customer context and can share team knowledge about any conversation, so no information is lost between sessions or team members
@@ -209,7 +209,7 @@ Note: Phases 8, 9, 12, and 14 all depend on Phase 7 but not necessarily on each 
 | 6. Deploy + Verify | v1.0 | 2/2 | Complete | 2026-02-21 |
 | 7. Foundation | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 8. Canned Responses | v2.0 | 3/3 | Complete | 2026-02-22 |
-| 9. Conversation Management | v2.0 | 0/5 | Not started | - |
+| 9. Conversation Management | v2.0 | 5/5 | Complete | 2026-02-22 |
 | 10. Customer Intelligence | v2.0 | 0/TBD | Not started | - |
 | 11. Notifications + Real-Time | v2.0 | 0/TBD | Not started | - |
 | 12. Analytics + Export | v2.0 | 0/TBD | Not started | - |

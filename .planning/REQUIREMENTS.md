@@ -27,11 +27,11 @@
 
 ### Conversation Status
 
-- [ ] **STATUS-01**: Each conversation has a status: Open, Pending, or Resolved
-- [ ] **STATUS-02**: Agent can change conversation status via a control in the message view header
-- [ ] **STATUS-03**: Conversation list is filterable by status (tabs or dropdown in sidebar)
-- [ ] **STATUS-04**: When a customer sends a new message to a Resolved conversation, it auto-reopens to Open
-- [ ] **STATUS-05**: Status indicators are visually distinct in the conversation list
+- [x] **STATUS-01**: Each conversation has a status: Open, Pending, or Resolved
+- [x] **STATUS-02**: Agent can change conversation status via a control in the message view header
+- [x] **STATUS-03**: Conversation list is filterable by status (tabs or dropdown in sidebar)
+- [x] **STATUS-04**: When a customer sends a new message to a Resolved conversation, it auto-reopens to Open
+- [x] **STATUS-05**: Status indicators are visually distinct in the conversation list
 
 ### Internal Notes
 
@@ -42,10 +42,10 @@
 
 ### Conversation Assignment
 
-- [ ] **ASSIGN-01**: Admin or agent can assign a conversation to a specific team member
-- [ ] **ASSIGN-02**: Conversation list can be filtered by "Mine", "Unassigned", or "All"
-- [ ] **ASSIGN-03**: Assigned agent name or avatar is visible in the conversation list item
-- [ ] **ASSIGN-04**: Unassigned conversations are visible to all agents by default
+- [x] **ASSIGN-01**: Admin or agent can assign a conversation to a specific team member
+- [x] **ASSIGN-02**: Conversation list can be filtered by "Mine", "Unassigned", or "All"
+- [x] **ASSIGN-03**: Assigned agent name or avatar is visible in the conversation list item
+- [x] **ASSIGN-04**: Unassigned conversations are visible to all agents by default
 
 ### Contact Profiles
 
@@ -56,10 +56,10 @@
 
 ### Customer Labels/Tags
 
-- [ ] **LABEL-01**: Admin can create, edit, and delete colored labels/tags (e.g., VIP, New Client, Balayage)
-- [ ] **LABEL-02**: Agent can attach one or more labels to a contact
-- [ ] **LABEL-03**: Conversation list can be filtered by contact label
-- [ ] **LABEL-04**: Labels are displayed on conversation list items and contact profiles
+- [x] **LABEL-01**: Admin can create, edit, and delete colored labels/tags (e.g., VIP, New Client, Balayage)
+- [x] **LABEL-02**: Agent can attach one or more labels to a contact
+- [x] **LABEL-03**: Conversation list can be filtered by contact label
+- [x] **LABEL-04**: Labels are displayed on conversation list items and contact profiles
 
 ### Message Search
 
