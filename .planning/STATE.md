@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 
 ## Current Position
 
-Phase: 11 of 14 (Notifications & Real-time) -- In progress
-Plan: 2 of 3 -- COMPLETE (11-01, 11-02 done, starting 11-03)
-Status: In progress
-Last activity: 2026-02-22 -- Completed 11-02-PLAN.md (Inbound message alert system)
+Phase: 11 of 14 (Notifications & Real-time) -- COMPLETE
+Plan: 3 of 3 -- COMPLETE (11-01, 11-02, 11-03 all done)
+Status: Phase complete -- ready for Phase 12
+Last activity: 2026-02-22 -- Completed 11-03-PLAN.md (Realtime metadata sync)
 
-Progress: [############################░░] 77% (v1.0 complete, Phases 7-10 complete, 11-01+11-02 done)
+Progress: [#############################░] 80% (v1.0 complete, Phases 7-11 complete)
 
 ## Performance Metrics
 
@@ -24,6 +24,7 @@ Progress: [############################░░] 77% (v1.0 complete, Phases 7-10 c
 - Total execution time: ~65 min
 
 **v2.0:**
+- 11-03: 4 min (Realtime sync hook + inbox integration, 2 tasks, 4 files)
 - 07-01: 3 min (getConfig batch refactor, 2 tasks, 9 files)
 - 07-02: User-executed SQL (Supabase RBAC setup)
 - 07-03: 3 min (admin route guard via layout.tsx)
@@ -90,6 +91,10 @@ Progress: [############################░░] 77% (v1.0 complete, Phases 7-10 c
 - [11-02]: Alert detection uses lastActiveAt change (not message count) -- avoids false triggers on filter changes
 - [11-02]: isBrandNew branch excluded from alerting on first load -- prevents spray of alerts when page first opens
 - [11-02]: Preference API defaults notifications_enabled to true when no user_profiles row exists (new users)
+- [11-03]: Supabase client created lazily (useRef + useEffect) not useMemo -- useMemo runs during SSR prerendering in Next.js 15, causing build crash when NEXT_PUBLIC env vars absent
+- [11-03]: Single Realtime channel with 4 .on() handlers (not 4 separate channels) -- reduces WebSocket connection overhead
+- [11-03]: realtimeConnected === false (strict) so undefined (pre-init) keeps 10s polling, only explicit false triggers 5s fallback
+- [11-03]: useEffect([interval]) added to useAutoPolling to sync interval refs when prop changes externally
 
 ### Pending Todos
 
@@ -102,5 +107,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 11-02-PLAN.md (Inbound message alert system -- ready for 11-03)
+Stopped at: Completed 11-03-PLAN.md (Realtime metadata sync -- Phase 11 complete, ready for Phase 12)
 Resume file: None
