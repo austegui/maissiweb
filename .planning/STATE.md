@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- COMPLETE. All 13 phases done.
+**Current focus:** Milestone v2.0 -- COMPLETE. All 14 phases done (including audit cleanup).
 
 ## Current Position
 

@@ -62,7 +62,7 @@ Plans:
 
 </details>
 
-### v2.0 Commercial-Grade Features (In Progress)
+### v2.0 Commercial-Grade Features (Complete)
 
 **Milestone Goal:** Transform the MVP inbox into a production commercial-level tool with team coordination, efficiency features, and operational visibility.
 
@@ -77,7 +77,7 @@ Plans:
 - [x] **Phase 11: Notifications + Real-Time** - Sound alerts for all messages and Supabase Realtime for instant metadata sync
 - [x] **Phase 12: Analytics + Export** - Operational dashboard and CSV export for business visibility
 - [x] **Phase 13: Error Tracking + User Management** - Global error boundary and admin UI for team member management
-- [ ] **Phase 14: Audit Cleanup** - Fix contact panel bug, hide admin nav from agents, improve nav discoverability
+- [x] **Phase 14: Audit Cleanup** - Fix contact panel bug, hide admin nav from agents, improve nav discoverability
 
 **Backlog (deferred):**
 - **Message Search** - Global search dialog for finding contacts, conversations, and messages (moved from Phase 13)
@@ -215,7 +215,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 14-01-PLAN.md -- Fix contact PATCH response, role-aware nav links, onMessageSent guard
+- [x] 14-01-PLAN.md -- Fix contact PATCH response, role-aware nav links, onMessageSent guard
 
 ### Backlog: Message Search (deferred)
 **Goal**: Any team member can quickly find a contact, conversation, or message from anywhere in the app using a keyboard-driven search dialog
@@ -244,5 +244,5 @@ Note: Phases 8, 9, 12, and 13 all depend on Phase 7 but not necessarily on each 
 | 11. Notifications + Real-Time | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 12. Analytics + Export | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 13. Error Tracking + User Management | v2.0 | 2/2 | Complete | 2026-02-22 |
-| 14. Audit Cleanup | v2.0 | 0/1 | Planned | - |
+| 14. Audit Cleanup | v2.0 | 1/1 | Complete | 2026-02-22 |
 | ~~Message Search~~ | backlog | - | Deferred | - |
