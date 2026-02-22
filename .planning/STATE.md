@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 8 (Canned Responses) complete
+**Current focus:** Milestone v2.0 -- Phase 8 complete, ready to plan Phase 9
 
 ## Current Position
 
-Phase: 8 of 14 (Canned Responses)
-Plan: 03 of 3 complete
-Status: Phase 8 complete
-Last activity: 2026-02-22 -- Completed 08-03 (slash-command picker integrated into message-view)
+Phase: 9 of 14 (Conversation Management)
+Plan: 0 of TBD
+Status: Ready to plan
+Last activity: 2026-02-22 -- Completed Phase 8 (Canned Responses) -- all 3 plans shipped and verified
 
 Progress: [####################░░░░░░░░░░] 57% (v1.0 complete, Phase 7 complete, Phase 8 complete)
 
@@ -64,5 +64,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 08-03-PLAN.md -- slash-command picker for canned responses
+Stopped at: Phase 8 complete -- ready to plan Phase 9
 Resume file: None

@@ -19,11 +19,11 @@
 
 ### Canned Responses
 
-- [ ] **CANNED-01**: Team can create, edit, and delete saved text responses with a title and shortcut
-- [ ] **CANNED-02**: Typing `/` in the message input shows a filterable dropdown of canned responses
-- [ ] **CANNED-03**: Selecting a canned response inserts its text into the message input
-- [ ] **CANNED-04**: Canned responses are team-shared (visible to all agents)
-- [ ] **CANNED-05**: Admin page or section for managing the canned responses library
+- [x] **CANNED-01**: Team can create, edit, and delete saved text responses with a title and shortcut
+- [x] **CANNED-02**: Typing `/` in the message input shows a filterable dropdown of canned responses
+- [x] **CANNED-03**: Selecting a canned response inserts its text into the message input
+- [x] **CANNED-04**: Canned responses are team-shared (visible to all agents)
+- [x] **CANNED-05**: Admin page or section for managing the canned responses library
 
 ### Conversation Status
 
@@ -153,11 +153,11 @@
 | RBAC-03 | Phase 7 | Complete |
 | RBAC-04 | Phase 7 | Complete |
 | RBAC-05 | Phase 7 | Complete |
-| CANNED-01 | Phase 8 | Pending |
-| CANNED-02 | Phase 8 | Pending |
-| CANNED-03 | Phase 8 | Pending |
-| CANNED-04 | Phase 8 | Pending |
-| CANNED-05 | Phase 8 | Pending |
+| CANNED-01 | Phase 8 | Complete |
+| CANNED-02 | Phase 8 | Complete |
+| CANNED-03 | Phase 8 | Complete |
+| CANNED-04 | Phase 8 | Complete |
+| CANNED-05 | Phase 8 | Complete |
 | STATUS-01 | Phase 9 | Pending |
 | STATUS-02 | Phase 9 | Pending |
 | STATUS-03 | Phase 9 | Pending |
@@ -212,4 +212,4 @@
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-21 after v2.0 roadmap creation*
+*Last updated: 2026-02-22 after Phase 8 completion*
