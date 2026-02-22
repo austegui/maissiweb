@@ -188,7 +188,7 @@ export function ContactPanel({
           label="Nombre"
           value={contact?.display_name ?? null}
           placeholder="Agregar nombre..."
-          onSave={(v) => handleSaveField('display_name', v)}
+          onSave={(v) => handleSaveField('displayName', v)}
         />
         <EditableField
           label="Email"

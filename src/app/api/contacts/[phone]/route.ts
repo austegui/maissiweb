@@ -81,5 +81,15 @@ export async function PATCH(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true });
+  const { data: updatedContact, error: fetchError } = await supabase
+    .from('contacts')
+    .select('phone_number, display_name, email, notes, whatsapp_name, created_at')
+    .eq('phone_number', phone)
+    .single();
+
+  if (fetchError) {
+    return NextResponse.json({ error: fetchError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ data: updatedContact });
 }

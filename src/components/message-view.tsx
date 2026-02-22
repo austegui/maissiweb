@@ -555,12 +555,14 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
         formData.append('file', selectedFile);
       }
 
-      await fetch('/api/messages/send', {
+      const response = await fetch('/api/messages/send', {
         method: 'POST',
         body: formData
       });
 
-      onMessageSent?.();
+      if (response.ok) {
+        onMessageSent?.();
+      }
       setMessageInput('');
       handleRemoveFile();
       await fetchMessages();
