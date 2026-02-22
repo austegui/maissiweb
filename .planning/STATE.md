@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 10 COMPLETE, Phase 11 next
+**Current focus:** Milestone v2.0 -- Phase 11 in progress (Notifications & Real-time)
 
 ## Current Position
 
-Phase: 10 of 14 (Customer Intelligence) -- COMPLETE
-Plan: 3 of 3 -- COMPLETE
-Status: Phase complete
-Last activity: 2026-02-22 -- Completed 10-03-PLAN.md (ContactPanel UI component)
+Phase: 11 of 14 (Notifications & Real-time) -- In progress
+Plan: 1 of 3 -- COMPLETE (11-01 done, starting 11-02)
+Status: In progress
+Last activity: 2026-02-22 -- Completed 11-01-PLAN.md (Realtime publication setup -- database SQL only)
 
-Progress: [##########################░░░░] 71% (v1.0 complete, Phases 7-10 complete)
+Progress: [###########################░░░] 74% (v1.0 complete, Phases 7-10 complete, 11-01 done)
 
 ## Performance Metrics
 
@@ -38,6 +38,7 @@ Progress: [##########################░░░░] 71% (v1.0 complete, Phases 7-
 - 10-01: User-executed SQL (contacts + conversation_notes tables)
 - 10-02: 4 min (contact profile API GET+PATCH, conversation notes API GET+POST, 2 files)
 - 10-03: 2 min (ContactPanel UI: editable contact fields, conversation history, collapsible notes, 3 files)
+- 11-01: User-executed SQL (Realtime publication for 4 tables + notifications_enabled column on user_profiles)
 
 ## Accumulated Context
 
@@ -82,6 +83,8 @@ Progress: [##########################░░░░] 71% (v1.0 complete, Phases 7-
 - [10-03]: conversations array stored in page.tsx state for ContactPanel history filtering by phoneNumber
 - [10-03]: Yellow tint (#fffde7) for internal notes distinguishes team notes from customer messages visually
 - [10-03]: EditableField uses onBlur-to-save pattern -- no save button per field, consistent with CRM UX conventions
+- [11-01]: Realtime publication enabled via ALTER PUBLICATION SQL (not Dashboard UI toggle) -- atomic, covers all 4 tables in one block
+- [11-01]: notifications_enabled uses ADD COLUMN IF NOT EXISTS -- idempotent SQL, safe to re-run without error
 
 ### Pending Todos
 
@@ -94,5 +97,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 10-03-PLAN.md (ContactPanel UI -- Phase 10 COMPLETE)
+Stopped at: Completed 11-01-PLAN.md (Realtime publication setup -- ready for 11-02)
 Resume file: None
