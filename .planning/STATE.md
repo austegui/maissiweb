@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 12 complete (Analytics + Export)
+**Current focus:** Milestone v2.0 -- Phase 12 complete (Analytics + Export), Message Search deferred to backlog
 
 ## Current Position
 
-Phase: 12 of 14 (Analytics + Export) -- COMPLETE
+Phase: 12 of 13 (Analytics + Export) -- COMPLETE
 Plan: 3 of 3 -- COMPLETE (12-01, 12-02, 12-03 all done)
-Status: Phase complete -- ready for Phase 13
-Last activity: 2026-02-22 -- Completed 12-03-PLAN.md (Analytics dashboard UI)
+Status: Phase complete -- ready for Phase 13 (Error Tracking + User Management)
+Last activity: 2026-02-22 -- Phase 13 (Message Search) deferred to backlog, old Phase 14 renumbered to 13
 
-Progress: [##############################░░] 87% (v1.0 complete, Phases 7-12 complete)
+Progress: [##############################░░] 92% (v1.0 complete, Phases 7-12 complete, 1 phase remaining)
 
 ## Performance Metrics
 
@@ -115,7 +115,7 @@ None.
 
 ### Blockers/Concerns
 
-- Kapso API search capability is UNVERIFIED -- affects Phase 13 scope (message content search)
+None.
 
 ## Session Continuity
 

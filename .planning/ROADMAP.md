@@ -3,7 +3,7 @@
 ## Milestones
 
 - v1.0 MVP -- Phases 1-6 (shipped 2026-02-21)
-- v2.0 Commercial-Grade Features -- Phases 7-14 (in progress)
+- v2.0 Commercial-Grade Features -- Phases 7-13 (in progress)
 
 ## Phases
 
@@ -76,8 +76,10 @@ Plans:
 - [x] **Phase 10: Customer Intelligence** - Contact profiles and internal notes for customer context and team knowledge
 - [x] **Phase 11: Notifications + Real-Time** - Sound alerts for all messages and Supabase Realtime for instant metadata sync
 - [x] **Phase 12: Analytics + Export** - Operational dashboard and CSV export for business visibility
-- [ ] **Phase 13: Message Search** - Global search dialog for finding contacts, conversations, and messages
-- [ ] **Phase 14: Error Tracking + User Management** - Sentry integration and admin UI for team member management
+- [ ] **Phase 13: Error Tracking + User Management** - Sentry integration and admin UI for team member management
+
+**Backlog (deferred):**
+- **Message Search** - Global search dialog for finding contacts, conversations, and messages (moved from Phase 13)
 
 ## Phase Details
 
@@ -184,18 +186,7 @@ Plans:
 - [x] 12-02-PLAN.md -- Analytics metrics API route and CSV export API route with admin auth guards
 - [x] 12-03-PLAN.md -- Analytics dashboard UI with Recharts charts, KPI cards, agent table, and CSV export
 
-### Phase 13: Message Search
-**Goal**: Any team member can quickly find a contact, conversation, or message from anywhere in the app using a keyboard-driven search dialog
-**Depends on**: Phase 10
-**Requirements**: SEARCH-01, SEARCH-02, SEARCH-03, SEARCH-04
-**Success Criteria** (what must be TRUE):
-  1. Pressing Cmd+K (or clicking a search icon) opens a global search dialog from any page
-  2. Searching finds contacts by name and phone number
-  3. Searching finds conversations by contact name, phone number, or label
-  4. If Kapso API supports message content search, results include matching messages; if not, the UI gracefully shows only contact/conversation results
-**Plans**: TBD
-
-### Phase 14: Error Tracking + User Management
+### Phase 13: Error Tracking + User Management
 **Goal**: Production errors are automatically captured and reported for debugging, and the admin can manage team members directly from the app without touching the Supabase dashboard
 **Depends on**: Phase 7
 **Requirements**: SENTRY-01, SENTRY-02, SENTRY-03, USRMGMT-01, USRMGMT-02, USRMGMT-03, USRMGMT-04
@@ -207,12 +198,17 @@ Plans:
   5. The user management page shows all team members with their current role and status
 **Plans**: TBD
 
+### Backlog: Message Search (deferred)
+**Goal**: Any team member can quickly find a contact, conversation, or message from anywhere in the app using a keyboard-driven search dialog
+**Requirements**: SEARCH-01, SEARCH-02, SEARCH-03, SEARCH-04
+**Status**: Deferred — revisit in future milestone
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14
+Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13
 
-Note: Phases 8, 9, 12, and 14 all depend on Phase 7 but not necessarily on each other. The linear order above is the recommended sequence based on research (dependency chains and productivity ROI). Phase 12 depends on Phase 9 data accumulation. Phase 13 depends on Phase 10 contact data.
+Note: Phases 8, 9, 12, and 13 all depend on Phase 7 but not necessarily on each other. The linear order above is the recommended sequence based on research (dependency chains and productivity ROI). Phase 12 depends on Phase 9 data accumulation. Message Search deferred to backlog.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -228,5 +224,5 @@ Note: Phases 8, 9, 12, and 14 all depend on Phase 7 but not necessarily on each 
 | 10. Customer Intelligence | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 11. Notifications + Real-Time | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 12. Analytics + Export | v2.0 | 3/3 | Complete | 2026-02-22 |
-| 13. Message Search | v2.0 | 0/TBD | Not started | - |
-| 14. Error Tracking + User Management | v2.0 | 0/TBD | Not started | - |
+| 13. Error Tracking + User Management | v2.0 | 0/TBD | Not started | - |
+| ~~Message Search~~ | backlog | - | Deferred | - |
