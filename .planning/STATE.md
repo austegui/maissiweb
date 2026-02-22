@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 12 complete (Analytics + Export), Message Search deferred to backlog
+**Current focus:** Milestone v2.0 -- Phase 13 in progress (Error Tracking + User Management), Plan 01 complete
 
 ## Current Position
 
-Phase: 12 of 13 (Analytics + Export) -- COMPLETE
-Plan: 3 of 3 -- COMPLETE (12-01, 12-02, 12-03 all done)
-Status: Phase complete -- ready for Phase 13 (Error Tracking + User Management)
-Last activity: 2026-02-22 -- Phase 13 (Message Search) deferred to backlog, old Phase 14 renumbered to 13
+Phase: 13 of 13 (Error Tracking + User Management) -- In progress
+Plan: 1 of 2 -- COMPLETE (13-01 done)
+Status: In progress -- Plan 02 (user management) ready to execute
+Last activity: 2026-02-22 -- Completed 13-01 (global error page + admin client)
 
-Progress: [##############################░░] 92% (v1.0 complete, Phases 7-12 complete, 1 phase remaining)
+Progress: [###############################░] 96% (v1.0 complete, Phases 7-12 complete, Phase 13 plan 1/2 done)
 
 ## Performance Metrics
 
@@ -44,6 +44,7 @@ Progress: [##############################░░] 92% (v1.0 complete, Phases 7-12
 - 12-01: User-executed SQL (get_agent_stats + get_conversation_volume_by_day RPC functions)
 - 12-02: 2 min (analytics JSON API + CSV export API, 2 tasks, 2 files)
 - 12-03: 4 min (analytics dashboard UI: Recharts charts, KPI cards, agent table, CSV export, 2 tasks, 4 files)
+- 13-01: 1 min (global error page + Supabase admin client factory, 2 tasks, 2 files)
 
 ## Accumulated Context
 
@@ -108,6 +109,11 @@ Progress: [##############################░░] 92% (v1.0 complete, Phases 7-12
 - [12-03]: ResponsiveContainer uses fixed pixel height={300} to prevent ResizeObserver infinite loop
 - [12-03]: Cancelled fetch pattern in useEffect prevents stale state updates on rapid preset switching
 - [12-03]: Recharts 3.7.0 installed -- React 19 peer dep officially supported
+- [13-01]: Inline styles only in global-error.tsx -- Tailwind/CSS vars unavailable when root layout is bypassed by error boundary
+- [13-01]: ASCII-safe Spanish text in error page (no accent chars) -- avoids encoding issues in crash scenario
+- [13-01]: admin.ts uses @supabase/supabase-js (not @supabase/ssr) -- service role key is static, no cookie sessions needed
+- [13-01]: SUPABASE_SERVICE_ROLE_KEY has no NEXT_PUBLIC_ prefix -- server-only, never exposed to browser
+- [13-01]: createAdminClient() auth options: persistSession/autoRefreshToken/detectSessionInUrl all false -- stateless server-side client
 
 ### Pending Todos
 
@@ -119,6 +125,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-22
-Stopped at: Completed Phase 12 (Analytics + Export -- all 3 plans done, verified, ready for Phase 13)
+Last session: 2026-02-22T19:23:24Z
+Stopped at: Completed 13-01-PLAN.md (global error page + admin client)
 Resume file: None
