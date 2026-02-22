@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 13 in progress (Error Tracking + User Management), Plan 01 complete
+**Current focus:** Milestone v2.0 -- COMPLETE. All 13 phases done.
 
 ## Current Position
 
-Phase: 13 of 13 (Error Tracking + User Management) -- In progress
-Plan: 1 of 2 -- COMPLETE (13-01 done)
-Status: In progress -- Plan 02 (user management) ready to execute
-Last activity: 2026-02-22 -- Completed 13-01 (global error page + admin client)
+Phase: 13 of 13 (Error Tracking + User Management) -- COMPLETE
+Plan: 2 of 2 -- COMPLETE (13-02 done)
+Status: ALL PLANS COMPLETE -- v2.0 milestone fully shipped
+Last activity: 2026-02-22 -- Completed 13-02 (user management CRUD at /admin/users)
 
-Progress: [###############################░] 96% (v1.0 complete, Phases 7-12 complete, Phase 13 plan 1/2 done)
+Progress: [████████████████████████████████] 100% (v1.0 complete, Phases 7-13 complete, all plans done)
 
 ## Performance Metrics
 
@@ -45,6 +45,7 @@ Progress: [###############################░] 96% (v1.0 complete, Phases 7-12 c
 - 12-02: 2 min (analytics JSON API + CSV export API, 2 tasks, 2 files)
 - 12-03: 4 min (analytics dashboard UI: Recharts charts, KPI cards, agent table, CSV export, 2 tasks, 4 files)
 - 13-01: 1 min (global error page + Supabase admin client factory, 2 tasks, 2 files)
+- 13-02: 2 min (user management CRUD: server actions + page + client component + settings link, 2 tasks, 4 files)
 
 ## Accumulated Context
 
@@ -114,6 +115,10 @@ Progress: [###############################░] 96% (v1.0 complete, Phases 7-12 c
 - [13-01]: admin.ts uses @supabase/supabase-js (not @supabase/ssr) -- service role key is static, no cookie sessions needed
 - [13-01]: SUPABASE_SERVICE_ROLE_KEY has no NEXT_PUBLIC_ prefix -- server-only, never exposed to browser
 - [13-01]: createAdminClient() auth options: persistSession/autoRefreshToken/detectSessionInUrl all false -- stateless server-side client
+- [13-02]: ban_duration='876000h' for deactivation, 'none' for reactivation -- Supabase auth.admin pattern, no data deletion
+- [13-02]: upsert user_profiles after createUser to handle DB trigger race condition -- profile may not exist yet
+- [13-02]: window.confirm() for deactivation confirmation -- admin-only page, simpler than inline confirm state
+- [13-02]: rowLoading[userId] state pattern for per-row loading in tables without full re-render
 
 ### Pending Todos
 
@@ -125,6 +130,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-22T19:23:24Z
-Stopped at: Completed 13-01-PLAN.md (global error page + admin client)
+Last session: 2026-02-22T19:28:42Z
+Stopped at: Completed 13-02-PLAN.md (user management CRUD) -- ALL PLANS COMPLETE
 Resume file: None
