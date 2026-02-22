@@ -108,7 +108,12 @@ Plans:
   3. Selecting a canned response from the dropdown inserts its full text into the message input ready to send
   4. All agents see the same shared library of canned responses
   5. An admin can edit or delete any existing canned response
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 08-01-PLAN.md -- Create canned_responses table and RLS policies in Supabase
+- [ ] 08-02-PLAN.md -- Build admin CRUD page for managing canned responses
+- [ ] 08-03-PLAN.md -- Add slash-command picker to message input with cmdk
 
 ### Phase 9: Conversation Management
 **Goal**: The inbox functions as a ticket system where conversations have a lifecycle status, can be assigned to specific agents, and can be categorized with labels for organized workflow
@@ -196,7 +201,7 @@ Note: Phases 8, 9, 12, and 14 all depend on Phase 7 but not necessarily on each 
 | 5. Branding | v1.0 | 1/1 | Complete | 2026-02-18 |
 | 6. Deploy + Verify | v1.0 | 2/2 | Complete | 2026-02-21 |
 | 7. Foundation | v2.0 | 3/3 | Complete | 2026-02-22 |
-| 8. Canned Responses | v2.0 | 0/TBD | Not started | - |
+| 8. Canned Responses | v2.0 | 0/3 | Not started | - |
 | 9. Conversation Management | v2.0 | 0/TBD | Not started | - |
 | 10. Customer Intelligence | v2.0 | 0/TBD | Not started | - |
 | 11. Notifications + Real-Time | v2.0 | 0/TBD | Not started | - |
