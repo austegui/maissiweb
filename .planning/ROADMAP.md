@@ -160,7 +160,12 @@ Plans:
   3. A browser notification appears for new messages when the inbox tab is not focused
   4. When one agent changes a conversation's status or assignment, all other connected agents see the update appear without refreshing
   5. If the real-time connection drops, it automatically reconnects
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 11-01-PLAN.md -- Enable Supabase Realtime publication for metadata tables + add notifications_enabled column
+- [ ] 11-02-PLAN.md -- Message alerts hook (chime + browser notifications), notification toggle, preferences API
+- [ ] 11-03-PLAN.md -- Supabase Realtime sync hook with reconnection, polling fallback, connection indicator
 
 ### Phase 12: Analytics + Export
 **Goal**: The admin has operational visibility into team performance through charts and metrics, and can export conversation data for record-keeping
