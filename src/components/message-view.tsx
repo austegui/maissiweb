@@ -249,9 +249,10 @@ type Props = {
   onLabelsChange?: (conversationId: string, labels: { id: string; name: string; color: string }[]) => void;
   onTogglePanel?: () => void;
   isPanelOpen?: boolean;
+  onMessageSent?: () => void;
 };
 
-export function MessageView({ conversationId, phoneNumber, contactName, convStatus, onStatusChange, onTemplateSent, onBack, isVisible = false, isHandoff = false, agents, assignedAgentId, onAssignmentChange, allLabels, contactLabels, onLabelsChange, onTogglePanel, isPanelOpen }: Props) {
+export function MessageView({ conversationId, phoneNumber, contactName, convStatus, onStatusChange, onTemplateSent, onBack, isVisible = false, isHandoff = false, agents, assignedAgentId, onAssignmentChange, allLabels, contactLabels, onLabelsChange, onTogglePanel, isPanelOpen, onMessageSent }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -553,6 +554,7 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
         body: formData
       });
 
+      onMessageSent?.();
       setMessageInput('');
       handleRemoveFile();
       await fetchMessages();

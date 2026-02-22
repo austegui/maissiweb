@@ -6,6 +6,8 @@ import { MessageView } from '@/components/message-view';
 import { ContactPanel } from '@/components/contact-panel';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { useHandoffAlerts } from '@/hooks/use-handoff-alerts';
+import { useMessageAlerts } from '@/hooks/use-message-alerts';
+import { NotificationToggle } from '@/components/notification-toggle';
 import { logout } from '@/app/login/actions';
 
 type Conversation = {
@@ -29,8 +31,25 @@ export default function Home() {
   const [currentUserId, setCurrentUserId] = useState<string | undefined>();
   const [showContactPanel, setShowContactPanel] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const conversationListRef = useRef<ConversationListRef>(null);
   const { alertingIds, allHandoffIds, acknowledge, onConversationsUpdated } = useHandoffAlerts();
+  const { onConversationsUpdated: onMessageAlert, markSentMessage } = useMessageAlerts({
+    notificationsEnabled,
+    currentUserId,
+  });
+
+  // Fetch notification preference on mount
+  useEffect(() => {
+    fetch('/api/user/preferences')
+      .then((r) => r.json())
+      .then((data) => {
+        if (typeof data.notifications_enabled === 'boolean') {
+          setNotificationsEnabled(data.notifications_enabled);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   // Fetch all labels once on mount for the label filter dropdown
   useEffect(() => {
@@ -40,6 +59,19 @@ export default function Home() {
       .catch(console.error);
   }, []);
 
+  const handleNotificationToggle = (value: boolean) => {
+    setNotificationsEnabled(value);
+    fetch('/api/user/preferences', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notifications_enabled: value }),
+    }).catch((err) => {
+      console.error('Failed to save notification preference:', err);
+      // Revert on error
+      setNotificationsEnabled(!value);
+    });
+  };
+
   const handleSelectConversation = (conversation: Conversation) => {
     setSelectedConversation(conversation);
     acknowledge(conversation.id);
@@ -47,6 +79,7 @@ export default function Home() {
 
   const handleConversationsLoaded = (convs: Conversation[], meta?: { agents: { id: string; displayName: string }[]; currentUserId: string | null }) => {
     onConversationsUpdated(convs);
+    onMessageAlert(convs);
     setConversations(convs);
     if (meta?.agents) setAgents(meta.agents);
     if (meta?.currentUserId) setCurrentUserId(meta.currentUserId);
@@ -104,6 +137,10 @@ export default function Home() {
           <a href="/admin/settings" className="text-xs text-gray-500 hover:text-gray-700">
             Settings
           </a>
+          <NotificationToggle
+            enabled={notificationsEnabled}
+            onToggle={handleNotificationToggle}
+          />
           <form action={logout}>
             <button type="submit" className="text-xs text-gray-500 hover:text-gray-700">
               Sign out
@@ -147,6 +184,7 @@ export default function Home() {
         onLabelsChange={handleLabelsChange}
         onTogglePanel={() => setShowContactPanel(p => !p)}
         isPanelOpen={showContactPanel}
+        onMessageSent={markSentMessage}
       />
       {showContactPanel && selectedConversation && (
         <ContactPanel
