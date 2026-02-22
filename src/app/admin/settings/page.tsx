@@ -21,6 +21,11 @@ export default async function SettingsPage() {
         <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
           &larr; Back to inbox
         </Link>
+        <div className="mt-2">
+          <Link href="/admin/users" className="text-sm text-[#00a884] hover:underline">
+            Gestion de miembros &rarr;
+          </Link>
+        </div>
       </div>
       <SettingsForm
         kapsoApiKey={settings['KAPSO_API_KEY'] ?? ''}
