@@ -77,10 +77,10 @@
 
 ### Sound Notifications
 
-- [ ] **NOTIF-01**: Audio alert plays when any new inbound message arrives (not just handoffs)
-- [ ] **NOTIF-02**: User can toggle sound notifications on/off via a preference setting
-- [ ] **NOTIF-03**: Browser notification shown for new messages when tab is not focused
-- [ ] **NOTIF-04**: Sound does not play for messages the agent themselves just sent
+- [x] **NOTIF-01**: Audio alert plays when any new inbound message arrives (not just handoffs)
+- [x] **NOTIF-02**: User can toggle sound notifications on/off via a preference setting
+- [x] **NOTIF-03**: Browser notification shown for new messages when tab is not focused
+- [x] **NOTIF-04**: Sound does not play for messages the agent themselves just sent
 
 ### Conversation Export
 
@@ -96,9 +96,9 @@
 
 ### Real-Time Updates
 
-- [ ] **REALTIME-01**: Status changes, assignment updates, and new notes appear instantly for all connected agents via Supabase Realtime
-- [ ] **REALTIME-02**: Polling continues for Kapso message data (unchanged)
-- [ ] **REALTIME-03**: Automatic reconnection on connection drop
+- [x] **REALTIME-01**: Status changes, assignment updates, and new notes appear instantly for all connected agents via Supabase Realtime
+- [x] **REALTIME-02**: Polling continues for Kapso message data (unchanged)
+- [x] **REALTIME-03**: Automatic reconnection on connection drop
 
 ### User Management
 
@@ -179,13 +179,13 @@
 | NOTES-02 | Phase 10 | Complete |
 | NOTES-03 | Phase 10 | Complete |
 | NOTES-04 | Phase 10 | Complete |
-| NOTIF-01 | Phase 11 | Pending |
-| NOTIF-02 | Phase 11 | Pending |
-| NOTIF-03 | Phase 11 | Pending |
-| NOTIF-04 | Phase 11 | Pending |
-| REALTIME-01 | Phase 11 | Pending |
-| REALTIME-02 | Phase 11 | Pending |
-| REALTIME-03 | Phase 11 | Pending |
+| NOTIF-01 | Phase 11 | Complete |
+| NOTIF-02 | Phase 11 | Complete |
+| NOTIF-03 | Phase 11 | Complete |
+| NOTIF-04 | Phase 11 | Complete |
+| REALTIME-01 | Phase 11 | Complete |
+| REALTIME-02 | Phase 11 | Complete |
+| REALTIME-03 | Phase 11 | Complete |
 | ANALYTICS-01 | Phase 12 | Pending |
 | ANALYTICS-02 | Phase 12 | Pending |
 | ANALYTICS-03 | Phase 12 | Pending |
@@ -212,4 +212,4 @@
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-22 after Phase 10 completion*
+*Last updated: 2026-02-22 after Phase 11 completion*

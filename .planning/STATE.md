@@ -24,6 +24,7 @@ Progress: [#############################░] 80% (v1.0 complete, Phases 7-11 com
 - Total execution time: ~65 min
 
 **v2.0:**
+- 11-02: 7 min (message alerts hook + notification toggle + preferences API + integration, 2 tasks, 6 files)
 - 11-03: 4 min (Realtime sync hook + inbox integration, 2 tasks, 4 files)
 - 07-01: 3 min (getConfig batch refactor, 2 tasks, 9 files)
 - 07-02: User-executed SQL (Supabase RBAC setup)
@@ -95,6 +96,9 @@ Progress: [#############################░] 80% (v1.0 complete, Phases 7-11 com
 - [11-03]: Single Realtime channel with 4 .on() handlers (not 4 separate channels) -- reduces WebSocket connection overhead
 - [11-03]: realtimeConnected === false (strict) so undefined (pre-init) keeps 10s polling, only explicit false triggers 5s fallback
 - [11-03]: useEffect([interval]) added to useAutoPolling to sync interval refs when prop changes externally
+- [11-fix]: fetchMessages deps stabilized via refs (onStatusChange, localStatus) -- parent re-renders no longer re-trigger setLoading(true) skeleton flash
+- [11-fix]: onConversationsLoaded gated by change detection -- only fires when data differs, prevents unnecessary page.tsx re-renders every poll
+- [11-fix]: refresh() unified to use fetchConversations() -- single fetch path with change detection, no spinner blink from Realtime events
 
 ### Pending Todos
 
