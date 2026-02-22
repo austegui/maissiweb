@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getWhatsAppClient } from '@/lib/whatsapp-client';
-import { getConfig } from '@/lib/get-config';
+import { getWhatsAppClientWithPhone } from '@/lib/whatsapp-client';
 import { createClient } from '@/lib/supabase/server';
 
 export async function GET(
@@ -15,8 +14,7 @@ export async function GET(
 
   const { mediaId } = await params;
   try {
-    const whatsappClient = await getWhatsAppClient();
-    const phoneNumberId = await getConfig('PHONE_NUMBER_ID');
+    const { client: whatsappClient, phoneNumberId } = await getWhatsAppClientWithPhone();
 
     // Get metadata for mime type
     const metadata = await whatsappClient.media.get({

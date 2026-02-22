@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getWhatsAppClient } from '@/lib/whatsapp-client';
-import { getConfig } from '@/lib/get-config';
+import { getWhatsAppClientWithPhone } from '@/lib/whatsapp-client';
 
 export async function POST(request: Request) {
   try {
-    const whatsappClient = await getWhatsAppClient();
-    const phoneNumberId = await getConfig('PHONE_NUMBER_ID');
+    const { client: whatsappClient, phoneNumberId } = await getWhatsAppClientWithPhone();
 
     const body = await request.json();
     const { phoneNumber, header, body: bodyText, buttons } = body;

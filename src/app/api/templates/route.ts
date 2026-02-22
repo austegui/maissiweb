@@ -1,11 +1,19 @@
 import { NextResponse } from 'next/server';
-import { getWhatsAppClient } from '@/lib/whatsapp-client';
-import { getConfig } from '@/lib/get-config';
+import { WhatsAppClient } from '@kapso/whatsapp-cloud-api';
+import { getConfigs } from '@/lib/get-config';
 
 export async function GET() {
   try {
-    const whatsappClient = await getWhatsAppClient();
-    const wabaId = await getConfig('WABA_ID');
+    const { KAPSO_API_KEY, WHATSAPP_API_URL, WABA_ID: wabaId } = await getConfigs(
+      'KAPSO_API_KEY',
+      'WHATSAPP_API_URL',
+      'WABA_ID'
+    );
+    const whatsappClient = new WhatsAppClient({
+      baseUrl: WHATSAPP_API_URL,
+      kapsoApiKey: KAPSO_API_KEY,
+      graphVersion: 'v24.0'
+    });
 
     const response = await whatsappClient.templates.list({
       businessAccountId: wabaId,

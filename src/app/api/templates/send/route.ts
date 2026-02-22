@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { buildTemplateSendPayload, WhatsAppClient } from '@kapso/whatsapp-cloud-api';
-import { getWhatsAppClient } from '@/lib/whatsapp-client';
-import { getConfig } from '@/lib/get-config';
+import { getWhatsAppClientWithPhone } from '@/lib/whatsapp-client';
 import type { TemplateParameterInfo } from '@/types/whatsapp';
 
 type TemplateSendInput = Parameters<typeof buildTemplateSendPayload>[0];
@@ -14,8 +13,7 @@ type ButtonTextParameter = { type: 'text'; text: string; parameter_name?: string
 
 export async function POST(request: Request) {
   try {
-    const whatsappClient = await getWhatsAppClient();
-    const phoneNumberId = await getConfig('PHONE_NUMBER_ID');
+    const { client: whatsappClient, phoneNumberId } = await getWhatsAppClientWithPhone();
 
     const body = await request.json();
     const { to, templateName, languageCode, parameters, parameterInfo } = body;

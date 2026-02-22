@@ -4,8 +4,7 @@ import {
   type ConversationKapsoExtensions,
   type ConversationRecord
 } from '@kapso/whatsapp-cloud-api';
-import { getWhatsAppClient } from '@/lib/whatsapp-client';
-import { getConfig } from '@/lib/get-config';
+import { getWhatsAppClientWithPhone } from '@/lib/whatsapp-client';
 
 function parseDirection(kapso?: ConversationKapsoExtensions): 'inbound' | 'outbound' {
   if (!kapso) {
@@ -26,8 +25,7 @@ function parseDirection(kapso?: ConversationKapsoExtensions): 'inbound' | 'outbo
 
 export async function GET(request: Request) {
   try {
-    const whatsappClient = await getWhatsAppClient();
-    const phoneNumberId = await getConfig('PHONE_NUMBER_ID');
+    const { client: whatsappClient, phoneNumberId } = await getWhatsAppClientWithPhone();
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
