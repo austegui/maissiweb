@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 ## Current Position
 
 Phase: 9 of 14 (Conversation Management)
-Plan: 3 of 5
+Plan: 4 of 5
 Status: In progress
-Last activity: 2026-02-22 -- Completed 09-03-PLAN.md (admin label management page)
+Last activity: 2026-02-22 -- Completed 09-04-PLAN.md (conversation status lifecycle UI)
 
-Progress: [####################░░░░░░░░░░] 57% (v1.0 complete, Phase 7 complete, Phase 8 complete, Phase 9 in progress)
+Progress: [####################░░░░░░░░░░] 59% (v1.0 complete, Phase 7 complete, Phase 8 complete, Phase 9 in progress)
 
 ## Performance Metrics
 
@@ -33,6 +33,7 @@ Progress: [####################░░░░░░░░░░] 57% (v1.0 complet
 - 09-01: User-executed SQL (conversation_metadata + contact_labels + conversation_contact_labels tables)
 - 09-02: 6 min (backend API routes: enriched conversations GET, PATCH status/assign, labels CRUD, 5 files)
 - 09-03: 4 min (admin label management page, 2 tasks, 3 files)
+- 09-04: 4 min (conversation status lifecycle UI: tabs, dots, dropdown, auto-reopen, 3 files)
 
 ## Accumulated Context
 
@@ -62,6 +63,10 @@ Progress: [####################░░░░░░░░░░] 57% (v1.0 complet
 - [09-03]: Native <input type="color"> for admin color picker -- returns hex directly, no library needed
 - [09-03]: Luminance formula (0.299R + 0.587G + 0.114B > 128) for dark vs white text on label pills -- readable across all colors
 - [09-03]: Color preview uses onChange state; form submit value carried by name="color" attribute (not controlled)
+- [09-04]: Radix Tabs with no Tabs.Content -- tab value drives JS filter only, no server round-trip on tab switch
+- [09-04]: autoReopenedRef stores conversationId (not boolean) -- guard correctly scoped per conversation, resets on conversation switch
+- [09-04]: Auto-reopen resets guard when user manually sets status to 'resuelto' -- future inbound messages can re-trigger
+- [09-04]: Status dot colors: green-500 (abierto), amber-500 (pendiente), gray-400 (resuelto) -- consistent across list and dropdown
 
 ### Pending Todos
 
@@ -74,5 +79,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 09-03-PLAN.md (admin label management page)
+Stopped at: Completed 09-04-PLAN.md (conversation status lifecycle UI)
 Resume file: None
