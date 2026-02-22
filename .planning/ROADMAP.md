@@ -163,9 +163,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 11-01-PLAN.md -- Enable Supabase Realtime publication for metadata tables + add notifications_enabled column
-- [ ] 11-02-PLAN.md -- Message alerts hook (chime + browser notifications), notification toggle, preferences API
-- [ ] 11-03-PLAN.md -- Supabase Realtime sync hook with reconnection, polling fallback, connection indicator
+- [x] 11-01-PLAN.md -- Enable Supabase Realtime publication for metadata tables + add notifications_enabled column
+- [x] 11-02-PLAN.md -- Message alerts hook (chime + browser notifications), notification toggle, preferences API
+- [x] 11-03-PLAN.md -- Supabase Realtime sync hook with reconnection, polling fallback, connection indicator
 
 ### Phase 12: Analytics + Export
 **Goal**: The admin has operational visibility into team performance through charts and metrics, and can export conversation data for record-keeping
@@ -177,7 +177,12 @@ Plans:
   3. The analytics dashboard is admin-only -- agents cannot access it
   4. An admin can export conversation data as a CSV file, filtered by date range and conversation status
   5. The CSV export includes contact name, phone number, status, assigned agent, message count, and last active date
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 12-01-PLAN.md -- Create Supabase RPC functions for analytics aggregation (get_agent_stats, get_conversation_volume_by_day)
+- [ ] 12-02-PLAN.md -- Analytics metrics API route and CSV export API route with admin auth guards
+- [ ] 12-03-PLAN.md -- Analytics dashboard UI with Recharts charts, KPI cards, agent table, and CSV export
 
 ### Phase 13: Message Search
 **Goal**: Any team member can quickly find a contact, conversation, or message from anywhere in the app using a keyboard-driven search dialog
@@ -222,6 +227,6 @@ Note: Phases 8, 9, 12, and 14 all depend on Phase 7 but not necessarily on each 
 | 9. Conversation Management | v2.0 | 5/5 | Complete | 2026-02-22 |
 | 10. Customer Intelligence | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 11. Notifications + Real-Time | v2.0 | 3/3 | Complete | 2026-02-22 |
-| 12. Analytics + Export | v2.0 | 0/TBD | Not started | - |
+| 12. Analytics + Export | v2.0 | 0/3 | Not started | - |
 | 13. Message Search | v2.0 | 0/TBD | Not started | - |
 | 14. Error Tracking + User Management | v2.0 | 0/TBD | Not started | - |
