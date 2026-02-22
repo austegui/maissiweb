@@ -2,12 +2,13 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { format, isValid, isToday, isYesterday, differenceInHours } from 'date-fns';
-import { RefreshCw, Paperclip, Send, X, AlertCircle, MessageSquare, XCircle, ListTree, ArrowLeft, UserRound, ChevronDown, Check } from 'lucide-react';
+import { RefreshCw, Paperclip, Send, X, AlertCircle, MessageSquare, XCircle, ListTree, ArrowLeft, UserRound, ChevronDown, Check, Tag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MediaMessage } from '@/components/media-message';
 import { TemplateSelectorDialog } from '@/components/template-selector-dialog';
 import { InteractiveMessageDialog } from '@/components/interactive-message-dialog'
 import { CannedResponsesPicker } from '@/components/canned-responses-picker';
+import { LabelPicker } from '@/components/label-picker';
 import { useAutoPolling } from '@/hooks/use-auto-polling';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -174,6 +175,62 @@ function StatusSelect({ value, onChange }: StatusSelectProps) {
   );
 }
 
+type AssignmentSelectProps = {
+  agents: { id: string; displayName: string }[];
+  value: string | null;
+  onChange: (value: string) => void;
+};
+
+function AssignmentSelect({ agents, value, onChange }: AssignmentSelectProps) {
+  const assignedAgent = agents.find((a) => a.id === value);
+  const displayLabel = assignedAgent ? assignedAgent.displayName : 'Sin asignar';
+
+  return (
+    <Select.Root value={value ?? '__unassigned__'} onValueChange={onChange}>
+      <Select.Trigger
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs border border-[#d1d7db] bg-white hover:bg-[#f0f2f5] transition-colors outline-none data-[state=open]:ring-2 data-[state=open]:ring-[#00a884]"
+        aria-label="Asignacion de agente"
+      >
+        <Select.Value>{displayLabel}</Select.Value>
+        <Select.Icon>
+          <ChevronDown className="h-3.5 w-3.5 text-[#667781]" />
+        </Select.Icon>
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Content
+          className="bg-white border border-[#d1d7db] rounded-lg shadow-lg z-50 overflow-hidden"
+          position="popper"
+          sideOffset={4}
+        >
+          <Select.Viewport>
+            <Select.Item
+              value="__unassigned__"
+              className="flex items-center gap-2 px-3 py-2 text-xs text-[#667781] cursor-pointer hover:bg-[#f0f2f5] outline-none data-[highlighted]:bg-[#f0f2f5] select-none"
+            >
+              <Select.ItemText>Sin asignar</Select.ItemText>
+              <Select.ItemIndicator className="ml-auto">
+                <Check className="h-3 w-3 text-[#00a884]" />
+              </Select.ItemIndicator>
+            </Select.Item>
+            {agents.map((agent) => (
+              <Select.Item
+                key={agent.id}
+                value={agent.id}
+                className="flex items-center gap-2 px-3 py-2 text-xs text-[#111b21] cursor-pointer hover:bg-[#f0f2f5] outline-none data-[highlighted]:bg-[#f0f2f5] select-none"
+              >
+                <Select.ItemText>{agent.displayName}</Select.ItemText>
+                <Select.ItemIndicator className="ml-auto">
+                  <Check className="h-3 w-3 text-[#00a884]" />
+                </Select.ItemIndicator>
+              </Select.Item>
+            ))}
+          </Select.Viewport>
+        </Select.Content>
+      </Select.Portal>
+    </Select.Root>
+  );
+}
+
 type Props = {
   conversationId?: string;
   phoneNumber?: string;
@@ -184,9 +241,15 @@ type Props = {
   onBack?: () => void;
   isVisible?: boolean;
   isHandoff?: boolean;
+  agents?: { id: string; displayName: string }[];
+  assignedAgentId?: string | null;
+  onAssignmentChange?: (conversationId: string, agentId: string | null, agentName: string | null) => void;
+  allLabels?: { id: string; name: string; color: string }[];
+  contactLabels?: { id: string; name: string; color: string }[];
+  onLabelsChange?: (conversationId: string, labels: { id: string; name: string; color: string }[]) => void;
 };
 
-export function MessageView({ conversationId, phoneNumber, contactName, convStatus, onStatusChange, onTemplateSent, onBack, isVisible = false, isHandoff = false }: Props) {
+export function MessageView({ conversationId, phoneNumber, contactName, convStatus, onStatusChange, onTemplateSent, onBack, isVisible = false, isHandoff = false, agents, assignedAgentId, onAssignmentChange, allLabels, contactLabels, onLabelsChange }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -201,6 +264,9 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
   const [showCannedPicker, setShowCannedPicker] = useState(false);
   const [cannedQuery, setCannedQuery] = useState('');
   const [localStatus, setLocalStatus] = useState(convStatus ?? 'abierto');
+  const [localAssignedAgentId, setLocalAssignedAgentId] = useState<string | null>(assignedAgentId ?? null);
+  const [localLabels, setLocalLabels] = useState<{ id: string; name: string; color: string }[]>(contactLabels ?? []);
+  const [showLabelPicker, setShowLabelPicker] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -213,6 +279,21 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
   useEffect(() => {
     setLocalStatus(convStatus ?? 'abierto');
   }, [convStatus]);
+
+  // Sync assignment when prop changes (e.g., switching conversations)
+  useEffect(() => {
+    setLocalAssignedAgentId(assignedAgentId ?? null);
+  }, [assignedAgentId]);
+
+  // Sync labels when prop changes (e.g., switching conversations)
+  useEffect(() => {
+    setLocalLabels(contactLabels ?? []);
+  }, [contactLabels]);
+
+  // Close label picker when conversation changes
+  useEffect(() => {
+    setShowLabelPicker(false);
+  }, [conversationId]);
 
   // Reset auto-reopen tracking when conversation changes
   useEffect(() => {
@@ -356,6 +437,50 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
     } catch (error) {
       console.error('Error updating status:', error);
       setLocalStatus(convStatus ?? 'abierto'); // revert on error
+    }
+  };
+
+  const handleAssignmentChange = async (value: string) => {
+    const agentId = value === '__unassigned__' ? null : value;
+    const agentName = agentId ? (agents?.find((a) => a.id === agentId)?.displayName ?? null) : null;
+    setLocalAssignedAgentId(agentId); // optimistic
+    try {
+      await fetch(`/api/conversations/${conversationId}/assign`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentId })
+      });
+      onAssignmentChange?.(conversationId!, agentId, agentName);
+    } catch (error) {
+      console.error('Error updating assignment:', error);
+      setLocalAssignedAgentId(assignedAgentId ?? null); // revert
+    }
+  };
+
+  const handleLabelToggle = async (label: { id: string; name: string; color: string }, selected: boolean) => {
+    const newLabels = selected
+      ? [...localLabels, label]
+      : localLabels.filter((l) => l.id !== label.id);
+    setLocalLabels(newLabels); // optimistic
+
+    try {
+      if (selected) {
+        await fetch(`/api/labels/contacts/${phoneNumber}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ labelId: label.id })
+        });
+      } else {
+        await fetch(`/api/labels/contacts/${phoneNumber}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ labelId: label.id })
+        });
+      }
+      onLabelsChange?.(conversationId!, newLabels);
+    } catch (error) {
+      console.error('Error toggling label:', error);
+      setLocalLabels(contactLabels ?? []); // revert
     }
   };
 
@@ -530,6 +655,37 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
           <div className="flex items-center gap-2 flex-shrink-0">
             {conversationId && (
               <StatusSelect value={localStatus} onChange={handleStatusChange} />
+            )}
+            {conversationId && (
+              <AssignmentSelect
+                agents={agents ?? []}
+                value={localAssignedAgentId}
+                onChange={handleAssignmentChange}
+              />
+            )}
+            {conversationId && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowLabelPicker(!showLabelPicker)}
+                  className="flex items-center gap-1 px-2 py-1 rounded-md text-xs border border-[#d1d7db] bg-white hover:bg-[#f0f2f5] transition-colors"
+                >
+                  <Tag className="h-3 w-3" />
+                  Etiquetas
+                  {localLabels.length > 0 && (
+                    <span className="bg-[#00a884] text-white text-[9px] rounded-full h-4 w-4 flex items-center justify-center">
+                      {localLabels.length}
+                    </span>
+                  )}
+                </button>
+                {showLabelPicker && (
+                  <LabelPicker
+                    allLabels={allLabels ?? []}
+                    selectedLabels={localLabels}
+                    onToggle={handleLabelToggle}
+                    onClose={() => setShowLabelPicker(false)}
+                  />
+                )}
+              </div>
             )}
             <Button
               onClick={handleRefresh}
