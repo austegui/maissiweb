@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 10 IN PROGRESS (2/3 plans complete)
+**Current focus:** Milestone v2.0 -- Phase 10 COMPLETE, Phase 11 next
 
 ## Current Position
 
-Phase: 10 of 14 (Customer Intelligence) -- IN PROGRESS
-Plan: 2 of 3 -- COMPLETE
-Status: In progress
-Last activity: 2026-02-22 -- Completed 10-02-PLAN.md (contact profile API + conversation notes API)
+Phase: 10 of 14 (Customer Intelligence) -- COMPLETE
+Plan: 3 of 3 -- COMPLETE
+Status: Phase complete
+Last activity: 2026-02-22 -- Completed 10-03-PLAN.md (ContactPanel UI component)
 
-Progress: [#######################░░░░░░░] 66% (v1.0 complete, Phases 7-9 complete, Phase 10 in progress)
+Progress: [##########################░░░░] 71% (v1.0 complete, Phases 7-10 complete)
 
 ## Performance Metrics
 
@@ -37,6 +37,7 @@ Progress: [#######################░░░░░░░] 66% (v1.0 complete, Pha
 - 09-05: 5 min (assignment dropdown, label picker, initials badge, label pills, filters, 5 files)
 - 10-01: User-executed SQL (contacts + conversation_notes tables)
 - 10-02: 4 min (contact profile API GET+PATCH, conversation notes API GET+POST, 2 files)
+- 10-03: 2 min (ContactPanel UI: editable contact fields, conversation history, collapsible notes, 3 files)
 
 ## Accumulated Context
 
@@ -77,6 +78,10 @@ Progress: [#######################░░░░░░░] 66% (v1.0 complete, Pha
 - [10-02]: Contacts GET uses upsert-then-read (ignoreDuplicates: true) -- rows created lazily, existing data never overwritten
 - [10-02]: Notes user_profiles join cast through unknown -- Supabase infers array type, double-cast required by TypeScript strict mode
 - [10-02]: Notes route has zero WhatsApp imports -- safety rule, notes physically separate from message-sending path
+- [10-03]: key={conversationId} on ContactPanel forces React remount on conversation switch, clearing all local state cleanly
+- [10-03]: conversations array stored in page.tsx state for ContactPanel history filtering by phoneNumber
+- [10-03]: Yellow tint (#fffde7) for internal notes distinguishes team notes from customer messages visually
+- [10-03]: EditableField uses onBlur-to-save pattern -- no save button per field, consistent with CRM UX conventions
 
 ### Pending Todos
 
@@ -89,5 +94,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 10-02-PLAN.md (contact profile API + conversation notes API)
+Stopped at: Completed 10-03-PLAN.md (ContactPanel UI -- Phase 10 COMPLETE)
 Resume file: None
