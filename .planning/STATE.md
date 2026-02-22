@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 11 in progress (Notifications & Real-time)
+**Current focus:** Milestone v2.0 -- Phase 12 in progress (Analytics + Export)
 
 ## Current Position
 
-Phase: 11 of 14 (Notifications & Real-time) -- COMPLETE
-Plan: 3 of 3 -- COMPLETE (11-01, 11-02, 11-03 all done)
-Status: Phase complete -- ready for Phase 12
-Last activity: 2026-02-22 -- Completed 11-03-PLAN.md (Realtime metadata sync)
+Phase: 12 of 14 (Analytics + Export) -- In progress
+Plan: 2 of 3 -- COMPLETE (12-01 SQL, 12-02 API routes done; 12-03 UI pending)
+Status: In progress
+Last activity: 2026-02-22 -- Completed 12-02-PLAN.md (Analytics & Export API routes)
 
-Progress: [#############################░] 80% (v1.0 complete, Phases 7-11 complete)
+Progress: [##############################░] 83% (v1.0 complete, Phases 7-12 partial)
 
 ## Performance Metrics
 
@@ -41,6 +41,7 @@ Progress: [#############################░] 80% (v1.0 complete, Phases 7-11 com
 - 10-02: 4 min (contact profile API GET+PATCH, conversation notes API GET+POST, 2 files)
 - 10-03: 2 min (ContactPanel UI: editable contact fields, conversation history, collapsible notes, 3 files)
 - 11-01: User-executed SQL (Realtime publication for 4 tables + notifications_enabled column on user_profiles)
+- 12-02: 2 min (analytics JSON API + CSV export API, 2 tasks, 2 files)
 
 ## Accumulated Context
 
@@ -99,6 +100,9 @@ Progress: [#############################░] 80% (v1.0 complete, Phases 7-11 com
 - [11-fix]: fetchMessages deps stabilized via refs (onStatusChange, localStatus) -- parent re-renders no longer re-trigger setLoading(true) skeleton flash
 - [11-fix]: onConversationsLoaded gated by change detection -- only fires when data differs, prevents unnecessary page.tsx re-renders every poll
 - [11-fix]: refresh() unified to use fetchConversations() -- single fetch path with change detection, no spinner blink from Realtime events
+- [12-02]: avgReplyTime uses lastInboundAt/lastOutboundAt difference -- approximate but zero extra API calls
+- [12-02]: Export route uses new Response() (not NextResponse.json) for raw CSV body
+- [12-02]: ISO timestamps passed to RPC as ${date}T00:00:00Z / ${date}T23:59:59Z -- full day coverage
 
 ### Pending Todos
 
@@ -111,5 +115,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 11-03-PLAN.md (Realtime metadata sync -- Phase 11 complete, ready for Phase 12)
+Stopped at: Completed 12-02-PLAN.md (Analytics & Export API routes -- Phase 12 plan 2 of 3 done)
 Resume file: None
