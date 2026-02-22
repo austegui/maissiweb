@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 9 in progress (Conversation Management)
+**Current focus:** Milestone v2.0 -- Phase 9 COMPLETE, Phase 10 next
 
 ## Current Position
 
-Phase: 9 of 14 (Conversation Management)
-Plan: 4 of 5
-Status: In progress
-Last activity: 2026-02-22 -- Completed 09-04-PLAN.md (conversation status lifecycle UI)
+Phase: 9 of 14 (Conversation Management) -- COMPLETE
+Plan: 5 of 5 -- COMPLETE
+Status: Phase complete
+Last activity: 2026-02-22 -- Completed 09-05-PLAN.md (assignment and label UI)
 
-Progress: [####################░░░░░░░░░░] 59% (v1.0 complete, Phase 7 complete, Phase 8 complete, Phase 9 in progress)
+Progress: [######################░░░░░░░░] 63% (v1.0 complete, Phase 7 complete, Phase 8 complete, Phase 9 complete)
 
 ## Performance Metrics
 
@@ -34,6 +34,7 @@ Progress: [####################░░░░░░░░░░] 59% (v1.0 complet
 - 09-02: 6 min (backend API routes: enriched conversations GET, PATCH status/assign, labels CRUD, 5 files)
 - 09-03: 4 min (admin label management page, 2 tasks, 3 files)
 - 09-04: 4 min (conversation status lifecycle UI: tabs, dots, dropdown, auto-reopen, 3 files)
+- 09-05: 5 min (assignment dropdown, label picker, initials badge, label pills, filters, 5 files)
 
 ## Accumulated Context
 
@@ -67,6 +68,10 @@ Progress: [####################░░░░░░░░░░] 59% (v1.0 complet
 - [09-04]: autoReopenedRef stores conversationId (not boolean) -- guard correctly scoped per conversation, resets on conversation switch
 - [09-04]: Auto-reopen resets guard when user manually sets status to 'resuelto' -- future inbound messages can re-trigger
 - [09-04]: Status dot colors: green-500 (abierto), amber-500 (pendiente), gray-400 (resuelto) -- consistent across list and dropdown
+- [09-05]: agents and currentUserId piggybacked on /api/conversations GET response -- no extra API endpoints needed
+- [09-05]: onConversationsLoaded callback extended with optional meta param -- backwards compatible
+- [09-05]: Native <select> for assignment and label secondary filters -- compact, no custom styling needed
+- [09-05]: LabelPicker uses absolute positioning (not Radix Popover) -- consistent with canned-responses-picker, no focus theft
 
 ### Pending Todos
 
@@ -79,5 +84,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 09-04-PLAN.md (conversation status lifecycle UI)
+Stopped at: Completed 09-05-PLAN.md (assignment and label UI) -- Phase 9 complete
 Resume file: None
