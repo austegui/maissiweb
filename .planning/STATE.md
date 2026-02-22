@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 8 complete, ready to plan Phase 9
+**Current focus:** Milestone v2.0 -- Phase 9 in progress (Conversation Management)
 
 ## Current Position
 
 Phase: 9 of 14 (Conversation Management)
-Plan: 0 of TBD
-Status: Ready to plan
-Last activity: 2026-02-22 -- Completed Phase 8 (Canned Responses) -- all 3 plans shipped and verified
+Plan: 3 of 5
+Status: In progress
+Last activity: 2026-02-22 -- Completed 09-03-PLAN.md (admin label management page)
 
-Progress: [####################░░░░░░░░░░] 57% (v1.0 complete, Phase 7 complete, Phase 8 complete)
+Progress: [####################░░░░░░░░░░] 57% (v1.0 complete, Phase 7 complete, Phase 8 complete, Phase 9 in progress)
 
 ## Performance Metrics
 
@@ -30,6 +30,8 @@ Progress: [####################░░░░░░░░░░] 57% (v1.0 complet
 - 08-01: User-executed SQL (canned_responses table + RLS)
 - 08-02: 2 min (admin CRUD page, 2 tasks, 4 files)
 - 08-03: 15 min (slash-command picker: cmdk, API route, message-view integration)
+- 09-01: User-executed SQL (conversation_metadata + contact_labels + conversation_contact_labels tables)
+- 09-03: 4 min (admin label management page, 2 tasks, 3 files)
 
 ## Accumulated Context
 
@@ -52,6 +54,9 @@ Progress: [####################░░░░░░░░░░] 57% (v1.0 complet
 - [08-03]: cmdk used without its own Input; shouldFilter=false + client-side filtering since message textarea is the search box
 - [08-03]: Slash-command picker uses absolute CSS positioning (not Radix Popover) to avoid focus theft from message input
 - [08-03]: Picker triggers only when '/' is value[0] (first char only), not mid-sentence slashes
+- [09-03]: Native <input type="color"> for admin color picker -- returns hex directly, no library needed
+- [09-03]: Luminance formula (0.299R + 0.587G + 0.114B > 128) for dark vs white text on label pills -- readable across all colors
+- [09-03]: Color preview uses onChange state; form submit value carried by name="color" attribute (not controlled)
 
 ### Pending Todos
 
@@ -64,5 +69,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 8 complete -- ready to plan Phase 9
+Stopped at: Completed 09-03-PLAN.md (admin label management page)
 Resume file: None
