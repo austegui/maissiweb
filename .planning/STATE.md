@@ -31,6 +31,7 @@ Progress: [####################░░░░░░░░░░] 57% (v1.0 complet
 - 08-02: 2 min (admin CRUD page, 2 tasks, 4 files)
 - 08-03: 15 min (slash-command picker: cmdk, API route, message-view integration)
 - 09-01: User-executed SQL (conversation_metadata + contact_labels + conversation_contact_labels tables)
+- 09-02: 6 min (backend API routes: enriched conversations GET, PATCH status/assign, labels CRUD, 5 files)
 - 09-03: 4 min (admin label management page, 2 tasks, 3 files)
 
 ## Accumulated Context
@@ -54,6 +55,10 @@ Progress: [####################░░░░░░░░░░] 57% (v1.0 complet
 - [08-03]: cmdk used without its own Input; shouldFilter=false + client-side filtering since message textarea is the search box
 - [08-03]: Slash-command picker uses absolute CSS positioning (not Radix Popover) to avoid focus theft from message input
 - [08-03]: Picker triggers only when '/' is value[0] (first char only), not mid-sentence slashes
+- [09-02]: convStatus defaults to 'abierto' for conversations with no conversation_metadata row -- business rule, no proactive row creation
+- [09-02]: Supabase enrichment in conversations GET wrapped in try/catch -- degrades gracefully if Supabase unavailable
+- [09-02]: Labels joined in conversations GET via .in(phone_number, phones) -- single round-trip returns all UI data
+- [09-02]: POST /api/labels/contacts/[phone] is idempotent -- unique constraint violation returns success
 - [09-03]: Native <input type="color"> for admin color picker -- returns hex directly, no library needed
 - [09-03]: Luminance formula (0.299R + 0.587G + 0.114B > 128) for dark vs white text on label pills -- readable across all colors
 - [09-03]: Color preview uses onChange state; form submit value carried by name="color" attribute (not controlled)
