@@ -77,6 +77,7 @@ Plans:
 - [x] **Phase 11: Notifications + Real-Time** - Sound alerts for all messages and Supabase Realtime for instant metadata sync
 - [x] **Phase 12: Analytics + Export** - Operational dashboard and CSV export for business visibility
 - [x] **Phase 13: Error Tracking + User Management** - Global error boundary and admin UI for team member management
+- [ ] **Phase 14: Audit Cleanup** - Fix contact panel bug, hide admin nav from agents, improve nav discoverability
 
 **Backlog (deferred):**
 - **Message Search** - Global search dialog for finding contacts, conversations, and messages (moved from Phase 13)
@@ -202,6 +203,20 @@ Plans:
 - [x] 13-01-PLAN.md -- Global error page + Supabase admin client utility
 - [x] 13-02-PLAN.md -- User management server actions, page UI, and settings nav link
 
+### Phase 14: Audit Cleanup
+**Goal**: All tech debt items identified by the v2.0 milestone audit are resolved -- the contact panel no longer blanks after save, admin nav links are hidden from agents, user management is discoverable from the top nav, and message send failure does not suppress notifications
+**Depends on**: Phase 13
+**Gap Closure**: Closes all 5 items from v2.0-MILESTONE-AUDIT.md
+**Success Criteria** (what must be TRUE):
+  1. After editing a contact field (name, email, notes) and blurring, the field retains the saved value (does not blank)
+  2. Non-admin users do not see admin-only nav links (analytics, labels, canned responses, settings, users) in the top nav
+  3. Admin users see a "Usuarios" link in the top nav that goes to /admin/users
+  4. If a message send fails (non-2xx response), the notification suppression window does not activate
+**Plans**: 1 plan
+
+Plans:
+- [ ] 14-01-PLAN.md -- Fix contact PATCH response, role-aware nav links, onMessageSent guard
+
 ### Backlog: Message Search (deferred)
 **Goal**: Any team member can quickly find a contact, conversation, or message from anywhere in the app using a keyboard-driven search dialog
 **Requirements**: SEARCH-01, SEARCH-02, SEARCH-03, SEARCH-04
@@ -210,7 +225,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13
+Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14
 
 Note: Phases 8, 9, 12, and 13 all depend on Phase 7 but not necessarily on each other. The linear order above is the recommended sequence based on research (dependency chains and productivity ROI). Phase 12 depends on Phase 9 data accumulation. Message Search deferred to backlog.
 
@@ -229,4 +244,5 @@ Note: Phases 8, 9, 12, and 13 all depend on Phase 7 but not necessarily on each 
 | 11. Notifications + Real-Time | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 12. Analytics + Export | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 13. Error Tracking + User Management | v2.0 | 2/2 | Complete | 2026-02-22 |
+| 14. Audit Cleanup | v2.0 | 0/1 | Planned | - |
 | ~~Message Search~~ | backlog | - | Deferred | - |
