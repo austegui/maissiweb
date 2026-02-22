@@ -35,10 +35,10 @@
 
 ### Internal Notes
 
-- [ ] **NOTES-01**: Agent can add text notes to any conversation, visible only to the team
-- [ ] **NOTES-02**: Notes are displayed in a collapsible side panel alongside the message view
-- [ ] **NOTES-03**: Each note shows author name and timestamp
-- [ ] **NOTES-04**: Notes are never sent to the customer (physically separate from message-sending code)
+- [x] **NOTES-01**: Agent can add text notes to any conversation, visible only to the team
+- [x] **NOTES-02**: Notes are displayed in a collapsible side panel alongside the message view
+- [x] **NOTES-03**: Each note shows author name and timestamp
+- [x] **NOTES-04**: Notes are never sent to the customer (physically separate from message-sending code)
 
 ### Conversation Assignment
 
@@ -49,10 +49,10 @@
 
 ### Contact Profiles
 
-- [ ] **CONTACT-01**: A contact profile is auto-created in Supabase when a new phone number first appears
-- [ ] **CONTACT-02**: Agent can view and edit contact details (display name, email, notes) in a side panel
-- [ ] **CONTACT-03**: Contact profile panel is accessible from the message view
-- [ ] **CONTACT-04**: Contact's conversation history is visible from their profile
+- [x] **CONTACT-01**: A contact profile is auto-created in Supabase when a new phone number first appears
+- [x] **CONTACT-02**: Agent can view and edit contact details (display name, email, notes) in a side panel
+- [x] **CONTACT-03**: Contact profile panel is accessible from the message view
+- [x] **CONTACT-04**: Contact's conversation history is visible from their profile
 
 ### Customer Labels/Tags
 
@@ -158,27 +158,27 @@
 | CANNED-03 | Phase 8 | Complete |
 | CANNED-04 | Phase 8 | Complete |
 | CANNED-05 | Phase 8 | Complete |
-| STATUS-01 | Phase 9 | Pending |
-| STATUS-02 | Phase 9 | Pending |
-| STATUS-03 | Phase 9 | Pending |
-| STATUS-04 | Phase 9 | Pending |
-| STATUS-05 | Phase 9 | Pending |
-| ASSIGN-01 | Phase 9 | Pending |
-| ASSIGN-02 | Phase 9 | Pending |
-| ASSIGN-03 | Phase 9 | Pending |
-| ASSIGN-04 | Phase 9 | Pending |
-| LABEL-01 | Phase 9 | Pending |
-| LABEL-02 | Phase 9 | Pending |
-| LABEL-03 | Phase 9 | Pending |
-| LABEL-04 | Phase 9 | Pending |
-| CONTACT-01 | Phase 10 | Pending |
-| CONTACT-02 | Phase 10 | Pending |
-| CONTACT-03 | Phase 10 | Pending |
-| CONTACT-04 | Phase 10 | Pending |
-| NOTES-01 | Phase 10 | Pending |
-| NOTES-02 | Phase 10 | Pending |
-| NOTES-03 | Phase 10 | Pending |
-| NOTES-04 | Phase 10 | Pending |
+| STATUS-01 | Phase 9 | Complete |
+| STATUS-02 | Phase 9 | Complete |
+| STATUS-03 | Phase 9 | Complete |
+| STATUS-04 | Phase 9 | Complete |
+| STATUS-05 | Phase 9 | Complete |
+| ASSIGN-01 | Phase 9 | Complete |
+| ASSIGN-02 | Phase 9 | Complete |
+| ASSIGN-03 | Phase 9 | Complete |
+| ASSIGN-04 | Phase 9 | Complete |
+| LABEL-01 | Phase 9 | Complete |
+| LABEL-02 | Phase 9 | Complete |
+| LABEL-03 | Phase 9 | Complete |
+| LABEL-04 | Phase 9 | Complete |
+| CONTACT-01 | Phase 10 | Complete |
+| CONTACT-02 | Phase 10 | Complete |
+| CONTACT-03 | Phase 10 | Complete |
+| CONTACT-04 | Phase 10 | Complete |
+| NOTES-01 | Phase 10 | Complete |
+| NOTES-02 | Phase 10 | Complete |
+| NOTES-03 | Phase 10 | Complete |
+| NOTES-04 | Phase 10 | Complete |
 | NOTIF-01 | Phase 11 | Pending |
 | NOTIF-02 | Phase 11 | Pending |
 | NOTIF-03 | Phase 11 | Pending |
@@ -212,4 +212,4 @@
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-22 after Phase 8 completion*
+*Last updated: 2026-02-22 after Phase 10 completion*
