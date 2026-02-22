@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 type UseRealtimeSyncOptions = {
   onDataChange: () => void;
@@ -15,10 +16,13 @@ const DEBOUNCE_MS = 500;
 
 export function useRealtimeSync({ onDataChange }: UseRealtimeSyncOptions): UseRealtimeSyncReturn {
   const [realtimeConnected, setRealtimeConnected] = useState(false);
-  const supabase = useMemo(() => createClient(), []);
+
+  // Lazy-initialize Supabase client only in the browser (useEffect scope)
+  // Using a ref to hold the client avoids creating it during SSR prerendering
+  const supabaseRef = useRef<SupabaseClient | null>(null);
 
   // Refs for lifecycle management
-  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const channelRef = useRef<ReturnType<SupabaseClient['channel']> | null>(null);
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const retryDelayRef = useRef(INITIAL_RETRY_DELAY);
@@ -41,6 +45,9 @@ export function useRealtimeSync({ onDataChange }: UseRealtimeSyncOptions): UseRe
 
   const subscribe = useCallback(() => {
     if (!isMountedRef.current) return;
+
+    const supabase = supabaseRef.current;
+    if (!supabase) return;
 
     // Clean up any existing channel before creating a new one
     if (channelRef.current) {
@@ -99,10 +106,13 @@ export function useRealtimeSync({ onDataChange }: UseRealtimeSyncOptions): UseRe
       });
 
     channelRef.current = channel;
-  }, [supabase, triggerDataChange]);
+  }, [triggerDataChange]);
 
   useEffect(() => {
     isMountedRef.current = true;
+
+    // Initialize Supabase client lazily — only runs in the browser, never during SSR
+    supabaseRef.current = createClient();
 
     subscribe();
 
@@ -135,13 +145,13 @@ export function useRealtimeSync({ onDataChange }: UseRealtimeSyncOptions): UseRe
         clearTimeout(debounceTimerRef.current);
         debounceTimerRef.current = null;
       }
-      if (channelRef.current) {
+      if (channelRef.current && supabaseRef.current) {
         channelRef.current.unsubscribe();
-        supabase.removeChannel(channelRef.current);
+        supabaseRef.current.removeChannel(channelRef.current);
         channelRef.current = null;
       }
     };
-  }, [subscribe, supabase]);
+  }, [subscribe]);
 
   return { realtimeConnected };
 }

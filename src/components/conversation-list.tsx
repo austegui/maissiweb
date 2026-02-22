@@ -97,6 +97,7 @@ type Props = {
   onLabelFilterChange: (value: string | null) => void;
   currentUserId?: string;
   allLabels?: { id: string; name: string; color: string }[];
+  realtimeConnected?: boolean;
 };
 
 export type ConversationListRef = {
@@ -105,7 +106,7 @@ export type ConversationListRef = {
 };
 
 export const ConversationList = forwardRef<ConversationListRef, Props>(
-  ({ onSelectConversation, selectedConversationId, isHidden = false, handoffIds, onConversationsLoaded, statusFilter, onStatusFilterChange, assignmentFilter, onAssignmentFilterChange, labelFilter, onLabelFilterChange, currentUserId, allLabels }, ref) => {
+  ({ onSelectConversation, selectedConversationId, isHidden = false, handoffIds, onConversationsLoaded, statusFilter, onStatusFilterChange, assignmentFilter, onAssignmentFilterChange, labelFilter, onLabelFilterChange, currentUserId, allLabels, realtimeConnected }, ref) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -160,9 +161,11 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
     fetchConversations();
   };
 
-  // Auto-polling for conversations (every 10 seconds)
+  // Auto-polling: 5s fallback when Realtime is disconnected, 10s when connected
+  // Use strict check so undefined (before hook initializes) defaults to 10s
+  const pollingInterval = realtimeConnected === false ? 5000 : 10000;
   const { isPolling } = useAutoPolling({
-    interval: 10000,
+    interval: pollingInterval,
     enabled: true,
     onPoll: fetchConversations
   });

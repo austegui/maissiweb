@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { ConversationList, type ConversationListRef } from '@/components/conversation-list';
 import { MessageView } from '@/components/message-view';
 import { ContactPanel } from '@/components/contact-panel';
@@ -8,6 +8,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { useHandoffAlerts } from '@/hooks/use-handoff-alerts';
 import { useMessageAlerts } from '@/hooks/use-message-alerts';
 import { NotificationToggle } from '@/components/notification-toggle';
+import { useRealtimeSync } from '@/hooks/use-realtime-sync';
 import { logout } from '@/app/login/actions';
 
 type Conversation = {
@@ -38,6 +39,13 @@ export default function Home() {
     notificationsEnabled,
     currentUserId,
   });
+
+  // Stable callback for Realtime sync — triggers conversation list refresh on metadata changes
+  const handleRealtimeChange = useCallback(() => {
+    conversationListRef.current?.refresh();
+  }, []);
+
+  const { realtimeConnected } = useRealtimeSync({ onDataChange: handleRealtimeChange });
 
   // Fetch notification preference on mount
   useEffect(() => {
@@ -137,6 +145,12 @@ export default function Home() {
           <a href="/admin/settings" className="text-xs text-gray-500 hover:text-gray-700">
             Settings
           </a>
+          {!realtimeConnected && (
+            <span
+              className="h-2 w-2 rounded-full bg-amber-400 animate-pulse"
+              title="Reconectando tiempo real..."
+            />
+          )}
           <NotificationToggle
             enabled={notificationsEnabled}
             onToggle={handleNotificationToggle}
@@ -165,6 +179,7 @@ export default function Home() {
         onLabelFilterChange={setLabelFilter}
         currentUserId={currentUserId}
         allLabels={allLabels}
+        realtimeConnected={realtimeConnected}
       />
       <MessageView
         conversationId={selectedConversation?.id}

@@ -13,6 +13,12 @@ export function useAutoPolling({ interval = 5000, enabled = true, onPoll }: UseA
   const currentIntervalRef = useRef(interval);
   const baseIntervalRef = useRef(interval);
 
+  // Sync interval refs when the interval prop changes (e.g. 10s → 5s fallback)
+  useEffect(() => {
+    baseIntervalRef.current = interval;
+    currentIntervalRef.current = interval;
+  }, [interval]);
+
   const resetBackoff = useCallback(() => {
     currentIntervalRef.current = baseIntervalRef.current;
   }, []);
