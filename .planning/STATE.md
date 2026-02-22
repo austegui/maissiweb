@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 ## Current Position
 
 Phase: 11 of 14 (Notifications & Real-time) -- In progress
-Plan: 1 of 3 -- COMPLETE (11-01 done, starting 11-02)
+Plan: 2 of 3 -- COMPLETE (11-01, 11-02 done, starting 11-03)
 Status: In progress
-Last activity: 2026-02-22 -- Completed 11-01-PLAN.md (Realtime publication setup -- database SQL only)
+Last activity: 2026-02-22 -- Completed 11-02-PLAN.md (Inbound message alert system)
 
-Progress: [###########################░░░] 74% (v1.0 complete, Phases 7-10 complete, 11-01 done)
+Progress: [############################░░] 77% (v1.0 complete, Phases 7-10 complete, 11-01+11-02 done)
 
 ## Performance Metrics
 
@@ -85,6 +85,11 @@ Progress: [###########################░░░] 74% (v1.0 complete, Phases 7-10
 - [10-03]: EditableField uses onBlur-to-save pattern -- no save button per field, consistent with CRM UX conventions
 - [11-01]: Realtime publication enabled via ALTER PUBLICATION SQL (not Dashboard UI toggle) -- atomic, covers all 4 tables in one block
 - [11-01]: notifications_enabled uses ADD COLUMN IF NOT EXISTS -- idempotent SQL, safe to re-run without error
+- [11-02]: useMessageAlerts handles ALL audio + browser notifications (subsumes handoff sound too); useHandoffAlerts is visual-only
+- [11-02]: AudioContext created lazily as module-level singleton -- survives React re-renders, avoids duplicate instances
+- [11-02]: Alert detection uses lastActiveAt change (not message count) -- avoids false triggers on filter changes
+- [11-02]: isBrandNew branch excluded from alerting on first load -- prevents spray of alerts when page first opens
+- [11-02]: Preference API defaults notifications_enabled to true when no user_profiles row exists (new users)
 
 ### Pending Todos
 
@@ -97,5 +102,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 11-01-PLAN.md (Realtime publication setup -- ready for 11-02)
+Stopped at: Completed 11-02-PLAN.md (Inbound message alert system -- ready for 11-03)
 Resume file: None
