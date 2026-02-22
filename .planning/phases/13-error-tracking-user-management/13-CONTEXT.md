@@ -6,7 +6,7 @@
 <domain>
 ## Phase Boundary
 
-Admin can manage team members (create accounts, change roles, deactivate) directly from the app without touching the Supabase dashboard. Error tracking (Sentry) is deferred to the backlog — this phase delivers User Management only.
+Admin can manage team members (create accounts, change roles, deactivate) directly from the app without touching the Supabase dashboard. A branded error page handles all unrecoverable errors. Sentry integration is deferred to the backlog — this phase delivers User Management + error page only.
 
 </domain>
 
@@ -14,31 +14,39 @@ Admin can manage team members (create accounts, change roles, deactivate) direct
 ## Implementation Decisions
 
 ### Error page experience
-- Friendly & branded: Maissi logo, warm Spanish message ("Algo salió mal, estamos trabajando en ello")
-- Spanish only — consistent with the rest of the app
+- Single page for all errors (404, crashes, any other) — no separate variants
+- Branded with Maissi colors and logo (no illustration, just the logo)
+- Spanish only — warm message: "Algo salió mal, estamos trabajando en ello"
 - Actions: "Intentar de nuevo" (retry/reload) + "Volver al inicio" (link to inbox)
 - No technical details shown to users
 
-### Invite flow (local — no email integration)
-- Admin enters email + password directly — no invitation emails
+### Invite/create flow
+- Admin enters email + password + display name — three fields
+- Password validation: minimum 6 characters only
 - Admin chooses role (Admin or Agente) at creation time
 - No confirmation step — clicking "Crear" immediately creates the account
-- After creation: credentials shown once on screen in a dialog — admin copies/screenshots to share manually
+- After creation: success dialog shows email + password with a "Copy credentials" button (clipboard copy)
+- Credentials shown once — dialog closes, admin shares manually (WhatsApp, in person, etc.)
+- One member at a time — form resets after dialog closes
+- No email integration — all credential sharing happens manually
 
 ### User list & actions
-- Columns: email, role badge (Admin/Agente), active/inactive status, last login timestamp
-- Role changes apply immediately via dropdown — no confirmation needed
+- Page lives at /admin/users
+- Navigation: link to user management from the existing settings page
+- Columns: display name, email, role badge (Admin/Agente), active/inactive status, last login timestamp
+- Role changes via inline dropdown in each row — applies immediately, no confirmation
 - Deactivation requires confirmation dialog ("¿Desactivar a maria@example.com?")
 - Soft disable only — account marked inactive, can't log in, admin can reactivate later
+- Reactivation restores original role — no role picker on reactivate
 - No permanent deletion option
 - Admin cannot modify themselves (no self-role-change, no self-deactivation) — prevents lockout
 
 ### Claude's Discretion
-- Error page variations (whether to have separate 404 vs generic, or one page for all)
-- Sentry capture scope when eventually implemented (crashes + API errors vs crashes only)
-- User list layout and styling details
-- Password validation rules for new accounts
 - Table vs card layout for user list
+- User list styling and spacing details
+- Error page layout and spacing
+- How the "Crear miembro" form is presented (inline or modal)
+- Sentry capture scope when eventually implemented
 
 </decisions>
 
@@ -48,6 +56,7 @@ Admin can manage team members (create accounts, change roles, deactivate) direct
 - No email integration — all credential sharing happens manually (admin tells team member in person, via WhatsApp, etc.)
 - Keep the create-member flow fast — no unnecessary steps or confirmation screens
 - Last login column gives admin visibility into who's actually using the tool
+- Copy-to-clipboard for credentials so admin can paste directly into WhatsApp to share
 
 </specifics>
 
