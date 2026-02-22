@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ConversationList, type ConversationListRef } from '@/components/conversation-list';
 import { MessageView } from '@/components/message-view';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -20,12 +20,31 @@ type Conversation = {
 export default function Home() {
   const [selectedConversation, setSelectedConversation] = useState<Conversation>();
   const [statusFilter, setStatusFilter] = useState('abierto');
+  const [assignmentFilter, setAssignmentFilter] = useState('todos');
+  const [labelFilter, setLabelFilter] = useState<string | null>(null);
+  const [agents, setAgents] = useState<{ id: string; displayName: string }[]>([]);
+  const [allLabels, setAllLabels] = useState<{ id: string; name: string; color: string }[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | undefined>();
   const conversationListRef = useRef<ConversationListRef>(null);
   const { alertingIds, allHandoffIds, acknowledge, onConversationsUpdated } = useHandoffAlerts();
+
+  // Fetch all labels once on mount for the label filter dropdown
+  useEffect(() => {
+    fetch('/api/labels')
+      .then((r) => r.json())
+      .then((data) => setAllLabels(data.data ?? []))
+      .catch(console.error);
+  }, []);
 
   const handleSelectConversation = (conversation: Conversation) => {
     setSelectedConversation(conversation);
     acknowledge(conversation.id);
+  };
+
+  const handleConversationsLoaded = (convs: Conversation[], meta?: { agents: { id: string; displayName: string }[]; currentUserId: string | null }) => {
+    onConversationsUpdated(convs);
+    if (meta?.agents) setAgents(meta.agents);
+    if (meta?.currentUserId) setCurrentUserId(meta.currentUserId);
   };
 
   const handleTemplateSent = async (phoneNumber: string) => {
@@ -48,6 +67,18 @@ export default function Home() {
   const handleStatusChange = (convId: string, newStatus: string) => {
     if (selectedConversation?.id === convId) {
       setSelectedConversation(prev => prev ? { ...prev, convStatus: newStatus } : prev);
+    }
+  };
+
+  const handleAssignmentChange = (convId: string, agentId: string | null, agentName: string | null) => {
+    if (selectedConversation?.id === convId) {
+      setSelectedConversation(prev => prev ? { ...prev, assignedAgentId: agentId, assignedAgentName: agentName } : prev);
+    }
+  };
+
+  const handleLabelsChange = (convId: string, labels: { id: string; name: string; color: string }[]) => {
+    if (selectedConversation?.id === convId) {
+      setSelectedConversation(prev => prev ? { ...prev, labels } : prev);
     }
   };
 
@@ -83,9 +114,15 @@ export default function Home() {
         selectedConversationId={selectedConversation?.id}
         isHidden={!!selectedConversation}
         handoffIds={alertingIds}
-        onConversationsLoaded={onConversationsUpdated}
+        onConversationsLoaded={handleConversationsLoaded}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
+        assignmentFilter={assignmentFilter}
+        onAssignmentFilterChange={setAssignmentFilter}
+        labelFilter={labelFilter}
+        onLabelFilterChange={setLabelFilter}
+        currentUserId={currentUserId}
+        allLabels={allLabels}
       />
       <MessageView
         conversationId={selectedConversation?.id}
@@ -97,6 +134,12 @@ export default function Home() {
         isVisible={!!selectedConversation}
         isHandoff={selectedConversation ? allHandoffIds.has(selectedConversation.id) : false}
         onStatusChange={handleStatusChange}
+        agents={agents}
+        assignedAgentId={selectedConversation?.assignedAgentId}
+        onAssignmentChange={handleAssignmentChange}
+        allLabels={allLabels}
+        contactLabels={selectedConversation?.labels}
+        onLabelsChange={handleLabelsChange}
       />
       </div>
       </ErrorBoundary>

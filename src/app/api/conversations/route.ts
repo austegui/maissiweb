@@ -145,9 +145,13 @@ export async function GET(request: Request) {
         };
       });
 
+      const { data: { user } } = await supabase.auth.getUser();
+
       return NextResponse.json({
         data: enrichedData,
-        paging: response.paging
+        paging: response.paging,
+        agents: (agentsResult.data ?? []).map((a) => ({ id: a.id, displayName: a.display_name })),
+        currentUserId: user?.id ?? null
       });
     } catch (supabaseError) {
       console.error('Supabase enrichment failed, returning unenriched conversations:', supabaseError);

@@ -39,6 +39,20 @@ const STATUS_DOT_CLASS: Record<string, string> = {
   resuelto: 'bg-gray-400',
 };
 
+function getInitials(name: string): string {
+  const words = name.trim().split(/\s+/);
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+}
+
+function getContrastColor(hex: string): string {
+  const c = hex.replace('#', '');
+  const r = parseInt(c.slice(0, 2), 16);
+  const g = parseInt(c.slice(2, 4), 16);
+  const b = parseInt(c.slice(4, 6), 16);
+  return 0.299 * r + 0.587 * g + 0.114 * b > 128 ? '#111827' : '#ffffff';
+}
+
 function formatConversationDate(timestamp: string): string {
   try {
     const date = new Date(timestamp);
@@ -74,9 +88,15 @@ type Props = {
   selectedConversationId?: string;
   isHidden?: boolean;
   handoffIds?: Set<string>;
-  onConversationsLoaded?: (conversations: Conversation[]) => void;
+  onConversationsLoaded?: (conversations: Conversation[], meta?: { agents: { id: string; displayName: string }[]; currentUserId: string | null }) => void;
   statusFilter: string;
   onStatusFilterChange: (value: string) => void;
+  assignmentFilter: string;
+  onAssignmentFilterChange: (value: string) => void;
+  labelFilter: string | null;
+  onLabelFilterChange: (value: string | null) => void;
+  currentUserId?: string;
+  allLabels?: { id: string; name: string; color: string }[];
 };
 
 export type ConversationListRef = {
@@ -85,7 +105,7 @@ export type ConversationListRef = {
 };
 
 export const ConversationList = forwardRef<ConversationListRef, Props>(
-  ({ onSelectConversation, selectedConversationId, isHidden = false, handoffIds, onConversationsLoaded, statusFilter, onStatusFilterChange }, ref) => {
+  ({ onSelectConversation, selectedConversationId, isHidden = false, handoffIds, onConversationsLoaded, statusFilter, onStatusFilterChange, assignmentFilter, onAssignmentFilterChange, labelFilter, onLabelFilterChange, currentUserId, allLabels }, ref) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -118,7 +138,10 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
         conversationsRef.current = convs;
         setConversations(convs);
       }
-      onConversationsLoadedRef.current?.(convs);
+      const meta = data.agents !== undefined
+        ? { agents: data.agents ?? [], currentUserId: data.currentUserId ?? null }
+        : undefined;
+      onConversationsLoadedRef.current?.(convs, meta);
     } catch (error) {
       console.error('Error fetching conversations:', error);
       throw error; // Re-throw so polling hook can apply backoff
@@ -175,7 +198,18 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
     const convStatus = conv.convStatus ?? 'abierto';
     const matchesStatus = statusFilter === 'todos' || convStatus === statusFilter;
 
-    return matchesSearch && matchesStatus;
+    // Assignment filter
+    let matchesAssignment = true;
+    if (assignmentFilter === 'mios') {
+      matchesAssignment = conv.assignedAgentId === currentUserId;
+    } else if (assignmentFilter === 'sin_asignar') {
+      matchesAssignment = !conv.assignedAgentId;
+    }
+
+    // Label filter
+    const matchesLabel = !labelFilter || (conv.labels ?? []).some((l) => l.id === labelFilter);
+
+    return matchesSearch && matchesStatus && matchesAssignment && matchesLabel;
   });
 
   function getEmptyStateText(): string {
@@ -250,6 +284,27 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
             className="pl-9 bg-white border-[#d1d7db] focus-visible:ring-[#00a884] rounded-lg"
           />
         </div>
+        <div className="flex items-center gap-2 mt-2">
+          <select
+            value={assignmentFilter}
+            onChange={(e) => onAssignmentFilterChange(e.target.value)}
+            className="text-xs border border-[#d1d7db] rounded px-2 py-1 bg-white text-[#111b21] outline-none focus:ring-1 focus:ring-[#00a884] flex-1 min-w-0"
+          >
+            <option value="todos">Todos</option>
+            <option value="mios">Mis conversaciones</option>
+            <option value="sin_asignar">Sin asignar</option>
+          </select>
+          <select
+            value={labelFilter ?? ''}
+            onChange={(e) => onLabelFilterChange(e.target.value || null)}
+            className="text-xs border border-[#d1d7db] rounded px-2 py-1 bg-white text-[#111b21] outline-none focus:ring-1 focus:ring-[#00a884] flex-1 min-w-0 truncate"
+          >
+            <option value="">Etiqueta</option>
+            {(allLabels ?? []).map((label) => (
+              <option key={label.id} value={label.id}>{label.name}</option>
+            ))}
+          </select>
+        </div>
         <Tabs.Root value={statusFilter} onValueChange={onStatusFilterChange}>
           <Tabs.List className="flex border-t border-[#e9edef] mt-3 -mb-[1px]">
             {(['abierto', 'pendiente', 'resuelto', 'todos'] as const).map((tab) => (
@@ -296,7 +351,7 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
                     {getAvatarInitials(conversation.contactName, conversation.phoneNumber)}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1 min-w-0 flex justify-between items-start gap-4 overflow-hidden">
+                <div className="flex-1 min-w-0 flex justify-between items-start gap-2 overflow-hidden">
                   <div className="flex-1 min-w-0 overflow-hidden">
                     <div className="flex items-center gap-1.5">
                       <span className={cn("h-2 w-2 rounded-full flex-shrink-0", dotClass)} />
@@ -317,10 +372,36 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
                         {conversation.lastMessage.content}
                       </p>
                     )}
+                    {conversation.labels && conversation.labels.length > 0 && (
+                      <div className="flex items-center gap-1 mt-1 overflow-hidden">
+                        {conversation.labels.slice(0, 3).map((label) => (
+                          <span
+                            key={label.id}
+                            style={{ backgroundColor: label.color, color: getContrastColor(label.color) }}
+                            className="text-[9px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 max-w-[60px] truncate"
+                          >
+                            {label.name}
+                          </span>
+                        ))}
+                        {conversation.labels.length > 3 && (
+                          <span className="text-[9px] text-[#667781]">+{conversation.labels.length - 3}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  <span className="text-xs text-[#667781] flex-shrink-0 mt-0.5 ml-4">
-                    {formatConversationDate(conversation.lastActiveAt)}
-                  </span>
+                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                    <span className="text-xs text-[#667781]">
+                      {formatConversationDate(conversation.lastActiveAt)}
+                    </span>
+                    {conversation.assignedAgentName && (
+                      <span
+                        className="h-5 w-5 rounded-full bg-[#d1d7db] text-[#111b21] text-[9px] font-medium flex items-center justify-center flex-shrink-0"
+                        title={conversation.assignedAgentName}
+                      >
+                        {getInitials(conversation.assignedAgentName)}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </button>
