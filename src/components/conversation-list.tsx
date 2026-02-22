@@ -11,6 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import * as Tabs from '@radix-ui/react-tabs';
 
 type Conversation = {
   id: string;
@@ -26,6 +27,16 @@ type Conversation = {
     direction: string;
     type?: string;
   };
+  convStatus?: string;
+  assignedAgentId?: string | null;
+  assignedAgentName?: string | null;
+  labels?: { id: string; name: string; color: string }[];
+};
+
+const STATUS_DOT_CLASS: Record<string, string> = {
+  abierto: 'bg-green-500',
+  pendiente: 'bg-amber-500',
+  resuelto: 'bg-gray-400',
 };
 
 function formatConversationDate(timestamp: string): string {
@@ -64,6 +75,8 @@ type Props = {
   isHidden?: boolean;
   handoffIds?: Set<string>;
   onConversationsLoaded?: (conversations: Conversation[]) => void;
+  statusFilter: string;
+  onStatusFilterChange: (value: string) => void;
 };
 
 export type ConversationListRef = {
@@ -72,7 +85,7 @@ export type ConversationListRef = {
 };
 
 export const ConversationList = forwardRef<ConversationListRef, Props>(
-  ({ onSelectConversation, selectedConversationId, isHidden = false, handoffIds, onConversationsLoaded }, ref) => {
+  ({ onSelectConversation, selectedConversationId, isHidden = false, handoffIds, onConversationsLoaded, statusFilter, onStatusFilterChange }, ref) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -152,12 +165,26 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
   }));
 
   const filteredConversations = conversations.filter((conv) => {
+    // Text search filter
     const query = debouncedQuery.toLowerCase();
-    return (
+    const matchesSearch =
       conv.phoneNumber.toLowerCase().includes(query) ||
-      conv.contactName?.toLowerCase().includes(query)
-    );
+      conv.contactName?.toLowerCase().includes(query);
+
+    // Status tab filter
+    const convStatus = conv.convStatus ?? 'abierto';
+    const matchesStatus = statusFilter === 'todos' || convStatus === statusFilter;
+
+    return matchesSearch && matchesStatus;
   });
+
+  function getEmptyStateText(): string {
+    if (statusFilter === 'abierto') return 'No hay conversaciones abiertas';
+    if (statusFilter === 'pendiente') return 'No hay conversaciones pendientes';
+    if (statusFilter === 'resuelto') return 'No hay conversaciones resueltas';
+    if (searchQuery) return 'No se encontraron conversaciones';
+    return 'No hay conversaciones aun';
+  }
 
   if (loading) {
     return (
@@ -192,7 +219,7 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
       "w-full md:w-96 border-r border-[#d1d7db] bg-white flex flex-col",
       isHidden && "hidden md:flex"
     )}>
-      <div className="p-4 border-b border-[#d1d7db] bg-[#f0f2f5]">
+      <div className="p-4 pb-0 border-b border-[#d1d7db] bg-[#f0f2f5]">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold text-[#111b21]">Chats</h1>
@@ -223,17 +250,33 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
             className="pl-9 bg-white border-[#d1d7db] focus-visible:ring-[#00a884] rounded-lg"
           />
         </div>
+        <Tabs.Root value={statusFilter} onValueChange={onStatusFilterChange}>
+          <Tabs.List className="flex border-t border-[#e9edef] mt-3 -mb-[1px]">
+            {(['abierto', 'pendiente', 'resuelto', 'todos'] as const).map((tab) => (
+              <Tabs.Trigger
+                key={tab}
+                value={tab}
+                className="flex-1 px-2 py-2 text-xs font-medium text-[#667781] data-[state=active]:text-[#00a884] data-[state=active]:border-b-2 data-[state=active]:border-[#00a884] transition-colors capitalize"
+              >
+                {tab === 'abierto' ? 'Abierto' :
+                 tab === 'pendiente' ? 'Pendiente' :
+                 tab === 'resuelto' ? 'Resuelto' : 'Todos'}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+        </Tabs.Root>
       </div>
 
       <ScrollArea className="flex-1 h-0 overflow-hidden">
         {filteredConversations.length === 0 ? (
           <div className="p-4 text-center text-[#667781]">
-            {searchQuery ? 'No conversations found' : 'No conversations yet'}
+            {getEmptyStateText()}
           </div>
         ) : (
           <div className="w-full overflow-hidden">
           {filteredConversations.map((conversation) => {
             const isHandoff = handoffIds?.has(conversation.id) ?? false;
+            const dotClass = STATUS_DOT_CLASS[conversation.convStatus ?? 'abierto'] ?? 'bg-gray-400';
             return (
             <button
               key={conversation.id}
@@ -256,6 +299,7 @@ export const ConversationList = forwardRef<ConversationListRef, Props>(
                 <div className="flex-1 min-w-0 flex justify-between items-start gap-4 overflow-hidden">
                   <div className="flex-1 min-w-0 overflow-hidden">
                     <div className="flex items-center gap-1.5">
+                      <span className={cn("h-2 w-2 rounded-full flex-shrink-0", dotClass)} />
                       <p className="font-medium text-[#111b21] truncate">
                         {conversation.contactName || conversation.phoneNumber}
                       </p>

@@ -11,10 +11,15 @@ type Conversation = {
   id: string;
   phoneNumber: string;
   contactName?: string;
+  convStatus?: string;
+  assignedAgentId?: string | null;
+  assignedAgentName?: string | null;
+  labels?: { id: string; name: string; color: string }[];
 };
 
 export default function Home() {
   const [selectedConversation, setSelectedConversation] = useState<Conversation>();
+  const [statusFilter, setStatusFilter] = useState('abierto');
   const conversationListRef = useRef<ConversationListRef>(null);
   const { alertingIds, allHandoffIds, acknowledge, onConversationsUpdated } = useHandoffAlerts();
 
@@ -40,6 +45,12 @@ export default function Home() {
     setSelectedConversation(undefined);
   };
 
+  const handleStatusChange = (convId: string, newStatus: string) => {
+    if (selectedConversation?.id === convId) {
+      setSelectedConversation(prev => prev ? { ...prev, convStatus: newStatus } : prev);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col">
       <div className="flex items-center justify-between border-b px-4 py-2">
@@ -48,6 +59,9 @@ export default function Home() {
           <span className="text-sm font-medium">Maissi Beauty Shop AI</span>
         </div>
         <div className="flex items-center gap-3">
+          <a href="/admin/labels" className="text-xs text-gray-500 hover:text-gray-700">
+            Etiquetas
+          </a>
           <a href="/admin/canned-responses" className="text-xs text-gray-500 hover:text-gray-700">
             Canned Responses
           </a>
@@ -70,15 +84,19 @@ export default function Home() {
         isHidden={!!selectedConversation}
         handoffIds={alertingIds}
         onConversationsLoaded={onConversationsUpdated}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
       />
       <MessageView
         conversationId={selectedConversation?.id}
         phoneNumber={selectedConversation?.phoneNumber}
         contactName={selectedConversation?.contactName}
+        convStatus={selectedConversation?.convStatus}
         onTemplateSent={handleTemplateSent}
         onBack={handleBackToList}
         isVisible={!!selectedConversation}
         isHandoff={selectedConversation ? allHandoffIds.has(selectedConversation.id) : false}
+        onStatusChange={handleStatusChange}
       />
       </div>
       </ErrorBoundary>
