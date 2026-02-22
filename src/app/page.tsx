@@ -48,6 +48,9 @@ export default function Home() {
           <span className="text-sm font-medium">Maissi Beauty Shop AI</span>
         </div>
         <div className="flex items-center gap-3">
+          <a href="/admin/canned-responses" className="text-xs text-gray-500 hover:text-gray-700">
+            Canned Responses
+          </a>
           <a href="/admin/settings" className="text-xs text-gray-500 hover:text-gray-700">
             Settings
           </a>
