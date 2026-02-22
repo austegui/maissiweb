@@ -3,7 +3,7 @@
 ## Milestones
 
 - v1.0 MVP -- Phases 1-6 (shipped 2026-02-21)
-- v2.0 Commercial-Grade Features -- Phases 7-13 (complete 2026-02-22)
+- v2.0 Commercial-Grade Features -- Phases 7-14 (shipped 2026-02-22)
 
 ## Phases
 
@@ -62,172 +62,27 @@ Plans:
 
 </details>
 
-### v2.0 Commercial-Grade Features (Complete)
+<details>
+<summary>v2.0 Commercial-Grade Features (Phases 7-14) - SHIPPED 2026-02-22</summary>
 
-**Milestone Goal:** Transform the MVP inbox into a production commercial-level tool with team coordination, efficiency features, and operational visibility.
+- [x] **Phase 7: Foundation** - RBAC, user profiles, and config batch refactor
+- [x] **Phase 8: Canned Responses** - Quick reply library with slash-command picker
+- [x] **Phase 9: Conversation Management** - Status tracking, team assignment, and customer labels
+- [x] **Phase 10: Customer Intelligence** - Contact profiles and internal notes
+- [x] **Phase 11: Notifications + Real-Time** - Sound alerts and Supabase Realtime sync
+- [x] **Phase 12: Analytics + Export** - Dashboard and CSV export
+- [x] **Phase 13: Error Tracking + User Management** - Error boundary and admin user management
+- [x] **Phase 14: Audit Cleanup** - Bug fixes from milestone audit
 
-**Phase Numbering:**
-- Integer phases (7, 8, 9...): Planned milestone work
-- Decimal phases (7.1, 7.2): Urgent insertions if needed (marked with INSERTED)
+Full details: `.planning/milestones/v2.0-ROADMAP.md`
 
-- [x] **Phase 7: Foundation** - RBAC, user profiles, and config batch refactor to unblock all subsequent features
-- [x] **Phase 8: Canned Responses** - Quick reply library with slash-command picker for agent productivity
-- [x] **Phase 9: Conversation Management** - Status tracking, team assignment, and customer labels for workflow control
-- [x] **Phase 10: Customer Intelligence** - Contact profiles and internal notes for customer context and team knowledge
-- [x] **Phase 11: Notifications + Real-Time** - Sound alerts for all messages and Supabase Realtime for instant metadata sync
-- [x] **Phase 12: Analytics + Export** - Operational dashboard and CSV export for business visibility
-- [x] **Phase 13: Error Tracking + User Management** - Global error boundary and admin UI for team member management
-- [x] **Phase 14: Audit Cleanup** - Fix contact panel bug, hide admin nav from agents, improve nav discoverability
+</details>
 
-**Backlog (deferred):**
-- **Message Search** - Global search dialog for finding contacts, conversations, and messages (moved from Phase 13)
+## Backlog
 
-## Phase Details
-
-### Phase 7: Foundation
-**Goal**: The system enforces role-based access so admins and agents see different capabilities, and the database layer is optimized to handle the increased query load of v2 features
-**Depends on**: Phase 6 (v1.0 complete)
-**Requirements**: RBAC-01, RBAC-02, RBAC-03, RBAC-04, RBAC-05
-**Success Criteria** (what must be TRUE):
-  1. When a new user logs in for the first time, a user profile row is automatically created with the "agent" role
-  2. An admin user can access the settings page; an agent user is blocked from accessing settings
-  3. An agent user can view conversations and send messages but cannot see admin-only pages
-  4. A user cannot change their own role (RLS prevents self-promotion)
-  5. API routes that previously made 4 individual config queries now make a single batch query
-**Plans**: 3 plans
-
-Plans:
-- [x] 07-01-PLAN.md -- Refactor getConfig() to batch queries and update all API route consumers
-- [x] 07-02-PLAN.md -- Create user_profiles table, trigger, RLS policies in Supabase Dashboard
-- [x] 07-03-PLAN.md -- Create admin route guard and verify RBAC on Vercel
-
-### Phase 8: Canned Responses
-**Goal**: Agents can instantly insert pre-written replies into conversations, eliminating repetitive typing of common responses like pricing, hours, and aftercare instructions
-**Depends on**: Phase 7
-**Requirements**: CANNED-01, CANNED-02, CANNED-03, CANNED-04, CANNED-05
-**Success Criteria** (what must be TRUE):
-  1. An admin can create a new canned response with a title, shortcut, and body text from a management page
-  2. An agent typing `/` in the message input sees a filterable dropdown of available canned responses
-  3. Selecting a canned response from the dropdown inserts its full text into the message input ready to send
-  4. All agents see the same shared library of canned responses
-  5. An admin can edit or delete any existing canned response
-**Plans**: 3 plans
-
-Plans:
-- [x] 08-01-PLAN.md -- Create canned_responses table and RLS policies in Supabase
-- [x] 08-02-PLAN.md -- Build admin CRUD page for managing canned responses
-- [x] 08-03-PLAN.md -- Add slash-command picker to message input with cmdk
-
-### Phase 9: Conversation Management
-**Goal**: The inbox functions as a ticket system where conversations have a lifecycle status, can be assigned to specific agents, and can be categorized with labels for organized workflow
-**Depends on**: Phase 7
-**Requirements**: STATUS-01, STATUS-02, STATUS-03, STATUS-04, STATUS-05, ASSIGN-01, ASSIGN-02, ASSIGN-03, ASSIGN-04, LABEL-01, LABEL-02, LABEL-03, LABEL-04
-**Success Criteria** (what must be TRUE):
-  1. Each conversation displays a status (Open, Pending, or Resolved) and an agent can change it from the message view header
-  2. The conversation list can be filtered by status via tabs or a dropdown, and status indicators are visually distinct
-  3. When a customer sends a new message to a Resolved conversation, it automatically reopens to Open
-  4. An agent can assign a conversation to a team member, and the assigned name is visible in the conversation list
-  5. The conversation list can be filtered by "Mine", "Unassigned", or "All" assignments, and by customer label
-**Plans**: 5 plans
-
-Plans:
-- [x] 09-01-PLAN.md -- Create Supabase tables (conversation_metadata, contact_labels, conversation_contact_labels) and RLS policies
-- [x] 09-02-PLAN.md -- Install Radix packages, create all API routes, enrich conversations endpoint with metadata + labels
-- [x] 09-03-PLAN.md -- Build admin label management page (CRUD with color picker)
-- [x] 09-04-PLAN.md -- Add status tabs to conversation list and status dropdown + auto-reopen to message view
-- [x] 09-05-PLAN.md -- Add assignment dropdown, label picker, initials badges, label pills, and filters
-
-### Phase 10: Customer Intelligence
-**Goal**: Agents have persistent customer context and can share team knowledge about any conversation, so no information is lost between sessions or team members
-**Depends on**: Phase 9
-**Requirements**: CONTACT-01, CONTACT-02, CONTACT-03, CONTACT-04, NOTES-01, NOTES-02, NOTES-03, NOTES-04
-**Success Criteria** (what must be TRUE):
-  1. A contact profile is automatically created when a new phone number first appears, and the agent can edit the display name, email, and notes from a side panel
-  2. A contact's full conversation history is accessible from their profile
-  3. An agent can add a text note to any conversation, and it appears in a collapsible side panel with the author name and timestamp
-  4. Internal notes are never sent to the customer -- they are physically separate from the message-sending code path
-**Plans**: 3 plans
-
-Plans:
-- [x] 10-01-PLAN.md -- Create contacts and conversation_notes tables in Supabase (SQL + RLS + backfill)
-- [x] 10-02-PLAN.md -- Backend API routes for contact profiles (GET/PATCH) and conversation notes (GET/POST)
-- [x] 10-03-PLAN.md -- Contact panel UI component with editable fields, conversation history, and collapsible notes
-
-### Phase 11: Notifications + Real-Time
-**Goal**: Agents never miss a new message thanks to sound and browser alerts, and all connected agents see status changes, assignments, and notes appear instantly without refreshing
-**Depends on**: Phase 10
-**Requirements**: NOTIF-01, NOTIF-02, NOTIF-03, NOTIF-04, REALTIME-01, REALTIME-02, REALTIME-03
-**Success Criteria** (what must be TRUE):
-  1. An audio alert plays when any new inbound WhatsApp message arrives (not just handoffs), and the sound does not play for messages the agent themselves just sent
-  2. A user can toggle sound notifications on or off via a preference setting
-  3. A browser notification appears for new messages when the inbox tab is not focused
-  4. When one agent changes a conversation's status or assignment, all other connected agents see the update appear without refreshing
-  5. If the real-time connection drops, it automatically reconnects
-**Plans**: 3 plans
-
-Plans:
-- [x] 11-01-PLAN.md -- Enable Supabase Realtime publication for metadata tables + add notifications_enabled column
-- [x] 11-02-PLAN.md -- Message alerts hook (chime + browser notifications), notification toggle, preferences API
-- [x] 11-03-PLAN.md -- Supabase Realtime sync hook with reconnection, polling fallback, connection indicator
-
-### Phase 12: Analytics + Export
-**Goal**: The admin has operational visibility into team performance through charts and metrics, and can export conversation data for record-keeping
-**Depends on**: Phase 9
-**Requirements**: ANALYTICS-01, ANALYTICS-02, ANALYTICS-03, ANALYTICS-04, EXPORT-01, EXPORT-02, EXPORT-03
-**Success Criteria** (what must be TRUE):
-  1. An admin can view a dashboard showing message volume over time as a daily/weekly chart
-  2. The dashboard displays average response time and conversations resolved per day and per agent
-  3. The analytics dashboard is admin-only -- agents cannot access it
-  4. An admin can export conversation data as a CSV file, filtered by date range and conversation status
-  5. The CSV export includes contact name, phone number, status, assigned agent, message count, and last active date
-**Plans**: 3 plans
-
-Plans:
-- [x] 12-01-PLAN.md -- Create Supabase RPC functions for analytics aggregation (get_agent_stats, get_conversation_volume_by_day)
-- [x] 12-02-PLAN.md -- Analytics metrics API route and CSV export API route with admin auth guards
-- [x] 12-03-PLAN.md -- Analytics dashboard UI with Recharts charts, KPI cards, agent table, and CSV export
-
-### Phase 13: Error Tracking + User Management
-**Goal**: Production errors are automatically captured and reported for debugging, and the admin can manage team members directly from the app without touching the Supabase dashboard
-**Depends on**: Phase 7
-**Requirements**: SENTRY-01, SENTRY-02, SENTRY-03, USRMGMT-01, USRMGMT-02, USRMGMT-03, USRMGMT-04
-**Success Criteria** (what must be TRUE):
-  1. Unhandled errors in production (client-side, server-side, and edge runtime) are captured and visible in the Sentry dashboard
-  2. When an unrecoverable error occurs, the user sees a friendly error page instead of a blank screen
-  3. An admin can invite a new team member by email from a user management page
-  4. An admin can deactivate a team member's account and change a team member's role (admin/agent)
-  5. The user management page shows all team members with their current role and status
-**Plans**: 2 plans
-
-Plans:
-- [x] 13-01-PLAN.md -- Global error page + Supabase admin client utility
-- [x] 13-02-PLAN.md -- User management server actions, page UI, and settings nav link
-
-### Phase 14: Audit Cleanup
-**Goal**: All tech debt items identified by the v2.0 milestone audit are resolved -- the contact panel no longer blanks after save, admin nav links are hidden from agents, user management is discoverable from the top nav, and message send failure does not suppress notifications
-**Depends on**: Phase 13
-**Gap Closure**: Closes all 5 items from v2.0-MILESTONE-AUDIT.md
-**Success Criteria** (what must be TRUE):
-  1. After editing a contact field (name, email, notes) and blurring, the field retains the saved value (does not blank)
-  2. Non-admin users do not see admin-only nav links (analytics, labels, canned responses, settings, users) in the top nav
-  3. Admin users see a "Usuarios" link in the top nav that goes to /admin/users
-  4. If a message send fails (non-2xx response), the notification suppression window does not activate
-**Plans**: 1 plan
-
-Plans:
-- [x] 14-01-PLAN.md -- Fix contact PATCH response, role-aware nav links, onMessageSent guard
-
-### Backlog: Message Search (deferred)
-**Goal**: Any team member can quickly find a contact, conversation, or message from anywhere in the app using a keyboard-driven search dialog
-**Requirements**: SEARCH-01, SEARCH-02, SEARCH-03, SEARCH-04
-**Status**: Deferred — revisit in future milestone
+- **Message Search** - Global search dialog for finding contacts, conversations, and messages (deferred from v2.0)
 
 ## Progress
-
-**Execution Order:**
-Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14
-
-Note: Phases 8, 9, 12, and 13 all depend on Phase 7 but not necessarily on each other. The linear order above is the recommended sequence based on research (dependency chains and productivity ROI). Phase 12 depends on Phase 9 data accumulation. Message Search deferred to backlog.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -245,4 +100,3 @@ Note: Phases 8, 9, 12, and 13 all depend on Phase 7 but not necessarily on each 
 | 12. Analytics + Export | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 13. Error Tracking + User Management | v2.0 | 2/2 | Complete | 2026-02-22 |
 | 14. Audit Cleanup | v2.0 | 1/1 | Complete | 2026-02-22 |
-| ~~Message Search~~ | backlog | - | Deferred | - |
