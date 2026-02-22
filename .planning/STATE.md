@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 9 COMPLETE, Phase 10 next
+**Current focus:** Milestone v2.0 -- Phase 10 IN PROGRESS (2/3 plans complete)
 
 ## Current Position
 
-Phase: 9 of 14 (Conversation Management) -- COMPLETE
-Plan: 5 of 5 -- COMPLETE
-Status: Phase complete
-Last activity: 2026-02-22 -- Completed 09-05-PLAN.md (assignment and label UI)
+Phase: 10 of 14 (Customer Intelligence) -- IN PROGRESS
+Plan: 2 of 3 -- COMPLETE
+Status: In progress
+Last activity: 2026-02-22 -- Completed 10-02-PLAN.md (contact profile API + conversation notes API)
 
-Progress: [######################░░░░░░░░] 63% (v1.0 complete, Phase 7 complete, Phase 8 complete, Phase 9 complete)
+Progress: [#######################░░░░░░░] 66% (v1.0 complete, Phases 7-9 complete, Phase 10 in progress)
 
 ## Performance Metrics
 
@@ -35,6 +35,8 @@ Progress: [######################░░░░░░░░] 63% (v1.0 complete, P
 - 09-03: 4 min (admin label management page, 2 tasks, 3 files)
 - 09-04: 4 min (conversation status lifecycle UI: tabs, dots, dropdown, auto-reopen, 3 files)
 - 09-05: 5 min (assignment dropdown, label picker, initials badge, label pills, filters, 5 files)
+- 10-01: User-executed SQL (contacts + conversation_notes tables)
+- 10-02: 4 min (contact profile API GET+PATCH, conversation notes API GET+POST, 2 files)
 
 ## Accumulated Context
 
@@ -72,6 +74,9 @@ Progress: [######################░░░░░░░░] 63% (v1.0 complete, P
 - [09-05]: onConversationsLoaded callback extended with optional meta param -- backwards compatible
 - [09-05]: Native <select> for assignment and label secondary filters -- compact, no custom styling needed
 - [09-05]: LabelPicker uses absolute positioning (not Radix Popover) -- consistent with canned-responses-picker, no focus theft
+- [10-02]: Contacts GET uses upsert-then-read (ignoreDuplicates: true) -- rows created lazily, existing data never overwritten
+- [10-02]: Notes user_profiles join cast through unknown -- Supabase infers array type, double-cast required by TypeScript strict mode
+- [10-02]: Notes route has zero WhatsApp imports -- safety rule, notes physically separate from message-sending path
 
 ### Pending Todos
 
@@ -84,5 +89,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 09-05-PLAN.md (assignment and label UI) -- Phase 9 complete
+Stopped at: Completed 10-02-PLAN.md (contact profile API + conversation notes API)
 Resume file: None
