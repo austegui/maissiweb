@@ -11,12 +11,15 @@ export async function GET() {
 
   const { data } = await supabase
     .from('user_profiles')
-    .select('notifications_enabled')
+    .select('notifications_enabled, role')
     .eq('id', user.id)
     .single();
 
   const notificationsEnabled = data?.notifications_enabled ?? true;
-  return NextResponse.json({ notifications_enabled: notificationsEnabled });
+  return NextResponse.json({
+    notifications_enabled: notificationsEnabled,
+    role: data?.role ?? 'agent',
+  });
 }
 
 export async function PATCH(request: Request) {

@@ -33,6 +33,7 @@ export default function Home() {
   const [showContactPanel, setShowContactPanel] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [userRole, setUserRole] = useState<'admin' | 'agent'>('agent');
   const conversationListRef = useRef<ConversationListRef>(null);
   const { alertingIds, allHandoffIds, acknowledge, onConversationsUpdated } = useHandoffAlerts();
   const { onConversationsUpdated: onMessageAlert, markSentMessage } = useMessageAlerts({
@@ -47,13 +48,16 @@ export default function Home() {
 
   const { realtimeConnected } = useRealtimeSync({ onDataChange: handleRealtimeChange });
 
-  // Fetch notification preference on mount
+  // Fetch notification preference and role on mount
   useEffect(() => {
     fetch('/api/user/preferences')
       .then((r) => r.json())
       .then((data) => {
         if (typeof data.notifications_enabled === 'boolean') {
           setNotificationsEnabled(data.notifications_enabled);
+        }
+        if (data.role === 'admin' || data.role === 'agent') {
+          setUserRole(data.role);
         }
       })
       .catch(console.error);
@@ -136,18 +140,25 @@ export default function Home() {
           <span className="text-sm font-medium">Maissi Beauty Shop AI</span>
         </div>
         <div className="flex items-center gap-3">
-          <a href="/admin/analytics" className="text-xs text-gray-500 hover:text-gray-700">
-            Analiticas
-          </a>
-          <a href="/admin/labels" className="text-xs text-gray-500 hover:text-gray-700">
-            Etiquetas
-          </a>
-          <a href="/admin/canned-responses" className="text-xs text-gray-500 hover:text-gray-700">
-            Canned Responses
-          </a>
-          <a href="/admin/settings" className="text-xs text-gray-500 hover:text-gray-700">
-            Settings
-          </a>
+          {userRole === 'admin' && (
+            <>
+              <a href="/admin/analytics" className="text-xs text-gray-500 hover:text-gray-700">
+                Analiticas
+              </a>
+              <a href="/admin/labels" className="text-xs text-gray-500 hover:text-gray-700">
+                Etiquetas
+              </a>
+              <a href="/admin/canned-responses" className="text-xs text-gray-500 hover:text-gray-700">
+                Canned Responses
+              </a>
+              <a href="/admin/settings" className="text-xs text-gray-500 hover:text-gray-700">
+                Settings
+              </a>
+              <a href="/admin/users" className="text-xs text-gray-500 hover:text-gray-700">
+                Usuarios
+              </a>
+            </>
+          )}
           {!realtimeConnected && (
             <span
               className="h-2 w-2 rounded-full bg-amber-400 animate-pulse"
