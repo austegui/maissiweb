@@ -11,11 +11,11 @@
 
 ### Foundation & RBAC
 
-- [ ] **RBAC-01**: User profiles table auto-created on first login with default "agent" role
-- [ ] **RBAC-02**: Two roles exist -- admin and agent -- enforced by RLS policies in Supabase
-- [ ] **RBAC-03**: Only admin users can access the settings page and user management
-- [ ] **RBAC-04**: Agent users can view conversations, send messages, manage notes, but cannot change settings or manage users
-- [ ] **RBAC-05**: getConfig() refactored to batch query (getConfigs()) to prevent query multiplication
+- [x] **RBAC-01**: User profiles table auto-created on first login with default "agent" role
+- [x] **RBAC-02**: Two roles exist -- admin and agent -- enforced by RLS policies in Supabase
+- [x] **RBAC-03**: Only admin users can access the settings page and user management
+- [x] **RBAC-04**: Agent users can view conversations, send messages, manage notes, but cannot change settings or manage users
+- [x] **RBAC-05**: getConfig() refactored to batch query (getConfigs()) to prevent query multiplication
 
 ### Canned Responses
 
@@ -148,11 +148,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RBAC-01 | Phase 7 | Pending |
-| RBAC-02 | Phase 7 | Pending |
-| RBAC-03 | Phase 7 | Pending |
-| RBAC-04 | Phase 7 | Pending |
-| RBAC-05 | Phase 7 | Pending |
+| RBAC-01 | Phase 7 | Complete |
+| RBAC-02 | Phase 7 | Complete |
+| RBAC-03 | Phase 7 | Complete |
+| RBAC-04 | Phase 7 | Complete |
+| RBAC-05 | Phase 7 | Complete |
 | CANNED-01 | Phase 8 | Pending |
 | CANNED-02 | Phase 8 | Pending |
 | CANNED-03 | Phase 8 | Pending |

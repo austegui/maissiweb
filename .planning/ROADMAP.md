@@ -70,7 +70,7 @@ Plans:
 - Integer phases (7, 8, 9...): Planned milestone work
 - Decimal phases (7.1, 7.2): Urgent insertions if needed (marked with INSERTED)
 
-- [ ] **Phase 7: Foundation** - RBAC, user profiles, and config batch refactor to unblock all subsequent features
+- [x] **Phase 7: Foundation** - RBAC, user profiles, and config batch refactor to unblock all subsequent features
 - [ ] **Phase 8: Canned Responses** - Quick reply library with slash-command picker for agent productivity
 - [ ] **Phase 9: Conversation Management** - Status tracking, team assignment, and customer labels for workflow control
 - [ ] **Phase 10: Customer Intelligence** - Contact profiles and internal notes for customer context and team knowledge
@@ -94,9 +94,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 07-01-PLAN.md -- Refactor getConfig() to batch queries and update all API route consumers
-- [ ] 07-02-PLAN.md -- Create user_profiles table, trigger, RLS policies in Supabase Dashboard
-- [ ] 07-03-PLAN.md -- Create admin route guard and verify RBAC on Vercel
+- [x] 07-01-PLAN.md -- Refactor getConfig() to batch queries and update all API route consumers
+- [x] 07-02-PLAN.md -- Create user_profiles table, trigger, RLS policies in Supabase Dashboard
+- [x] 07-03-PLAN.md -- Create admin route guard and verify RBAC on Vercel
 
 ### Phase 8: Canned Responses
 **Goal**: Agents can instantly insert pre-written replies into conversations, eliminating repetitive typing of common responses like pricing, hours, and aftercare instructions
@@ -195,7 +195,7 @@ Note: Phases 8, 9, 12, and 14 all depend on Phase 7 but not necessarily on each 
 | 4. Config Migration | v1.0 | 2/2 | Complete | 2026-02-18 |
 | 5. Branding | v1.0 | 1/1 | Complete | 2026-02-18 |
 | 6. Deploy + Verify | v1.0 | 2/2 | Complete | 2026-02-21 |
-| 7. Foundation | v2.0 | 0/3 | Not started | - |
+| 7. Foundation | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 8. Canned Responses | v2.0 | 0/TBD | Not started | - |
 | 9. Conversation Management | v2.0 | 0/TBD | Not started | - |
 | 10. Customer Intelligence | v2.0 | 0/TBD | Not started | - |
