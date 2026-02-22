@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 
 ## Current Position
 
-Phase: 13 of 13 (Error Tracking + User Management) -- COMPLETE
-Plan: 2 of 2 -- COMPLETE (13-02 done)
-Status: ALL PLANS COMPLETE -- v2.0 milestone fully shipped
-Last activity: 2026-02-22 -- Completed 13-02 (user management CRUD at /admin/users)
+Phase: 14 of 14 (Audit Cleanup)
+Plan: 1 of 1 -- COMPLETE (14-01 done)
+Status: Phase 14 complete -- all audit items closed
+Last activity: 2026-02-22 -- Completed 14-01 (5 audit bug fixes across 5 files)
 
-Progress: [████████████████████████████████] 100% (v1.0 complete, Phases 7-13 complete, all plans done)
+Progress: [████████████████████████████████] 100% (v1.0 complete, Phases 7-14 complete, all audit items closed)
 
 ## Performance Metrics
 
@@ -119,6 +119,9 @@ Progress: [███████████████████████
 - [13-02]: upsert user_profiles after createUser to handle DB trigger race condition -- profile may not exist yet
 - [13-02]: window.confirm() for deactivation confirmation -- admin-only page, simpler than inline confirm state
 - [13-02]: rowLoading[userId] state pattern for per-row loading in tables without full re-render
+- [14-01]: Re-SELECT after UPDATE in PATCH handler returns { data: updatedContact } -- matches GET response shape so ContactPanel setContact(data.data) works after save
+- [14-01]: userRole state defaults to 'agent' (least privilege) -- admin links hidden during loading until preference fetch resolves
+- [14-01]: response.ok guard on onMessageSent?.() -- prevents notification suppression on failed sends; UI reset calls (setMessageInput, handleRemoveFile, fetchMessages) remain unconditional
 
 ### Pending Todos
 
@@ -130,6 +133,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-22T19:28:42Z
-Stopped at: Completed 13-02-PLAN.md (user management CRUD) -- ALL PLANS COMPLETE
+Last session: 2026-02-22T20:04:26Z
+Stopped at: Completed 14-01-PLAN.md (5 audit bug fixes) -- ALL PHASES COMPLETE
 Resume file: None
