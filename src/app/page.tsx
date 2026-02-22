@@ -136,6 +136,9 @@ export default function Home() {
           <span className="text-sm font-medium">Maissi Beauty Shop AI</span>
         </div>
         <div className="flex items-center gap-3">
+          <a href="/admin/analytics" className="text-xs text-gray-500 hover:text-gray-700">
+            Analiticas
+          </a>
           <a href="/admin/labels" className="text-xs text-gray-500 hover:text-gray-700">
             Etiquetas
           </a>
