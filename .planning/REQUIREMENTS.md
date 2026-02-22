@@ -90,9 +90,9 @@
 
 ### Error Tracking
 
-- [ ] **SENTRY-01**: Sentry integrated for client-side, server-side, and edge runtime error tracking
-- [ ] **SENTRY-02**: Unhandled errors in production are captured and reported to Sentry dashboard
-- [ ] **SENTRY-03**: global-error.tsx provides user-friendly error page for unrecoverable errors
+- [ ] **SENTRY-01**: Sentry integrated for client-side, server-side, and edge runtime error tracking _(descoped from v2.0 -- revisit in future milestone)_
+- [ ] **SENTRY-02**: Unhandled errors in production are captured and reported to Sentry dashboard _(descoped from v2.0 -- revisit in future milestone)_
+- [x] **SENTRY-03**: global-error.tsx provides user-friendly error page for unrecoverable errors
 
 ### Real-Time Updates
 
@@ -102,10 +102,10 @@
 
 ### User Management
 
-- [ ] **USRMGMT-01**: Admin can invite new team members via email from a user management page
-- [ ] **USRMGMT-02**: Admin can deactivate a team member's account
-- [ ] **USRMGMT-03**: Admin can change a team member's role (admin/agent)
-- [ ] **USRMGMT-04**: User management page shows all team members with their role and status
+- [x] **USRMGMT-01**: Admin can invite new team members via email from a user management page
+- [x] **USRMGMT-02**: Admin can deactivate a team member's account
+- [x] **USRMGMT-03**: Admin can change a team member's role (admin/agent)
+- [x] **USRMGMT-04**: User management page shows all team members with their role and status
 
 ---
 
@@ -193,17 +193,17 @@
 | EXPORT-01 | Phase 12 | Complete |
 | EXPORT-02 | Phase 12 | Complete |
 | EXPORT-03 | Phase 12 | Complete |
-| SEARCH-01 | Phase 13 | Pending |
-| SEARCH-02 | Phase 13 | Pending |
-| SEARCH-03 | Phase 13 | Pending |
-| SEARCH-04 | Phase 13 | Pending |
-| SENTRY-01 | Phase 14 | Pending |
-| SENTRY-02 | Phase 14 | Pending |
-| SENTRY-03 | Phase 14 | Pending |
-| USRMGMT-01 | Phase 14 | Pending |
-| USRMGMT-02 | Phase 14 | Pending |
-| USRMGMT-03 | Phase 14 | Pending |
-| USRMGMT-04 | Phase 14 | Pending |
+| SEARCH-01 | Backlog | Deferred |
+| SEARCH-02 | Backlog | Deferred |
+| SEARCH-03 | Backlog | Deferred |
+| SEARCH-04 | Backlog | Deferred |
+| SENTRY-01 | Backlog | Descoped |
+| SENTRY-02 | Backlog | Descoped |
+| SENTRY-03 | Phase 13 | Complete |
+| USRMGMT-01 | Phase 13 | Complete |
+| USRMGMT-02 | Phase 13 | Complete |
+| USRMGMT-03 | Phase 13 | Complete |
+| USRMGMT-04 | Phase 13 | Complete |
 
 **Coverage:**
 - v2.0 requirements: 56 total
@@ -212,4 +212,4 @@
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-22 after Phase 12 completion*
+*Last updated: 2026-02-22 after Phase 13 completion*

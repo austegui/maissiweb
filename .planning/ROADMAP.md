@@ -3,7 +3,7 @@
 ## Milestones
 
 - v1.0 MVP -- Phases 1-6 (shipped 2026-02-21)
-- v2.0 Commercial-Grade Features -- Phases 7-13 (in progress)
+- v2.0 Commercial-Grade Features -- Phases 7-13 (complete 2026-02-22)
 
 ## Phases
 
@@ -76,7 +76,7 @@ Plans:
 - [x] **Phase 10: Customer Intelligence** - Contact profiles and internal notes for customer context and team knowledge
 - [x] **Phase 11: Notifications + Real-Time** - Sound alerts for all messages and Supabase Realtime for instant metadata sync
 - [x] **Phase 12: Analytics + Export** - Operational dashboard and CSV export for business visibility
-- [ ] **Phase 13: Error Tracking + User Management** - Sentry integration and admin UI for team member management
+- [x] **Phase 13: Error Tracking + User Management** - Global error boundary and admin UI for team member management
 
 **Backlog (deferred):**
 - **Message Search** - Global search dialog for finding contacts, conversations, and messages (moved from Phase 13)
@@ -199,8 +199,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 13-01-PLAN.md -- Global error page + Supabase admin client utility
-- [ ] 13-02-PLAN.md -- User management server actions, page UI, and settings nav link
+- [x] 13-01-PLAN.md -- Global error page + Supabase admin client utility
+- [x] 13-02-PLAN.md -- User management server actions, page UI, and settings nav link
 
 ### Backlog: Message Search (deferred)
 **Goal**: Any team member can quickly find a contact, conversation, or message from anywhere in the app using a keyboard-driven search dialog
@@ -228,5 +228,5 @@ Note: Phases 8, 9, 12, and 13 all depend on Phase 7 but not necessarily on each 
 | 10. Customer Intelligence | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 11. Notifications + Real-Time | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 12. Analytics + Export | v2.0 | 3/3 | Complete | 2026-02-22 |
-| 13. Error Tracking + User Management | v2.0 | 0/TBD | Not started | - |
+| 13. Error Tracking + User Management | v2.0 | 2/2 | Complete | 2026-02-22 |
 | ~~Message Search~~ | backlog | - | Deferred | - |
