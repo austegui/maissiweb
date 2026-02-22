@@ -75,7 +75,7 @@ Plans:
 - [x] **Phase 9: Conversation Management** - Status tracking, team assignment, and customer labels for workflow control
 - [x] **Phase 10: Customer Intelligence** - Contact profiles and internal notes for customer context and team knowledge
 - [x] **Phase 11: Notifications + Real-Time** - Sound alerts for all messages and Supabase Realtime for instant metadata sync
-- [ ] **Phase 12: Analytics + Export** - Operational dashboard and CSV export for business visibility
+- [x] **Phase 12: Analytics + Export** - Operational dashboard and CSV export for business visibility
 - [ ] **Phase 13: Message Search** - Global search dialog for finding contacts, conversations, and messages
 - [ ] **Phase 14: Error Tracking + User Management** - Sentry integration and admin UI for team member management
 
@@ -180,9 +180,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 12-01-PLAN.md -- Create Supabase RPC functions for analytics aggregation (get_agent_stats, get_conversation_volume_by_day)
-- [ ] 12-02-PLAN.md -- Analytics metrics API route and CSV export API route with admin auth guards
-- [ ] 12-03-PLAN.md -- Analytics dashboard UI with Recharts charts, KPI cards, agent table, and CSV export
+- [x] 12-01-PLAN.md -- Create Supabase RPC functions for analytics aggregation (get_agent_stats, get_conversation_volume_by_day)
+- [x] 12-02-PLAN.md -- Analytics metrics API route and CSV export API route with admin auth guards
+- [x] 12-03-PLAN.md -- Analytics dashboard UI with Recharts charts, KPI cards, agent table, and CSV export
 
 ### Phase 13: Message Search
 **Goal**: Any team member can quickly find a contact, conversation, or message from anywhere in the app using a keyboard-driven search dialog
@@ -227,6 +227,6 @@ Note: Phases 8, 9, 12, and 14 all depend on Phase 7 but not necessarily on each 
 | 9. Conversation Management | v2.0 | 5/5 | Complete | 2026-02-22 |
 | 10. Customer Intelligence | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 11. Notifications + Real-Time | v2.0 | 3/3 | Complete | 2026-02-22 |
-| 12. Analytics + Export | v2.0 | 0/3 | Not started | - |
+| 12. Analytics + Export | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 13. Message Search | v2.0 | 0/TBD | Not started | - |
 | 14. Error Tracking + User Management | v2.0 | 0/TBD | Not started | - |

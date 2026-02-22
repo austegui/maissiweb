@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** The team can send and receive WhatsApp messages through a shared web inbox without anyone needing to touch code or config files.
-**Current focus:** Milestone v2.0 -- Phase 12 in progress (Analytics + Export)
+**Current focus:** Milestone v2.0 -- Phase 12 complete (Analytics + Export)
 
 ## Current Position
 
-Phase: 12 of 14 (Analytics + Export) -- In progress
-Plan: 2 of 3 -- COMPLETE (12-01 SQL, 12-02 API routes done; 12-03 UI pending)
-Status: In progress
-Last activity: 2026-02-22 -- Completed 12-02-PLAN.md (Analytics & Export API routes)
+Phase: 12 of 14 (Analytics + Export) -- COMPLETE
+Plan: 3 of 3 -- COMPLETE (12-01, 12-02, 12-03 all done)
+Status: Phase complete -- ready for Phase 13
+Last activity: 2026-02-22 -- Completed 12-03-PLAN.md (Analytics dashboard UI)
 
-Progress: [##############################░] 83% (v1.0 complete, Phases 7-12 partial)
+Progress: [##############################░░] 87% (v1.0 complete, Phases 7-12 complete)
 
 ## Performance Metrics
 
@@ -41,7 +41,9 @@ Progress: [##############################░] 83% (v1.0 complete, Phases 7-12 pa
 - 10-02: 4 min (contact profile API GET+PATCH, conversation notes API GET+POST, 2 files)
 - 10-03: 2 min (ContactPanel UI: editable contact fields, conversation history, collapsible notes, 3 files)
 - 11-01: User-executed SQL (Realtime publication for 4 tables + notifications_enabled column on user_profiles)
+- 12-01: User-executed SQL (get_agent_stats + get_conversation_volume_by_day RPC functions)
 - 12-02: 2 min (analytics JSON API + CSV export API, 2 tasks, 2 files)
+- 12-03: 4 min (analytics dashboard UI: Recharts charts, KPI cards, agent table, CSV export, 2 tasks, 4 files)
 
 ## Accumulated Context
 
@@ -103,6 +105,9 @@ Progress: [##############################░] 83% (v1.0 complete, Phases 7-12 pa
 - [12-02]: avgReplyTime uses lastInboundAt/lastOutboundAt difference -- approximate but zero extra API calls
 - [12-02]: Export route uses new Response() (not NextResponse.json) for raw CSV body
 - [12-02]: ISO timestamps passed to RPC as ${date}T00:00:00Z / ${date}T23:59:59Z -- full day coverage
+- [12-03]: ResponsiveContainer uses fixed pixel height={300} to prevent ResizeObserver infinite loop
+- [12-03]: Cancelled fetch pattern in useEffect prevents stale state updates on rapid preset switching
+- [12-03]: Recharts 3.7.0 installed -- React 19 peer dep officially supported
 
 ### Pending Todos
 
@@ -115,5 +120,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 12-02-PLAN.md (Analytics & Export API routes -- Phase 12 plan 2 of 3 done)
+Stopped at: Completed Phase 12 (Analytics + Export -- all 3 plans done, verified, ready for Phase 13)
 Resume file: None

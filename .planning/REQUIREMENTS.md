@@ -70,10 +70,10 @@
 
 ### Analytics Dashboard
 
-- [ ] **ANALYTICS-01**: Admin can view a dashboard showing message volume over time (daily/weekly chart)
-- [ ] **ANALYTICS-02**: Dashboard shows average response time
-- [ ] **ANALYTICS-03**: Dashboard shows conversations resolved per day and per agent
-- [ ] **ANALYTICS-04**: Dashboard is admin-only (agents cannot access)
+- [x] **ANALYTICS-01**: Admin can view a dashboard showing message volume over time (daily/weekly chart)
+- [x] **ANALYTICS-02**: Dashboard shows average response time
+- [x] **ANALYTICS-03**: Dashboard shows conversations resolved per day and per agent
+- [x] **ANALYTICS-04**: Dashboard is admin-only (agents cannot access)
 
 ### Sound Notifications
 
@@ -84,9 +84,9 @@
 
 ### Conversation Export
 
-- [ ] **EXPORT-01**: Admin can export conversation data as CSV
-- [ ] **EXPORT-02**: Export supports filtering by date range and conversation status
-- [ ] **EXPORT-03**: Export includes contact name, phone number, status, assigned agent, message count, last active date
+- [x] **EXPORT-01**: Admin can export conversation data as CSV
+- [x] **EXPORT-02**: Export supports filtering by date range and conversation status
+- [x] **EXPORT-03**: Export includes contact name, phone number, status, assigned agent, message count, last active date
 
 ### Error Tracking
 
@@ -186,13 +186,13 @@
 | REALTIME-01 | Phase 11 | Complete |
 | REALTIME-02 | Phase 11 | Complete |
 | REALTIME-03 | Phase 11 | Complete |
-| ANALYTICS-01 | Phase 12 | Pending |
-| ANALYTICS-02 | Phase 12 | Pending |
-| ANALYTICS-03 | Phase 12 | Pending |
-| ANALYTICS-04 | Phase 12 | Pending |
-| EXPORT-01 | Phase 12 | Pending |
-| EXPORT-02 | Phase 12 | Pending |
-| EXPORT-03 | Phase 12 | Pending |
+| ANALYTICS-01 | Phase 12 | Complete |
+| ANALYTICS-02 | Phase 12 | Complete |
+| ANALYTICS-03 | Phase 12 | Complete |
+| ANALYTICS-04 | Phase 12 | Complete |
+| EXPORT-01 | Phase 12 | Complete |
+| EXPORT-02 | Phase 12 | Complete |
+| EXPORT-03 | Phase 12 | Complete |
 | SEARCH-01 | Phase 13 | Pending |
 | SEARCH-02 | Phase 13 | Pending |
 | SEARCH-03 | Phase 13 | Pending |
@@ -212,4 +212,4 @@
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-22 after Phase 11 completion*
+*Last updated: 2026-02-22 after Phase 12 completion*
