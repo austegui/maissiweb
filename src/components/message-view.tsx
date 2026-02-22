@@ -247,9 +247,11 @@ type Props = {
   allLabels?: { id: string; name: string; color: string }[];
   contactLabels?: { id: string; name: string; color: string }[];
   onLabelsChange?: (conversationId: string, labels: { id: string; name: string; color: string }[]) => void;
+  onTogglePanel?: () => void;
+  isPanelOpen?: boolean;
 };
 
-export function MessageView({ conversationId, phoneNumber, contactName, convStatus, onStatusChange, onTemplateSent, onBack, isVisible = false, isHandoff = false, agents, assignedAgentId, onAssignmentChange, allLabels, contactLabels, onLabelsChange }: Props) {
+export function MessageView({ conversationId, phoneNumber, contactName, convStatus, onStatusChange, onTemplateSent, onBack, isVisible = false, isHandoff = false, agents, assignedAgentId, onAssignmentChange, allLabels, contactLabels, onLabelsChange, onTogglePanel, isPanelOpen }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -653,6 +655,20 @@ export function MessageView({ conversationId, phoneNumber, contactName, convStat
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            {conversationId && (
+              <Button
+                onClick={() => onTogglePanel?.()}
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "text-[#667781] hover:bg-[#f0f2f5]",
+                  isPanelOpen && "bg-[#e9f5e2] text-[#00a884]"
+                )}
+                title="Panel de contacto"
+              >
+                <UserRound className="h-4 w-4" />
+              </Button>
+            )}
             {conversationId && (
               <StatusSelect value={localStatus} onChange={handleStatusChange} />
             )}

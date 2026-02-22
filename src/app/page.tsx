@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { ConversationList, type ConversationListRef } from '@/components/conversation-list';
 import { MessageView } from '@/components/message-view';
+import { ContactPanel } from '@/components/contact-panel';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { useHandoffAlerts } from '@/hooks/use-handoff-alerts';
 import { logout } from '@/app/login/actions';
@@ -15,6 +16,7 @@ type Conversation = {
   assignedAgentId?: string | null;
   assignedAgentName?: string | null;
   labels?: { id: string; name: string; color: string }[];
+  lastActiveAt?: string;
 };
 
 export default function Home() {
@@ -25,6 +27,8 @@ export default function Home() {
   const [agents, setAgents] = useState<{ id: string; displayName: string }[]>([]);
   const [allLabels, setAllLabels] = useState<{ id: string; name: string; color: string }[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | undefined>();
+  const [showContactPanel, setShowContactPanel] = useState(false);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const conversationListRef = useRef<ConversationListRef>(null);
   const { alertingIds, allHandoffIds, acknowledge, onConversationsUpdated } = useHandoffAlerts();
 
@@ -43,6 +47,7 @@ export default function Home() {
 
   const handleConversationsLoaded = (convs: Conversation[], meta?: { agents: { id: string; displayName: string }[]; currentUserId: string | null }) => {
     onConversationsUpdated(convs);
+    setConversations(convs);
     if (meta?.agents) setAgents(meta.agents);
     if (meta?.currentUserId) setCurrentUserId(meta.currentUserId);
   };
@@ -140,7 +145,19 @@ export default function Home() {
         allLabels={allLabels}
         contactLabels={selectedConversation?.labels}
         onLabelsChange={handleLabelsChange}
+        onTogglePanel={() => setShowContactPanel(p => !p)}
+        isPanelOpen={showContactPanel}
       />
+      {showContactPanel && selectedConversation && (
+        <ContactPanel
+          key={selectedConversation.id}
+          conversationId={selectedConversation.id}
+          phoneNumber={selectedConversation.phoneNumber}
+          contactName={selectedConversation.contactName}
+          onClose={() => setShowContactPanel(false)}
+          conversationHistory={conversations.filter(c => c.phoneNumber === selectedConversation.phoneNumber)}
+        />
+      )}
       </div>
       </ErrorBoundary>
     </div>
