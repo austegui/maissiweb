@@ -196,7 +196,11 @@ Plans:
   3. An admin can invite a new team member by email from a user management page
   4. An admin can deactivate a team member's account and change a team member's role (admin/agent)
   5. The user management page shows all team members with their current role and status
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 13-01-PLAN.md -- Global error page + Supabase admin client utility
+- [ ] 13-02-PLAN.md -- User management server actions, page UI, and settings nav link
 
 ### Backlog: Message Search (deferred)
 **Goal**: Any team member can quickly find a contact, conversation, or message from anywhere in the app using a keyboard-driven search dialog
